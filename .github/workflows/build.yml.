@@ -1,4 +1,4 @@
-name: Stable Build
+name: Final Fix Build
 on:
   workflow_dispatch:
 
@@ -19,20 +19,20 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: 🐍 Generate Stable App Files
+      - name: 🐍 Generate Modern App Files
         run: |
           python3 -c '
           import os
 
-          # 1. ROOT BUILD.GRADLE (Matched Versions)
+          # 1. ROOT BUILD.GRADLE (Modern Versions)
           root_gradle = """
           plugins {
-              id "com.android.application" version "8.0.0" apply false
-              id "org.jetbrains.kotlin.android" version "1.8.0" apply false
+              id "com.android.application" version "8.2.0" apply false
+              id "org.jetbrains.kotlin.android" version "1.9.20" apply false
           }
           """
           
-          # 2. APP BUILD.GRADLE (Minimal & Clean)
+          # 2. APP BUILD.GRADLE (Simple & Clean)
           app_gradle = """
           plugins {
               id "com.android.application"
@@ -40,20 +40,19 @@ jobs:
           }
           android {
               namespace "com.example.personaldj"
-              compileSdk 33
+              compileSdk 34
               defaultConfig {
                   applicationId "com.example.personaldj"
                   minSdk 24
-                  targetSdk 33
+                  targetSdk 34
                   versionCode 1
                   versionName "1.0"
               }
           }
           dependencies {
-              implementation "androidx.core:core-ktx:1.9.0"
+              implementation "androidx.core:core-ktx:1.12.0"
               implementation "androidx.appcompat:appcompat:1.6.1"
-              implementation "androidx.media3:media3-exoplayer:1.0.0"
-              implementation "androidx.media3:media3-session:1.0.0"
+              implementation "androidx.media3:media3-exoplayer:1.2.0"
           }
           """
 
@@ -94,8 +93,13 @@ jobs:
                   val btn = Button(this).apply {
                       text = "Tap to Start Radio"
                       setOnClickListener {
-                          startService(Intent(context, RadioService::class.java))
-                          Toast.makeText(context, "Radio Started!", Toast.LENGTH_SHORT).show()
+                          try {
+                              val i = Intent(this@MainActivity, RadioService::class.java)
+                              startService(i)
+                              Toast.makeText(this@MainActivity, "Starting...", Toast.LENGTH_SHORT).show()
+                          } catch (e: Exception) {
+                              e.printStackTrace()
+                          }
                       }
                   }
                   setContentView(btn)
@@ -135,10 +139,10 @@ jobs:
           write("app/src/main/java/com/example/personaldj/MainActivity.kt", kotlin_code)
           '
 
-      - name: Setup Gradle (Force Version 8.0)
+      - name: Setup Gradle (Modern 8.4)
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: '8.0'
+          gradle-version: '8.4'
 
       - name: Build APK
         run: gradle assembleDebug --no-daemon --stacktrace
@@ -147,5 +151,5 @@ jobs:
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: stable-dj-app
+          name: dj-app-final
           path: app/build/outputs/apk/debug/app-debug.apk
