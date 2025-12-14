@@ -1,0 +1,41 @@
+name: Rescue Build
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Auto-Fix Folders
+        run: |
+          # 1. Force create the correct folder structure
+          mkdir -p app/src/main/java/com/example/personaldj
+          
+          # 2. Find your Kotlin files (wherever you put them) and move them to the right spot
+          find . -name "MainActivity.kt" -exec mv {} app/src/main/java/com/example/personaldj/ \;
+          find . -name "DJRadioService.kt" -exec mv {} app/src/main/java/com/example/personaldj/ \;
+          
+          # 3. Print the file tree to logs (for debugging)
+          echo "File structure after fix:"
+          find app/src/main/java -maxdepth 10
+
+      - name: Build APK
+        # We use --stacktrace to see exactly why it fails if it happens again
+        run: gradle assembleDebug --stacktrace --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: dj-app-fixed
+          path: app/build/outputs/apk/debug/app-debug.apk
+          
