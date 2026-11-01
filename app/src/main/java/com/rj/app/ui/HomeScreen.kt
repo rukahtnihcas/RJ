@@ -60,6 +60,11 @@ import com.rj.app.data.AppSettings
 import com.rj.app.show.OnAir
 import com.rj.app.show.ShowState
 import com.rj.app.show.Who
+import com.rj.core.CueType
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 
 @Composable
 fun HomeScreen(
@@ -68,6 +73,7 @@ fun HomeScreen(
     hasMediaAccess: Boolean,
     onStart: (String?) -> Unit,
     onTalk: () -> Unit,
+    onFeature: (CueType) -> Unit,
     onSkip: () -> Unit,
     onStop: () -> Unit,
     onDestination: (String?) -> Unit,
@@ -109,6 +115,13 @@ fun HomeScreen(
             )
         }
         state.notice?.let { Text(it, color = MaterialTheme.colorScheme.secondary, style = MaterialTheme.typography.bodySmall) }
+        if (state.live && !state.online) {
+            Text("Offline: quizzes, trivia, jokes and your phone's music keep the show going.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+        }
+        state.quiz?.let {
+            Text(it, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        }
 
         // Last thing the RJ said: big and glanceable.
         Card(
@@ -138,6 +151,13 @@ fun HomeScreen(
                                     line.text,
                                     fontSize = if (isLast) 24.sp else 16.sp,
                                     lineHeight = if (isLast) 32.sp else 22.sp,
+                                    modifier = Modifier.alpha(if (isLast) 1f else 0.6f),
+                                )
+                                Who.COHOST -> Text(
+                                    "${state.cohostName.ifBlank { "Co-host" }}: ${line.text}",
+                                    color = Color(0xFF8FD3FF),
+                                    fontSize = if (isLast) 22.sp else 16.sp,
+                                    lineHeight = if (isLast) 30.sp else 22.sp,
                                     modifier = Modifier.alpha(if (isLast) 1f else 0.6f),
                                 )
                                 Who.YOU -> Text(
@@ -180,6 +200,23 @@ fun HomeScreen(
                 shape = RoundedCornerShape(20.dp),
             ) { Text("Start drive", fontSize = 22.sp, fontWeight = FontWeight.Bold) }
         } else {
+            // One-tap show features.
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(
+                    "Quiz me" to CueType.QUIZ,
+                    "Podcast" to CueType.PODCAST,
+                    "Local trivia" to CueType.TRIVIA,
+                    "News" to CueType.NEWS_BREAK,
+                    "Joke" to CueType.JOKE,
+                ).forEach { (label, type) ->
+                    AssistChip(
+                        onClick = { onFeature(type) },
+                        label = { Text(label, fontSize = 16.sp) },
+                        modifier = Modifier.height(48.dp),
+                        colors = AssistChipDefaults.assistChipColors(labelColor = MaterialTheme.colorScheme.onSurface),
+                    )
+                }
+            }
             // Big, glove-friendly controls.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 FilledTonalButton(onClick = onStop, modifier = Modifier.height(72.dp), shape = RoundedCornerShape(20.dp)) {

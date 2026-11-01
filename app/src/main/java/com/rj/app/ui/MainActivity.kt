@@ -45,25 +45,26 @@ class MainActivity : ComponentActivity() {
                         settings = settings,
                         onChange = { settings = it },
                         onClose = { store.save(settings); showSettings = false },
-                        hasMediaAccess = engine.music.hasSessionAccess(),
-                        onGrantMediaAccess = { engine.music.openSessionAccessSettings() },
+                        hasMediaAccess = engine.music.streaming.hasSessionAccess(),
+                        onGrantMediaAccess = { engine.music.streaming.openSessionAccessSettings() },
                         onClearMemories = { com.rj.app.data.MemoryStore(this).clear() },
                     )
                 } else {
                     HomeScreen(
                         state = state,
                         settings = settings,
-                        hasMediaAccess = engine.music.hasSessionAccess(),
+                        hasMediaAccess = engine.music.streaming.hasSessionAccess(),
                         onStart = { destination ->
                             pendingDestination = destination
                             permissions.launch(requiredPermissions())
                         },
                         onTalk = { engine.talk() },
+                        onFeature = { engine.feature(it) },
                         onSkip = { engine.skip() },
                         onStop = { RjService.send(this, RjService.ACTION_STOP) },
                         onDestination = { engine.setDestination(it) },
                         onSettings = { settings = store.load(); showSettings = true },
-                        onGrantMediaAccess = { engine.music.openSessionAccessSettings() },
+                        onGrantMediaAccess = { engine.music.streaming.openSessionAccessSettings() },
                     )
                 }
             }
@@ -75,6 +76,7 @@ class MainActivity : ComponentActivity() {
         add(Manifest.permission.ACCESS_FINE_LOCATION)
         add(Manifest.permission.ACCESS_COARSE_LOCATION)
         add(Manifest.permission.READ_CALENDAR)
+        add(if (Build.VERSION.SDK_INT >= 33) Manifest.permission.READ_MEDIA_AUDIO else Manifest.permission.READ_EXTERNAL_STORAGE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) add(Manifest.permission.POST_NOTIFICATIONS)
     }.toTypedArray()
 }

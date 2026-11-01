@@ -37,7 +37,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.rj.app.data.AppSettings
+import com.rj.app.data.BrainMode
 import com.rj.app.data.MusicApp
+import com.rj.app.data.MusicSource
+import com.rj.app.data.VoiceEngine
 import com.rj.core.Persona
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -86,6 +89,24 @@ fun SettingsScreen(
             onChange(settings.copy(persona = persona.copy(quirks = it)))
         }
 
+        Field("Co-host name (podcast segments)", persona.cohostName) {
+            onChange(settings.copy(persona = persona.copy(cohostName = it)))
+        }
+        Field("Co-host personality", persona.cohostVibe, lines = 2) {
+            onChange(settings.copy(persona = persona.copy(cohostVibe = it)))
+        }
+
+        Section("Voice")
+        Chips(VoiceEngine.entries, settings.voiceEngine, { it.label }) { onChange(settings.copy(voiceEngine = it)) }
+        if (settings.voiceEngine == VoiceEngine.ELEVENLABS) {
+            Field("ElevenLabs API key", settings.elevenLabsKey, secret = true) { onChange(settings.copy(elevenLabsKey = it)) }
+            Field("Host voice ID", settings.hostVoiceId) { onChange(settings.copy(hostVoiceId = it)) }
+            Field("Co-host voice ID", settings.cohostVoiceId) { onChange(settings.copy(cohostVoiceId = it)) }
+            Hint("Natural, expressive voices from elevenlabs.io. Pick any two voices from its Voice Library and paste their IDs. Falls back to the phone's voice when offline.")
+        } else {
+            Hint("For the best phone voice: Android Settings → Text-to-speech → Speech Services by Google, then install a high-quality voice for your language.")
+        }
+
         Section("About you")
         Field("Your name", p.name) { onChange(settings.copy(profile = p.copy(name = it))) }
         Field("Home city", p.homeCity) { onChange(settings.copy(profile = p.copy(homeCity = it))) }
@@ -105,10 +126,15 @@ fun SettingsScreen(
         }
 
         Section("Music")
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            MusicApp.entries.forEach { m ->
-                FilterChip(selected = settings.musicApp == m, onClick = { onChange(settings.copy(musicApp = m)) }, label = { Text(m.label) })
-            }
+        Chips(MusicSource.entries, settings.musicSource, { it.label }) { onChange(settings.copy(musicSource = it)) }
+        Hint(when (settings.musicSource) {
+            MusicSource.AUTO -> "Uses your streaming app when online, and the music saved on your phone when offline or if the app won't play."
+            MusicSource.LIBRARY -> "Plays music files saved on your phone with the built-in player. Works fully offline, and the RJ picks from your own collection."
+            MusicSource.STREAMING -> "Cues songs in your streaming app. Needs internet."
+        })
+        if (settings.musicSource != MusicSource.LIBRARY) {
+            Text("Streaming app", style = MaterialTheme.typography.bodyMedium)
+            Chips(MusicApp.entries, settings.musicApp, { it.label }) { onChange(settings.copy(musicApp = it)) }
         }
         if (!hasMediaAccess) {
             OutlinedButton(onClick = onGrantMediaAccess) { Text("Allow notification access (see & cue songs)") }
@@ -122,6 +148,9 @@ fun SettingsScreen(
         )
 
         Section("Brain")
+        Chips(BrainMode.entries, settings.brainMode, { it.label }) { onChange(settings.copy(brainMode = it)) }
+        Hint(if (settings.brainMode == BrainMode.AUTO) "Claude writes the show when you're online; the offline host takes over automatically in dead zones."
+            else "Never uses the internet for the show: built-in quizzes, trivia, jokes, mini-podcasts and your phone's music.")
         Field("Claude API key", settings.apiKey, secret = true, hint = "sk-ant-…") { onChange(settings.copy(apiKey = it)) }
         Field("Model", settings.model) { onChange(settings.copy(model = it)) }
         Text(
@@ -135,6 +164,19 @@ fun SettingsScreen(
         }
         Spacer(Modifier.height(24.dp))
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun <T> Chips(options: List<T>, selected: T, label: (T) -> String, onSelect: (T) -> Unit) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        options.forEach { o -> FilterChip(selected = o == selected, onClick = { onSelect(o) }, label = { Text(label(o)) }) }
+    }
+}
+
+@Composable
+private fun Hint(text: String) {
+    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable

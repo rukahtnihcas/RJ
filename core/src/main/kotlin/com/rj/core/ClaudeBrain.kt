@@ -36,8 +36,8 @@ class ClaudeBrain(
     private var system: String = ""
     private val messages = mutableListOf<MessageParam>()
 
-    override fun startShow(persona: Persona, profile: UserProfile, memories: List<String>) {
-        system = PromptBuilder.system(persona, profile, memories)
+    override fun startShow(persona: Persona, profile: UserProfile, memories: List<String>, catalog: List<SongPick>) {
+        system = PromptBuilder.system(persona, profile, memories, catalog)
         messages.clear()
     }
 

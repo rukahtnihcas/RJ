@@ -33,9 +33,34 @@ and you can talk back.
   - local colour about the town you're passing through
   - personal check-ins: it asks you something, listens, and remembers the answer for future drives
   - traffic-jam mode: calmer, funnier, feel-good songs
+- **Podcast segments**: you and your co-host (default "Max", a dry-witted sceptic) debate a topical
+  issue from today's news in two distinct voices, then ask which side you're on.
+- **Quiz rounds**: three questions read aloud with A/B/C choices. Answer out loud and the phone judges
+  instantly. Questions are themed on where you are, the news, music and your interests. With music on
+  your phone you also get **name that tune**. Scores and personal bests are kept across drives.
+- **Local trivia** whenever you roll into a new town, plus on request.
+- **One-tap features** on the home screen: *Quiz me*, *Podcast*, *Local trivia*, *News*, *Joke*. Or just
+  say it: "quiz me", "tell me about this place", "let's have a debate".
+- **Drive recap** at sign-off (distance, time, songs, quiz score), and it remembers how many drives you've
+  done together.
 - **Talk back** any time: tap **Talk** (or *Talk* on the notification) and ask for a song, a mood, a
   score, or just chat.
 - **Sign-off** when you end the drive.
+
+## Offline mode
+
+When there's no signal (or with **Brain → Always offline**), a built-in host takes over seamlessly. It
+still knows the time, your calendar, the drive, the last weather it saw and your music library, and it
+runs ~50 quiz questions, name-that-tune, place trivia for 30+ cities, facts, jokes and scripted
+mini-podcasts with your co-host. Set **Music → Phone library** (or *Auto*) so songs play from files
+on your phone with the built-in player.
+
+## Voices
+
+- **ElevenLabs (natural)**: paste an ElevenLabs API key and two voice IDs (host and co-host) in
+  Settings → Voice. Lines are pre-rendered while the previous song plays, so they start instantly.
+- **On-device**: the app prefers Google's TTS engine and picks its highest-quality voices, with a different
+  voice for the co-host. Install "Speech Services by Google" and a high-quality voice pack for the best results.
 
 ## Project layout
 
@@ -57,9 +82,10 @@ and you can talk back.
      curator, calm co-pilot) and add quirks if you like.
    - Tell it about you: name, city, interests, music taste, and **key stuff** (family, goals, what's
      happening at work), plus the language you want, e.g. "English with a sprinkle of Hindi".
-   - Choose your music app and tap **Allow notification access**. This lets the RJ see what's playing, know
-     when a song is ending, and cue songs in the background. Without it, songs are opened via your music app
-     and talk breaks fall back to a timer.
+   - Music: **Auto** (streaming app online, phone library offline), **Phone library** or **Streaming app**.
+     For streaming, tap **Allow notification access**: the RJ needs it to press play in Spotify/YouTube
+     Music after a search, see what's playing and know when a song ends. Without it, apps like Spotify
+     only open their search results.
 4. Mount the phone, connect to the car over Bluetooth, tap **Start drive**, and grant mic, location and
    calendar access when asked.
 
@@ -89,6 +115,8 @@ and you can talk back.
   settings). A natural cloud voice is a drop-in replacement for `Voice.say()`.
 - **Wake word**: talking is tap-to-talk (big button or notification action). A hands-free wake word needs an
   on-device hotword engine.
-- **Starting songs from the background** without notification access is blocked by Android, so grant it.
+- **Streaming apps** decide for themselves how to handle "play this song". The RJ checks that playback
+  actually started and retries through the app's media session, but if an app still refuses, *Auto*
+  switches to your phone's library.
 - Navigation ETA isn't read from Maps; type the destination on the home screen or put a location on the
   calendar event.

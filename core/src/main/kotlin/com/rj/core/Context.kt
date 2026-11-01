@@ -66,6 +66,9 @@ data class ShowContext(
     val nowPlaying: NowPlaying? = null,
     val memories: List<String> = emptyList(),
     val recentSongs: List<String> = emptyList(),
+    val online: Boolean = true,
+    /** Long-run history, e.g. "drive #14", "best quiz score 3/3". */
+    val history: List<String> = emptyList(),
 ) {
     fun nextEvent(): CalendarEvent? =
         events.filter { !it.allDay && it.end.isAfter(now) }.minByOrNull { it.start }
@@ -122,6 +125,8 @@ data class ShowContext(
         nowPlaying?.let { np ->
             if (np.title != null) appendLine("Currently playing: ${np.title}${np.artist?.let { " by $it" } ?: ""}")
         }
+        if (!online) appendLine("No internet connection right now.")
+        if (history.isNotEmpty()) appendLine("History together: ${history.joinToString("; ")}")
         if (recentSongs.isNotEmpty()) appendLine("Already played this drive: ${recentSongs.takeLast(15).joinToString("; ")}")
     }.trim()
 
