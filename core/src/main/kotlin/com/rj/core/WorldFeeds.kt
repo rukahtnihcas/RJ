@@ -60,7 +60,8 @@ class WeatherClient(private val client: OkHttpClient = http) {
             var best: Int? = null
             for (i in 0 until times.size()) {
                 val t = runCatching { LocalDateTime.parse(times[i].asText()) }.getOrNull() ?: continue
-                if (!t.isBefore(now.withMinute(0)) && t.isBefore(now.plusHours(3))) {
+                val hour = now.withMinute(0).withSecond(0).withNano(0)
+                if (!t.isBefore(hour) && t.isBefore(hour.plusHours(3))) {
                     val p = probs.path(i)
                     if (p.isNumber) best = maxOf(best ?: 0, p.asInt())
                 }
