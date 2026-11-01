@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- microphone capsule -->
+    <path android:fillColor="#FFB000"
+        android:pathData="M54,30a9,9 0 0,1 9,9v15a9,9 0 0,1 -18,0v-15a9,9 0 0,1 9,-9z" />
+    <!-- stand -->
+    <path android:fillColor="#00000000" android:strokeColor="#FFB000" android:strokeWidth="4"
+        android:pathData="M39,52a15,15 0 0,0 30,0M54,67v10M45,77h18" />
+    <!-- radio waves -->
+    <path android:fillColor="#00000000" android:strokeColor="#FF4F81" android:strokeWidth="3.5"
+        android:pathData="M31,38a28,28 0 0,0 0,24M77,38a28,28 0 0,1 0,24" />
+</vector>
