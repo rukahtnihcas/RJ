@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- constellation lines -->
+    <path android:strokeColor="#806FA0FF" android:strokeWidth="1.5"
+        android:pathData="M34,40 L48,50 L60,44 L72,58 M48,50 L52,66" />
+    <!-- stars -->
+    <path android:fillColor="#FFFFFF" android:pathData="M34,40m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M48,50m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M60,44m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M72,58m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M52,66m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    <!-- planet -->
+    <path android:fillColor="#FFD180" android:pathData="M70,34m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+    <!-- satellite -->
+    <path android:fillColor="#7CFFB2" android:pathData="M38,64 L41,67 L38,70 L35,67 Z" />
+    <!-- reticle -->
+    <path android:strokeColor="#FFEB3B" android:strokeWidth="2" android:fillColor="#00000000"
+        android:pathData="M48,50m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+</vector>
