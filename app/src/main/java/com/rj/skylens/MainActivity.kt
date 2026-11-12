@@ -41,6 +41,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.rj.skylens.astro.*
+import com.rj.skylens.astro.Observer
 import com.rj.skylens.data.*
 import com.rj.skylens.sensor.OrientationProvider
 import com.rj.skylens.ui.Selection
