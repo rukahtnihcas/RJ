@@ -5,3 +5,4 @@ local.properties
 .idea/
 .kotlin/
 *.apk
+app/src/main/assets/recognizer/

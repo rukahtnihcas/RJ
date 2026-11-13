@@ -173,6 +173,35 @@ class CoreTest {
         }
     }
 
+    @Test fun vocabularyCoversTheLibrary() {
+        val text = javaClass.classLoader!!.getResource("vocab.tsv")!!.readText()
+        val rows = text.lines().filter { it.isNotBlank() && !it.startsWith("#") }.map { it.split('\t') }
+        assertTrue(rows.all { it.size == 2 && it[1].isNotBlank() }, "malformed vocabulary line")
+        val ids = rows.map { it[0] }.toSet()
+        val known = KnowledgeBase.all.map { it.id }.toSet()
+        assertEquals(emptySet(), ids - known, "vocabulary points at entries that don't exist")
+        assertEquals(setOf("unknown"), known - ids, "every library entry should be recognisable")
+        assertEquals(rows.size, rows.map { it[1] }.toSet().size, "duplicate phrase")
+    }
+
+    @Test fun vocabularyRanksAndAddsUp() {
+        // Three phrases in two dimensions: two for "dog", one for "cat".
+        val v = Vocabulary(listOf("dog", "dog", "cat"), listOf("a dog", "a puppy", "a cat"), floatArrayOf(1f, 0f, 0.98f, 0.2f, 0f, 1f), 2)
+        val g = v.rank(floatArrayOf(5f, 0.5f))
+        assertEquals("dog", g[0].id); assertEquals("a dog", g[0].phrase); assertEquals("Dog", g[0].display)
+        assertEquals(1.0, g.sumOf { it.probability.toDouble() }, 1e-4)
+        assertEquals("cat", v.rank(floatArrayOf(0.1f, 3f))[0].id)
+        assertEquals("Jeans", Vocabulary.displayName("a pair of jeans"))
+        assertEquals("Cup of coffee", Vocabulary.displayName("a cup of coffee"))
+        // A broad category takes the name of what was actually seen.
+        assertEquals("Hoodie", KnowledgeBase.fromGuess(Vocabulary.Guess("generic-fashion", 0.9f, "a hoodie"))!!.name)
+        assertEquals("Cotton T-shirt", KnowledgeBase.fromGuess(Vocabulary.Guess("tshirt", 0.9f, "a polo shirt"))!!.name)
+        // Round-trips through the build tool's file format.
+        val bytes = java.nio.ByteBuffer.allocate(6 * 4).order(java.nio.ByteOrder.LITTLE_ENDIAN).apply { floatArrayOf(1f, 0f, 0.98f, 0.2f, 0f, 1f).forEach { putFloat(it) } }.array()
+        val loaded = Vocabulary.load("dog\ta dog\ndog\ta puppy\ncat\ta cat\n", bytes, 2)
+        assertEquals(g, loaded.rank(floatArrayOf(5f, 0.5f)))
+    }
+
     @Test fun radarGeometry() {
         assertTrue(Radar.radius(-5.0) < Radar.ZERO && Radar.ZERO < Radar.radius(5.0))
         assertEquals(1.0, Radar.radius(5.0), 1e-9)

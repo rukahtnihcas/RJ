@@ -130,7 +130,7 @@ fun ScanScreen(vm: AppViewModel, onJournal: () -> Unit, onSettings: () -> Unit) 
     // A light, periodic "what is this probably?" so the reticle can name what it is on.
     LaunchedEffect(Unit) {
         while (true) {
-            delay(900)
+            delay(if (vm.recognizer.available) 700 else 900)
             val s = vm.scan.value
             if (s.phase == Phase.SEARCHING && s.target != null) preview.bitmap?.let(vm::updateHint)
         }
@@ -413,7 +413,7 @@ fun Pill(onClick: () -> Unit, label: String, content: @Composable () -> Unit) {
 private fun Prompt(scan: ScanState, ai: Boolean) {
     val text = when {
         scan.note != null -> scan.note
-        scan.phase == Phase.THINKING -> if (ai) "Looking closely…" else "Identifying…"
+        scan.phase == Phase.THINKING -> "Looking closely…"
         scan.phase == Phase.REVEALED && scan.refining -> "Checking better sources…"
         scan.phase == Phase.REVEALED -> "Tap the chart to explore, or aim at something else"
         scan.target == null -> "Point at anything, or pick a photo"

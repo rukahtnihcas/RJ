@@ -36,7 +36,7 @@ import earth.ripple.core.AiProtocol
 import earth.ripple.core.Dimension
 
 @Composable
-fun SettingsScreen(settings: Settings, onChange: (Settings) -> Unit, onBack: () -> Unit) {
+fun SettingsScreen(settings: Settings, onChange: (Settings) -> Unit, onBack: () -> Unit, recognizer: Recognizer.Status = Recognizer.Status.Missing) {
     var key by remember { mutableStateOf(settings.apiKey) }
     var model by remember { mutableStateOf(settings.model) }
     fun commit() = onChange(settings.copy(apiKey = key.trim(), model = model.trim().ifBlank { AiProtocol.DEFAULT_MODEL }))
@@ -48,10 +48,21 @@ fun SettingsScreen(settings: Settings, onChange: (Settings) -> Unit, onBack: () 
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
             Text("Settings", style = MaterialTheme.typography.displaySmall, color = Ink.Text)
 
-            Section("AI analysis", if (settings.aiEnabled) "On" else "Off — using the on-device library")
+            Section("On-device recognition")
             Text(
-                "This is what makes identification accurate. Without a key, Ripple can only sort what it sees into about 50 broad kinds of object, and it will often be vague or wrong. " +
-                    "With a Claude API key it looks at the actual photo: it can name the specific object, material and brand, read labels and certifications on the pack, and answer your own questions.",
+                when (recognizer) {
+                    is Recognizer.Status.Ready -> "Ready: ${recognizer.model}. Identifies objects from the photo itself, on your phone, with no internet. About ${recognizer.millis} ms per photo on this phone."
+                    Recognizer.Status.Preparing -> "Preparing the vision model. The first launch after installing takes a little while."
+                    Recognizer.Status.Missing -> "This build has no vision model, so Ripple uses a basic labeler that is often vague."
+                    is Recognizer.Status.Failed -> "The vision model could not start on this phone (${recognizer.reason}). Using a basic labeler instead."
+                },
+                color = Ink.Text.copy(alpha = 0.88f), style = MaterialTheme.typography.bodyMedium,
+            )
+
+            Section("AI analysis", if (settings.aiEnabled) "On" else "Off")
+            Text(
+                "Optional. On-device recognition sorts what it sees into the library of about 55 kinds of object. " +
+                    "With a Claude API key, Ripple also sends the photo to Claude, which can name the exact product, material and brand, read labels and certifications on the pack, score that specific item, and answer your own questions.",
                 color = Ink.Text.copy(alpha = 0.88f), style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(Modifier.height(12.dp))

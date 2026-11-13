@@ -32,6 +32,8 @@ android {
         )
     }
     lint { abortOnError = false }
+    // The vision model is large and barely compresses; storing it uncompressed makes first-run setup faster.
+    androidResources { noCompress += listOf("onnx", "bin") }
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -68,6 +70,9 @@ dependencies {
     implementation("com.google.mlkit:object-detection:17.0.2")
     implementation("com.google.mlkit:image-labeling:17.0.9")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+
+    // On-device vision model runtime (CPU, optimised ARM kernels).
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.20.0")
 
     implementation("com.anthropic:anthropic-java:3.8.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

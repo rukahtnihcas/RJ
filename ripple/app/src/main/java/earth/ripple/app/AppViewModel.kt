@@ -12,6 +12,7 @@ import earth.ripple.core.Assessment
 import earth.ripple.core.Dimension
 import earth.ripple.core.Game
 import earth.ripple.core.KnowledgeBase
+import earth.ripple.core.fromGuess
 import earth.ripple.core.Label
 import earth.ripple.core.OpenFoodFacts
 import earth.ripple.core.Profile
@@ -66,6 +67,17 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val store = Store(app)
     val vision = Vision()
     private val http = OkHttpClient.Builder().callTimeout(12, TimeUnit.SECONDS).build()
+    val recognizer = Recognizer(app)
+    private val _recognizerStatus = MutableStateFlow<Recognizer.Status>(Recognizer.Status.Preparing)
+    val recognizerStatus: StateFlow<Recognizer.Status> = _recognizerStatus
+    private var hintBusy = false
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            recognizer.load()
+            _recognizerStatus.value = recognizer.status
+        }
+    }
 
     private val _settings = MutableStateFlow(store.loadSettings())
     val settings: StateFlow<Settings> = _settings
@@ -128,11 +140,21 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     fun updateHint(frame: Bitmap) {
         val s = _scan.value
         val target = s.target ?: return
-        if (s.phase != Phase.SEARCHING) return
+        if (s.phase != Phase.SEARCHING || hintBusy) return
+        // The vision model is used for live hints only when it is quick enough not to make the phone sluggish.
+        val useModel = recognizer.available && recognizer.lastMillis in 1..900
+        hintBusy = true
         viewModelScope.launch {
-            val labels = vision.label(withContext(Dispatchers.Default) { cropTo(frame, target.box) })
-            val match = KnowledgeBase.match(labels + listOfNotNull(target.coarse?.let { Label(it, 0.5f) }))
-            _scan.update { if (it.phase == Phase.SEARCHING && it.target?.id == target.id) it.copy(hint = match.assessment.takeIf { m -> m.id != "unknown" }?.name) else it }
+            try {
+                val crop = withContext(Dispatchers.Default) { cropTo(frame, target.box) }
+                val name = if (useModel) {
+                    withContext(Dispatchers.Default) { recognizer.classify(crop, 1) }?.firstOrNull()?.takeIf { it.probability > 0.25f }?.display
+                } else {
+                    val labels = vision.label(crop)
+                    KnowledgeBase.match(labels + listOfNotNull(target.coarse?.let { Label(it, 0.5f) })).assessment.takeIf { m -> m.id != "unknown" }?.name
+                }
+                _scan.update { if (it.phase == Phase.SEARCHING && it.target?.id == target.id) it.copy(hint = name) else it }
+            } finally { hintBusy = false }
         }
     }
 
@@ -159,17 +181,23 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         pipeline = viewModelScope.launch {
             // A gallery photo is taken whole; a camera frame is cropped to the tracked object.
             val crop = if (photo != null) photo else withContext(Dispatchers.Default) { cropTo(frame, target?.box) }
-            // The close-up says what the object is; the wider frame adds context the crop can lose.
-            // Labels seen in both are reinforced.
-            val close = vision.label(crop)
-            val wide = if (photo != null || target == null) emptyList() else vision.label(frame).map { it.copy(confidence = it.confidence * 0.7f) }
-            val labels = (close + wide + listOfNotNull(target?.coarse?.let { Label(it, 0.5f) }))
+            // First choice: the on-device vision model, which can tell a hoodie from a T-shirt.
+            val guesses = withContext(Dispatchers.Default) { runCatching { recognizer.classify(crop, 6) }.getOrNull() }
+            val modelPick = guesses?.firstOrNull()?.takeIf { it.probability >= MODEL_CONFIDENT }
+            // Fallback: ML Kit's basic labeler. The close-up says what the object is; the wider frame
+            // adds context the crop can lose. Labels seen in both are reinforced.
+            val close = if (modelPick != null) emptyList() else vision.label(crop)
+            val wide = if (modelPick != null || photo != null || target == null) emptyList() else vision.label(frame).map { it.copy(confidence = it.confidence * 0.7f) }
+            val mlkit = (close + wide + listOfNotNull(target?.coarse?.let { Label(it, 0.5f) }))
                 .groupBy { it.text.lowercase() }.map { (_, same) -> Label(same.first().text, (same.maxOf { it.confidence } + 0.15f * (same.size - 1)).coerceAtMost(1f)) }
                 .sortedByDescending { it.confidence }
-            val offline = KnowledgeBase.match(labels).assessment
+            val offline = modelPick?.let { KnowledgeBase.fromGuess(it) } ?: KnowledgeBase.match(mlkit).assessment
+            // What the AI tier is told was seen on the device.
+            val labels = guesses?.map { Label(it.phrase, it.probability) }?.takeIf { it.isNotEmpty() } ?: mlkit
+            val candidateIds = if (modelPick != null) guesses.drop(1).filter { it.probability > 0.02f }.map { it.id } else KnowledgeBase.candidates(mlkit)
             val barcode = liveBarcode ?: if (photo != null) vision.barcode(photo) else null
             val thumb = withContext(Dispatchers.IO) { store.saveThumb(key, thumbnail(crop)) }
-            var entry = Entry(key, System.currentTimeMillis(), thumb, offline, KnowledgeBase.candidates(labels).filter { it != offline.id })
+            var entry = Entry(key, System.currentTimeMillis(), thumb, offline, candidateIds.filter { it != offline.id }.distinct())
             val s = _settings.value
             val willRefine = barcode != null || s.aiEnabled
             val coarse = target?.coarse
@@ -349,6 +377,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     override fun onCleared() { vision.close() }
 
     companion object {
+        /** Below this the model is unsure, and the ML Kit labeler gets a say instead. */
+        const val MODEL_CONFIDENT = 0.18f
         const val DWELL_MS = 1300L
         const val REDWELL_MS = 1800L
     }

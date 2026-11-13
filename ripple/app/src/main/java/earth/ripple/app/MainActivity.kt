@@ -67,6 +67,7 @@ private fun App(vm: AppViewModel = viewModel()) {
     val journal by vm.journal.collectAsStateWithLifecycle()
     val settings by vm.settings.collectAsStateWithLifecycle()
     val rewards by vm.rewards.collectAsStateWithLifecycle()
+    val recognizerStatus by vm.recognizerStatus.collectAsStateWithLifecycle()
 
     if (!granted) {
         Welcome(denied) { ask.launch(Manifest.permission.CAMERA) }
@@ -96,7 +97,7 @@ private fun App(vm: AppViewModel = viewModel()) {
         }
         screen == Screen.SETTINGS -> {
             BackHandler { screen = Screen.SCAN }
-            SettingsScreen(settings, vm::updateSettings) { screen = Screen.SCAN }
+            SettingsScreen(settings, vm::updateSettings, { screen = Screen.SCAN }, recognizerStatus)
         }
         else -> ScanScreen(vm, onJournal = { screen = Screen.JOURNAL }, onSettings = { screen = Screen.SETTINGS })
     }

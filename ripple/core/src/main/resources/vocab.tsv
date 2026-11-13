@@ -539,3 +539,25 @@ generic-home	stationery
 generic-home	a calculator
 generic-home	a sticky note
 generic-home	a wall
+human	a person standing
+human	a person walking
+human	a person sitting
+human	a person playing sport
+human	a portrait of a person
+human	people on a street
+plant	a plant in a pot
+plant	a potted flower
+plant	a plant on a windowsill
+tv	a television screen showing a picture
+tv	a tv on a stand
+tv	a tv in a living room
+tv	a big screen
+furniture	a dining table with chairs
+furniture	an empty bed with sheets
+furniture	a sofa in a living room
+meal	a plate of food on a table
+meal	a meal in a bowl
+cat	a cat lying down
+cat	a cat sitting
+dog	a dog lying down
+dog	a dog playing

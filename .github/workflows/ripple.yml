@@ -10,6 +10,12 @@ on:
 permissions:
   contents: write
 
+# The on-device recogniser bundled into the app. Chosen with the "Ripple recogniser benchmark" workflow.
+env:
+  RECOGNIZER_REPO: Xenova/clip-vit-base-patch32
+  RECOGNIZER_REVISION: main
+  RECOGNIZER_VARIANT: fp32
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,6 +29,14 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Build the on-device recogniser into the app
+        run: |
+          pip install -q huggingface_hub onnxruntime tokenizers numpy pillow
+          python tools/recognizer.py build --repo "$RECOGNIZER_REPO" --revision "$RECOGNIZER_REVISION" \
+            --variant "$RECOGNIZER_VARIANT" --out app/src/main/assets/recognizer
+          ls -la app/src/main/assets/recognizer
       - name: Test scoring engine
         run: ./gradlew :core:test --console=plain
       - name: Build APK
