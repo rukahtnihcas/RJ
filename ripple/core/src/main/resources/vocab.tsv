@@ -1,0 +1,541 @@
+# On-device recogniser vocabulary. Each line: library id <TAB> what the camera might be looking at.
+# The model compares a photo with every phrase here; matches add up per library id.
+# Keep phrases concrete and visual. Lines starting with # are ignored.
+beef-burger	a hamburger
+beef-burger	a cheeseburger
+beef-burger	a beef steak
+beef-burger	raw minced beef
+beef-burger	a plate of meatballs
+beef-burger	a beef burger in a bun
+chicken	fried chicken
+chicken	roast chicken
+chicken	chicken nuggets
+chicken	chicken wings
+chicken	raw chicken breast in a pack
+fish	sushi
+fish	a salmon fillet
+fish	a fried fish
+fish	cooked shrimp
+fish	a tin of tuna
+fish	a plate of seafood
+coffee	a cup of coffee
+coffee	a latte with milk foam
+coffee	an espresso
+coffee	a takeaway coffee cup
+coffee	a bag of coffee beans
+coffee	a coffee machine making coffee
+tea	a cup of tea
+tea	a teapot
+tea	tea bags
+tea	a glass of iced tea
+fruit	a banana
+fruit	a bunch of bananas
+fruit	an apple
+fruit	an orange
+fruit	a bowl of fruit
+fruit	strawberries
+fruit	grapes
+fruit	a mango
+fruit	a pineapple
+fruit	a lemon
+fruit	a watermelon
+fruit	blueberries
+fruit	a pear
+vegetables	broccoli
+vegetables	carrots
+vegetables	a green salad
+vegetables	tomatoes
+vegetables	potatoes
+vegetables	an onion
+vegetables	a cucumber
+vegetables	bell peppers
+vegetables	lettuce
+vegetables	a cabbage
+vegetables	vegetables at a market
+vegetables	an avocado
+vegetables	mushrooms
+bread	a loaf of bread
+bread	sliced bread
+bread	a baguette
+bread	a sandwich
+bread	a croissant
+bread	a bagel
+bread	toast
+pizza	a pizza
+pizza	a slice of pizza
+pizza	a plate of pasta
+pizza	spaghetti
+pizza	lasagna
+dairy	a block of cheese
+dairy	a carton of milk
+dairy	a glass of milk
+dairy	a pot of yogurt
+dairy	butter
+dairy	an ice cream cone
+dairy	a bottle of milk
+chocolate	a bar of chocolate
+chocolate	chocolates
+chocolate	sweets and candy
+chocolate	a jar of chocolate spread
+chocolate	a chocolate cake
+egg	eggs
+egg	an egg carton
+egg	a fried egg
+egg	an omelette
+alcohol	a glass of beer
+alcohol	a bottle of beer
+alcohol	a glass of red wine
+alcohol	a bottle of wine
+alcohol	a cocktail
+alcohol	a bottle of whisky
+alcohol	a champagne glass
+soda	a can of cola
+soda	a soda can
+soda	a bottle of soft drink
+soda	a glass of orange juice
+soda	an energy drink can
+soda	a juice carton
+water-bottle	a plastic water bottle
+water-bottle	a bottle of mineral water
+water-bottle	a pack of plastic water bottles
+meal	a plate of food
+meal	a bowl of rice
+meal	a bowl of soup
+meal	a curry
+meal	a bowl of noodles
+meal	a hot dog
+meal	french fries
+meal	a cake
+meal	cookies
+meal	a doughnut
+meal	breakfast cereal
+meal	a packet of crisps
+meal	a takeaway meal in a box
+meal	a lunch box
+meal	tacos
+meal	a burrito
+meal	a bowl of porridge
+meal	nuts
+meal	a jar of jam
+meal	a bottle of cooking oil
+meal	a tin of food
+meal	a packet of biscuits
+tshirt	a t-shirt
+tshirt	a cotton t-shirt
+tshirt	a shirt
+tshirt	a polo shirt
+tshirt	a button-up shirt
+tshirt	a blouse
+tshirt	a t-shirt being worn
+jeans	a pair of jeans
+jeans	blue denim jeans
+jeans	a denim jacket
+jeans	trousers
+jeans	denim shorts
+shoes	a pair of sneakers
+shoes	a running shoe
+shoes	trainers
+shoes	a leather shoe
+shoes	a leather boot
+shoes	high heels
+shoes	sandals
+shoes	flip-flops
+shoes	a pair of shoes on feet
+shoes	a slipper
+bag	a handbag
+bag	a backpack
+bag	a leather bag
+bag	a suitcase
+bag	a wallet
+bag	a tote bag
+bag	a leather belt
+bag	a purse
+jewellery	a gold ring
+jewellery	a diamond ring
+jewellery	a necklace
+jewellery	a bracelet
+jewellery	earrings
+jewellery	a wristwatch
+jewellery	jewellery
+generic-fashion	a hoodie
+generic-fashion	a wool sweater
+generic-fashion	a jacket
+generic-fashion	a winter coat
+generic-fashion	a dress
+generic-fashion	a skirt
+generic-fashion	a suit
+generic-fashion	a tie
+generic-fashion	a scarf
+generic-fashion	a hat
+generic-fashion	a baseball cap
+generic-fashion	gloves
+generic-fashion	socks
+generic-fashion	underwear
+generic-fashion	a swimsuit
+generic-fashion	sportswear leggings
+generic-fashion	a pile of clothes
+generic-fashion	clothes on hangers
+generic-fashion	a raincoat
+generic-fashion	glasses
+generic-fashion	sunglasses
+phone	a smartphone
+phone	a mobile phone
+phone	an iphone
+phone	a phone screen
+phone	a phone in a hand
+phone	a phone charger
+laptop	a laptop
+laptop	a desktop computer
+laptop	a computer keyboard
+laptop	a computer mouse
+laptop	a tablet computer
+laptop	a computer monitor on a desk
+tv	a television
+tv	a flat screen tv
+tv	a computer monitor
+tv	a projector
+tv	a game console
+tv	a tv remote control
+headphones	headphones
+headphones	wireless earbuds
+headphones	a bluetooth speaker
+headphones	a smartwatch
+headphones	a camera
+headphones	a game controller
+headphones	a power bank
+headphones	a router
+headphones	batteries
+headphones	an electronic gadget
+headphones	a usb cable
+furniture	a chair
+furniture	a wooden chair
+furniture	an office chair
+furniture	a table
+furniture	a dining table
+furniture	a desk
+furniture	a sofa
+furniture	an armchair
+furniture	a bed
+furniture	a bookshelf
+furniture	a wardrobe
+furniture	a chest of drawers
+furniture	a stool
+furniture	a mattress
+furniture	a cushion
+furniture	a pillow
+furniture	a kitchen cabinet
+book	a book
+book	a stack of books
+book	an open book
+book	a newspaper
+book	a magazine
+book	a notebook
+book	a cardboard box
+book	paper
+book	a printed document
+book	a paper bag
+lamp	a lamp
+lamp	a desk lamp
+lamp	a light bulb
+lamp	a ceiling light
+lamp	a floor lamp
+lamp	a candle
+lamp	a torch flashlight
+lamp	fairy lights
+mug	a mug
+mug	a ceramic mug
+mug	a plate
+mug	a bowl
+mug	a drinking glass
+mug	a fork and knife
+mug	a spoon
+mug	a cooking pot
+mug	a frying pan
+mug	a reusable water bottle
+mug	a vase
+mug	a glass jar
+mug	a kitchen utensil
+mug	a thermos flask
+plastic	a plastic bag
+plastic	plastic packaging
+plastic	a plastic container
+plastic	a plastic food tray
+plastic	cling film
+plastic	a polystyrene box
+plastic	a plastic straw
+plastic	a disposable coffee cup
+plastic	a rubbish bin
+plastic	a pile of rubbish
+plastic	litter on the ground
+plastic	a recycling bin
+plastic	a shopping bag
+plastic	a crisp packet wrapper
+toy	a teddy bear
+toy	a toy
+toy	a doll
+toy	lego bricks
+toy	a toy car
+toy	a board game
+toy	a jigsaw puzzle
+toy	a plush toy
+toy	a balloon
+toy	a children's toy made of plastic
+cigarette	a cigarette
+cigarette	a pack of cigarettes
+cigarette	a cigarette butt
+cigarette	a vape
+cigarette	an ashtray
+cigarette	a lighter
+cigarette	a person smoking
+appliance	a refrigerator
+appliance	a washing machine
+appliance	a microwave oven
+appliance	an oven
+appliance	a dishwasher
+appliance	a kettle
+appliance	a toaster
+appliance	a vacuum cleaner
+appliance	an air conditioner
+appliance	an electric fan
+appliance	a hair dryer
+appliance	an iron
+appliance	a blender
+appliance	a coffee machine
+appliance	a stove
+appliance	a heater
+appliance	a tumble dryer
+tap	a tap
+tap	a kitchen sink
+tap	a bathroom sink
+tap	a shower
+tap	a bathtub
+tap	a toilet
+tap	running water from a tap
+tap	a garden hose
+cosmetics	a lipstick
+cosmetics	a bottle of shampoo
+cosmetics	a bar of soap
+cosmetics	a perfume bottle
+cosmetics	a tube of toothpaste
+cosmetics	a toothbrush
+cosmetics	a bottle of lotion
+cosmetics	makeup
+cosmetics	a deodorant
+cosmetics	sunscreen
+cosmetics	a bottle of detergent
+cosmetics	a cleaning spray
+cosmetics	toilet paper
+cosmetics	a towel
+cosmetics	a razor
+cosmetics	a hairbrush
+cosmetics	nail polish
+cosmetics	cosmetic products on a shelf
+sports	a football
+sports	a basketball
+sports	a tennis racket
+sports	a tennis ball
+sports	a yoga mat
+sports	dumbbells
+sports	a skateboard
+sports	a surfboard
+sports	skis
+sports	a golf club
+sports	a baseball bat
+sports	a bicycle helmet
+sports	a frisbee
+sports	a kite
+sports	a gym
+sports	sports equipment
+money	cash banknotes
+money	coins
+money	a credit card
+money	a bank card
+money	a cash machine
+car	a car
+car	a car on the road
+car	a parked car
+car	an suv
+car	a pickup truck
+car	a lorry
+car	a van
+car	a car interior with steering wheel
+car	a car tyre
+car	a petrol station
+car	an electric car charging
+car	a traffic jam
+bicycle	a bicycle
+bicycle	a person riding a bicycle
+bicycle	an electric bike
+bicycle	a bicycle wheel
+bicycle	a kick scooter
+motorbike	a motorcycle
+motorbike	a moped
+motorbike	a motor scooter
+transit	a bus
+transit	a train
+transit	a tram
+transit	a metro train
+transit	a train station
+transit	a bus stop
+plane	an aeroplane
+plane	an airliner in the sky
+plane	an airport
+plane	an aircraft wing
+plane	a helicopter
+tree	a tree
+tree	an oak tree
+tree	a pine tree
+tree	a palm tree
+tree	a forest
+tree	tree bark
+tree	tree branches with leaves
+tree	a tree trunk
+tree	a fallen tree
+plant	a houseplant
+plant	a potted plant
+plant	a flower
+plant	a bouquet of flowers
+plant	a rose
+plant	a cactus
+plant	a succulent
+plant	a garden
+plant	grass
+plant	a lawn
+plant	a leaf
+plant	a herb plant
+plant	a sunflower
+plant	moss
+plant	a bush
+plant	a hedge
+dog	a dog
+dog	a puppy
+dog	a dog on a lead
+cat	a cat
+cat	a kitten
+bird	a bird
+bird	a pigeon
+bird	a sparrow
+bird	a duck
+bird	a seagull
+bird	a parrot
+bird	a crow
+bird	an owl
+bird	a swan
+bird	a bird feeder
+pollinator	a bee
+pollinator	a bumblebee
+pollinator	a butterfly
+pollinator	a moth
+pollinator	a ladybird
+pollinator	a dragonfly
+pollinator	an insect
+pollinator	a spider
+pollinator	an ant
+pollinator	a beetle
+pollinator	a bee on a flower
+human	a person
+human	a man
+human	a woman
+human	a child
+human	a baby
+human	a face
+human	a selfie
+human	a group of people
+human	a hand
+human	a person's feet
+livestock	a cow
+livestock	cattle in a field
+livestock	a sheep
+livestock	a goat
+livestock	a pig
+livestock	a horse
+livestock	a chicken on a farm
+building	a house
+building	a building
+building	an apartment block
+building	a skyscraper
+building	a city street
+building	a room interior
+building	a living room
+building	a bedroom
+building	a kitchen
+building	an office
+building	a shop
+building	a supermarket aisle
+building	a restaurant
+building	a factory
+building	a bridge
+building	a road
+building	a construction site
+building	a brick wall
+building	a window
+building	a door
+building	a roof
+building	a staircase
+building	a classroom
+building	a church
+solar	a solar panel
+solar	solar panels on a roof
+solar	a wind turbine
+solar	a wind farm
+wild	the sky
+wild	clouds
+wild	the sea
+wild	a beach
+wild	a river
+wild	a lake
+wild	a mountain
+wild	a waterfall
+wild	a field of wildflowers
+wild	a meadow
+wild	a desert
+wild	snow
+wild	a sunset
+wild	a park
+wild	a wetland
+wild	a coral reef
+wild	rocks
+wild	a hill landscape
+wild	a deer
+wild	a fox
+wild	a squirrel
+wild	a wild animal
+wild	a fish in water
+wild	a frog
+wild	a snail
+generic-home	a pen
+generic-home	a pencil
+generic-home	scissors
+generic-home	a clock
+generic-home	a key
+generic-home	an umbrella
+generic-home	a mirror
+generic-home	a curtain
+generic-home	a rug
+generic-home	a basket
+generic-home	a bucket
+generic-home	a broom
+generic-home	a tool
+generic-home	a hammer
+generic-home	a screwdriver
+generic-home	a drill
+generic-home	a guitar
+generic-home	a piano
+generic-home	a painting
+generic-home	a picture frame
+generic-home	a statue
+generic-home	a trophy
+generic-home	a plastic chair
+generic-home	a storage box
+generic-home	a ladder
+generic-home	a door handle
+generic-home	a light switch
+generic-home	a power socket
+generic-home	a cable
+generic-home	a metal object
+generic-home	a wooden object
+generic-home	a plastic object
+generic-home	stationery
+generic-home	a calculator
+generic-home	a sticky note
+generic-home	a wall
