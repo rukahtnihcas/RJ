@@ -131,7 +131,7 @@ answer briefly and steer back.
 
     /** Parses the model's JSON. Scores are clamped and snapped; malformed output returns null. */
     fun parse(text: String, id: String): Assessment? = runCatching {
-        val o = json.parseToJsonElement(text.trim().removePrefix("```json").removePrefix("```").removeSuffix("```").trim()).jsonObject
+        val o = json.parseToJsonElement(OpenAiCompat.jsonObjectIn(text) ?: return null).jsonObject
         val s = o["scores"] as JsonObject
         Assessment(
             id = id,
@@ -141,7 +141,10 @@ answer briefly and steer back.
             unit = o.str("unit"),
             headline = o.str("headline"),
             scores = keys.map { k ->
-                val d = s[k] as JsonObject
+                // Some models answer a bare number instead of the full object; keep the number.
+                val raw = s[k]
+                if (raw is JsonPrimitive) return@map DimensionScore(Rubric.snap(raw.doubleOrNull ?: 0.0), "", "", Confidence.LOW)
+                val d = raw as JsonObject
                 DimensionScore(
                     score = Rubric.snap(d.num("score")),
                     why = d.str("why"),

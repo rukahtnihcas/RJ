@@ -38,17 +38,32 @@ import java.time.Duration
 /** Why an AI call produced nothing, phrased for the user. */
 class AiFailure(message: String) : Exception(message)
 
+/** Anything that can look at a photo and assess it, and answer follow-up questions. */
+interface Analyst {
+    suspend fun assess(photo: Bitmap, labels: List<Label>, coarse: String?, productRecord: String?, country: String?, id: String): Assessment
+    suspend fun ask(about: Assessment, history: List<Pair<String, String>>, question: String): String
+}
+
+/** 768 px on the long side is plenty to identify an object and keeps the upload quick on mobile data. */
+fun jpegBase64(source: Bitmap): String {
+    val scale = 768f / maxOf(source.width, source.height)
+    val bmp = if (scale < 1f) Bitmap.createScaledBitmap(source, (source.width * scale).toInt(), (source.height * scale).toInt(), true) else source
+    val out = ByteArrayOutputStream()
+    bmp.compress(Bitmap.CompressFormat.JPEG, 85, out)
+    return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+}
+
 /**
  * The AI tier: sends the photo to Claude and gets back a full assessment in a fixed JSON shape.
  * Refusals are routed to a fallback model by the API (server-side fallbacks), so a declined
  * request does not simply dead-end.
  */
-class Ai(private val apiKey: String, private val model: String) {
+class Ai(private val apiKey: String, private val model: String) : Analyst {
     private val client: AnthropicClient by lazy {
         AnthropicOkHttpClient.builder().apiKey(apiKey).timeout(Duration.ofSeconds(90)).maxRetries(1).build()
     }
 
-    suspend fun assess(photo: Bitmap, labels: List<Label>, coarse: String?, productRecord: String?, country: String?, id: String): Assessment =
+    override suspend fun assess(photo: Bitmap, labels: List<Label>, coarse: String?, productRecord: String?, country: String?, id: String): Assessment =
         withContext(Dispatchers.IO) {
             val params = base(AiProtocol.systemPrompt)
                 .maxTokens(16000L)
@@ -76,7 +91,7 @@ class Ai(private val apiKey: String, private val model: String) {
             AiProtocol.parse(text, id) ?: throw AiFailure("The AI answer could not be read. Showing the on-device estimate.")
         }
 
-    suspend fun ask(about: Assessment, history: List<Pair<String, String>>, question: String): String = withContext(Dispatchers.IO) {
+    override suspend fun ask(about: Assessment, history: List<Pair<String, String>>, question: String): String = withContext(Dispatchers.IO) {
         val b = base(AiProtocol.chatSystemPrompt + "\n\nASSESSMENT\n" + AiProtocol.chatContext(about))
             .maxTokens(2000L)
             .outputConfig(BetaOutputConfig.builder().effort(BetaOutputConfig.Effort.LOW).build())
@@ -129,12 +144,4 @@ class Ai(private val apiKey: String, private val model: String) {
         is JsonPrimitive -> if (e.isString) e.content else e.booleanOrNull ?: e.longOrNull ?: e.doubleOrNull ?: e.content
     }
 
-    private fun jpegBase64(source: Bitmap): String {
-        // 768 px on the long side is plenty to identify an object and keeps the upload quick on mobile data.
-        val scale = 768f / maxOf(source.width, source.height)
-        val bmp = if (scale < 1f) Bitmap.createScaledBitmap(source, (source.width * scale).toInt(), (source.height * scale).toInt(), true) else source
-        val out = ByteArrayOutputStream()
-        bmp.compress(Bitmap.CompressFormat.JPEG, 85, out)
-        return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
-    }
 }

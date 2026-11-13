@@ -32,9 +32,11 @@ To build locally: `cd ripple && ./gradlew :app:assembleDebug` (JDK 17+ and the A
    - **Barcode.** A food barcode is looked up in Open Food Facts: carbon from Agribalyse life-cycle
      data, health from Nutri-Score and NOVA, nature from Eco-Score. Freshwater and social are
      estimated from the category and marked low confidence.
-   - **AI (optional).** With a Claude API key in Settings, a cropped photo is sent to Claude, which
-     identifies the specific object and scores it against the same rubric. It also answers free-form
-     follow-up questions.
+   - **AI (optional).** A cropped photo is sent to a vision-capable AI model, which identifies the
+     specific object and scores it against the same rubric, and answers free-form follow-up questions.
+     Choose the service in Settings: Kimi K2.6 free via OpenRouter (default; free key at openrouter.ai/keys),
+     Google Gemini's free tier (key at aistudio.google.com/apikey), Claude, or any OpenAI-compatible service.
+     Services that ignore a strict JSON schema are retried with looser formats automatically.
 3. **Hang the chart.** The chart is tethered to the tracked object with a spring, so it lags and
    sways as you move. The dashed ring is zero: a shape inside it takes, a shape outside it gives.
 4. **Go deeper.** Tap the chart for the critical material or process to be mindful of, the

@@ -92,7 +92,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val _rewards = MutableStateFlow<List<Reward>>(emptyList())
     val rewards: StateFlow<List<Reward>> = _rewards
 
-    private var ai: Ai? = null
+    private var ai: Analyst? = null
     private var pipeline: Job? = null
     private var dwellId: Int? = null
     private var dwellSince = 0L
@@ -300,7 +300,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             .execute().use { if (it.isSuccessful) it.body?.string() else null }
     }.getOrNull()
 
-    private fun client(s: Settings): Ai = ai ?: Ai(s.apiKey, s.model).also { ai = it }
+    private fun client(s: Settings): Analyst = ai ?: (
+        if (s.active.isClaude) Ai(s.apiKey, s.model) else OpenAiAnalyst(s.baseUrl, s.apiKey, s.model)
+    ).also { ai = it }
 
     private fun thumbnail(crop: Bitmap): Bitmap {
         val scale = 480f / maxOf(crop.width, crop.height)
@@ -333,7 +335,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         val s = _settings.value
         when {
             canned != null -> _detail.update { it?.copy(chat = it.chat + Chat(q, canned)) }
-            !s.aiEnabled -> _detail.update { it?.copy(chat = it.chat + Chat(q, "Add an API key in Settings to ask your own questions. Without one, Ripple can only answer the questions prepared for each object.", failed = true)) }
+            !s.aiEnabled -> _detail.update { it?.copy(chat = it.chat + Chat(q, "Turn on AI analysis in Settings to ask your own questions (a free Kimi or Gemini key works). Without it, Ripple can only answer the questions prepared for each object.", failed = true)) }
             else -> {
                 _detail.update { it?.copy(chat = it.chat + Chat(q, null)) }
                 viewModelScope.launch {
@@ -349,7 +351,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     // ---- Settings and rewards ----------------------------------------------------------------
 
     fun updateSettings(s: Settings) {
-        if (s.apiKey != _settings.value.apiKey || s.model != _settings.value.model) ai = null
+        val old = _settings.value
+        if (s.provider != old.provider || s.apiKey != old.apiKey || s.model != old.model || s.baseUrl != old.baseUrl) ai = null
         _settings.value = s
         store.saveSettings(s)
     }

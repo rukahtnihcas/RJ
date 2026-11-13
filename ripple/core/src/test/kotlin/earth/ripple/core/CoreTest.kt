@@ -202,6 +202,32 @@ class CoreTest {
         assertEquals(g, loaded.rank(floatArrayOf(5f, 0.5f)))
     }
 
+    @Test fun openAiCompatibleServices() {
+        // Requests are valid JSON with the photo attached and, when asked, the schema.
+        val body = Json.parseToJsonElement(OpenAiCompat.assessBody("m", "look", "QUJD", OpenAiCompat.Format.SCHEMA)).toString()
+        assertTrue(body.contains("data:image/jpeg;base64,QUJD") && body.contains("json_schema") && body.contains("ripple_assessment"))
+        assertFalse(OpenAiCompat.assessBody("m", "look", "QUJD", OpenAiCompat.Format.NONE).contains("response_format"))
+        assertTrue(OpenAiCompat.assessBody("m", "x", "y", OpenAiCompat.Format.JSON).contains("json_object"))
+        val chat = OpenAiCompat.chatBody("m", KnowledgeBase.byId("tree")!!, listOf("q1" to "a1"), "q2")
+        assertTrue(chat.contains("\"assistant\"") && chat.contains("q2"))
+
+        // Replies: plain, multi-part, refused, error, cut off.
+        fun ok(content: String) = """{"choices":[{"message":{"role":"assistant","content":${kotlinx.serialization.json.JsonPrimitive(content).toString()}},"finish_reason":"stop"}]}"""
+        assertEquals(OpenAiCompat.Reply.Text("hi"), OpenAiCompat.reply(ok("<think>hmm</think> hi")))
+        assertEquals(OpenAiCompat.Reply.Text("ab"), OpenAiCompat.reply("""{"choices":[{"message":{"content":[{"type":"text","text":"a"},{"type":"text","text":"b"}]}}]}"""))
+        assertTrue(OpenAiCompat.reply("""{"choices":[{"message":{"content":null,"refusal":"no"}}]}""") is OpenAiCompat.Reply.Refused)
+        assertEquals(OpenAiCompat.Reply.Error("Rate limit exceeded"), OpenAiCompat.reply("""{"error":{"message":"Rate limit exceeded","code":429}}"""))
+        assertEquals(OpenAiCompat.Reply.Error("The answer was cut off"), OpenAiCompat.reply("""{"choices":[{"message":{"content":""},"finish_reason":"length"}]}"""))
+
+        // A loosely formatted answer from a free model still becomes an assessment.
+        val messy = "Sure! Here it is:\n```json\n" + """{"identified":true,"name":"Oak {tree}","emoji":"🌳","kind":"LIVING","unit":"one year","headline":"h \"q\"",
+            "scores":{"carbon":3,"water":{"score":3.5,"why":"w","metric":"","confidence":"LOW"},"health":4,"nature":5,"social":3},
+            "stages":[],"dependencies":[],"alternatives":[],"critical":[],"look_for":[],"questions":[],"sources":[]}""" + "\n```\nHope that helps."
+        val a = assertNotNull(AiProtocol.parse(messy, "x"))
+        assertEquals("Oak {tree}", a.name); assertEquals(listOf(3.0, 3.5, 4.0, 5.0, 3.0), a.values)
+        assertEquals(Provider.KIMI, Provider.byId("kimi")); assertEquals(Provider.CLAUDE, Provider.byId(null))
+    }
+
     @Test fun radarGeometry() {
         assertTrue(Radar.radius(-5.0) < Radar.ZERO && Radar.ZERO < Radar.radius(5.0))
         assertEquals(1.0, Radar.radius(5.0), 1e-9)

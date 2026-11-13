@@ -32,14 +32,26 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import earth.ripple.core.AiProtocol
+import earth.ripple.core.Provider
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import earth.ripple.core.Dimension
 
 @Composable
 fun SettingsScreen(settings: Settings, onChange: (Settings) -> Unit, onBack: () -> Unit, recognizer: Recognizer.Status = Recognizer.Status.Missing) {
-    var key by remember { mutableStateOf(settings.apiKey) }
-    var model by remember { mutableStateOf(settings.model) }
-    fun commit() = onChange(settings.copy(apiKey = key.trim(), model = model.trim().ifBlank { AiProtocol.DEFAULT_MODEL }))
+    var provider by remember { mutableStateOf(settings.provider) }
+    var keys by remember { mutableStateOf(settings.keys) }
+    var models by remember { mutableStateOf(settings.models) }
+    var customUrl by remember { mutableStateOf(settings.customUrl) }
+    val draft = settings.copy(
+        provider = provider, keys = keys.mapValues { it.value.trim() }, models = models.mapValues { it.value.trim() }, customUrl = customUrl.trim(),
+    )
+    val changed = draft != settings
+    fun commit() { if (changed) onChange(draft) }
+    val p = Provider.byId(provider)
 
     Column(Modifier.fillMaxSize().background(Ink.Bg).statusBarsPadding().navigationBarsPadding().imePadding()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 6.dp)) {
@@ -59,38 +71,70 @@ fun SettingsScreen(settings: Settings, onChange: (Settings) -> Unit, onBack: () 
                 color = Ink.Text.copy(alpha = 0.88f), style = MaterialTheme.typography.bodyMedium,
             )
 
-            Section("AI analysis", if (settings.aiEnabled) "On" else "Off")
+            Section("AI analysis", if (settings.aiEnabled) "On: ${settings.active.label}" else "Off")
             Text(
-                "Optional. On-device recognition sorts what it sees into the library of about 55 kinds of object. " +
-                    "With a Claude API key, Ripple also sends the photo to Claude, which can name the exact product, material and brand, read labels and certifications on the pack, score that specific item, and answer your own questions.",
+                "Optional. With AI analysis on, Ripple also sends the photo to an AI model that can name the exact product, material and brand, " +
+                    "read labels and certifications on the pack, score that specific item, and answer your own questions. Free options work well.",
                 color = Ink.Text.copy(alpha = 0.88f), style = MaterialTheme.typography.bodyMedium,
             )
+            Spacer(Modifier.height(10.dp))
+            Provider.all.forEach { option ->
+                val on = option.id == provider
+                Row(
+                    Modifier.fillMaxWidth().padding(vertical = 3.dp).clip(RoundedCornerShape(16.dp))
+                        .background(if (on) Ink.Raised else Ink.Surface)
+                        .clickable(role = Role.RadioButton) { provider = option.id }.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(Modifier.size(20.dp).border(2.dp, if (on) Ink.Leaf else Ink.Muted, CircleShape), contentAlignment = Alignment.Center) {
+                        if (on) Box(Modifier.size(10.dp).background(Ink.Leaf, CircleShape))
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(option.label, color = Ink.Text, style = MaterialTheme.typography.titleMedium)
+                        Text(option.note, color = Ink.Muted, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+            }
             Spacer(Modifier.height(12.dp))
+            if (p.keyUrl.isNotEmpty()) {
+                Text("Get a key at ${p.keyUrl}, then paste it here.", color = Ink.Zero, style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.height(8.dp))
+            }
+            if (p == Provider.CUSTOM) {
+                OutlinedTextField(
+                    value = customUrl, onValueChange = { customUrl = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,
+                    label = { Text("Base URL") }, placeholder = { Text("https://…/v1") }, shape = RoundedCornerShape(16.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, autoCorrectEnabled = false),
+                )
+                Spacer(Modifier.height(10.dp))
+            }
             OutlinedTextField(
-                value = key, onValueChange = { key = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,
-                label = { Text("Claude API key") }, placeholder = { Text("sk-ant-…") },
+                value = keys[provider].orEmpty(), onValueChange = { keys = keys + (provider to it) }, modifier = Modifier.fillMaxWidth(), singleLine = true,
+                label = { Text("API key for ${p.label.substringBefore(" (").substringBefore(" via")}") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false),
                 shape = RoundedCornerShape(16.dp),
             )
             Spacer(Modifier.height(10.dp))
             OutlinedTextField(
-                value = model, onValueChange = { model = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,
-                label = { Text("Model") }, shape = RoundedCornerShape(16.dp),
+                value = models[provider].orEmpty(), onValueChange = { models = models + (provider to it) }, modifier = Modifier.fillMaxWidth(), singleLine = true,
+                label = { Text("Model") }, placeholder = { Text(p.defaultModel.ifEmpty { "an image-capable model" }) }, shape = RoundedCornerShape(16.dp),
                 keyboardOptions = KeyboardOptions(autoCorrectEnabled = false),
             )
+            if (p.defaultModel.isNotEmpty()) Text("Leave blank to use ${p.defaultModel}.", color = Ink.Muted, style = MaterialTheme.typography.bodySmall)
             Spacer(Modifier.height(10.dp))
             Text(
-                if (key.trim() != settings.apiKey || model.trim() != settings.model) "Save" else "Saved",
-                color = if (key.trim() != settings.apiKey || model.trim() != settings.model) Ink.Bg else Ink.Muted,
+                if (changed) "Save" else "Saved",
+                color = if (changed) Ink.Bg else Ink.Muted,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.clip(RoundedCornerShape(22.dp))
-                    .background(if (key.trim() != settings.apiKey || model.trim() != settings.model) Ink.Leaf else Ink.Raised)
+                    .background(if (changed) Ink.Leaf else Ink.Raised)
                     .clickable(role = Role.Button) { commit() }.padding(horizontal = 22.dp, vertical = 13.dp),
             )
             Note(
-                "Privacy: with AI analysis on, a cropped photo of what you scan is sent to Anthropic's API together with the on-device labels and your country code. " +
-                    "Nothing is sent otherwise, apart from a barcode number to Open Food Facts when you scan one. Your key is stored encrypted on this phone and your journal never leaves it."
+                "Privacy: with AI analysis on, a cropped photo of what you scan is sent to the service you chose above (Anthropic, OpenRouter and the model's host, or Google), together with the on-device labels and your country code. Free services may keep or learn from what you send. " +
+                    "Nothing is sent otherwise, apart from a barcode number to Open Food Facts when you scan one. Keys are stored encrypted on this phone and your journal never leaves it."
             )
 
             Section("Scanning")
