@@ -12,7 +12,8 @@ hangs off it showing what it does to the world:
 ## Get the app
 
 Every push that touches `ripple/` builds an APK in GitHub Actions (workflow **Ripple**). Open the
-run, download the `ripple-debug-apk` artifact, and install it on an Android 8+ phone.
+run, download the `ripple-debug-apk` artifact, and install it on an Android 8+ phone. The same build is
+published as the `ripple-latest` pre-release, whose `Ripple.apk` can be downloaded straight to a phone.
 
 To build locally: `cd ripple && ./gradlew :app:assembleDebug` (JDK 17+ and the Android SDK).
 
