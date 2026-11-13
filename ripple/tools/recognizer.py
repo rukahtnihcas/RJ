@@ -49,12 +49,14 @@ def files_for(repo, revision, variant):
     text = pick(["text"]) if variant == "fp32" else (f"onnx/text_model.onnx" if "onnx/text_model.onnx" in names else pick(["text"]))
     if vision is None or text is None:
         raise SystemExit(f"{repo}: no {variant} vision/text ONNX. Files: {sorted(n for n in names if n.endswith('.onnx'))}")
-    extra = [n for n in names if n.startswith(vision) and n != vision]  # external weight files
+    extra = [n for n in names if (n.startswith(vision) or n.startswith(text)) and n not in (vision, text)]  # external weights
     return info.sha, vision, text, extra, names
 
 def download(repo, revision, path):
+    # Real files in a plain folder: ONNX Runtime refuses external weight files reached through cache symlinks.
     from huggingface_hub import hf_hub_download
-    return hf_hub_download(repo, path, revision=revision)
+    local = os.path.join(os.environ.get("RIPPLE_MODELS", "models"), repo.replace("/", "__"))
+    return hf_hub_download(repo, path, revision=revision, local_dir=local)
 
 def session(path, threads=4):
     import onnxruntime as ort
@@ -118,8 +120,9 @@ def norm(v):
 def text_embeddings(repo, revision, text_path, rows):
     from tokenizers import Tokenizer
     cfg = json.load(open(download(repo, revision, "config.json")))
-    tcfg = cfg.get("text_config", {})
-    length = int(tcfg.get("max_position_embeddings", 77))
+    tcfg = cfg.get("text_config", {}) or {}
+    default = 64 if "siglip" in str(cfg.get("model_type", "")).lower() else 77
+    length = int(tcfg.get("max_position_embeddings", default))
     tok = Tokenizer.from_file(download(repo, revision, "tokenizer.json"))
     pad_id = None
     try:
@@ -156,6 +159,7 @@ def text_embeddings(repo, revision, text_path, rows):
 class Model:
     def __init__(self, repo, revision, variant):
         self.sha, vision, text, extra, _ = files_for(repo, revision, variant)
+        self.extra_vision = [e for e in extra if e.startswith(vision)]
         self.vision_path = download(repo, self.sha, vision)
         for e in extra:
             download(repo, self.sha, e)
@@ -255,7 +259,7 @@ def cmd_eval(a):
         s = per.setdefault(name, [0, 0]); s[0] += h1; s[1] += 1
         if not h1: errors[(name, ranked[0][0])] = errors.get((name, ranked[0][0]), 0) + 1
     n = len(crops)
-    vsize = sum(os.path.getsize(p) for p in [m.vision_path] + [os.path.join(os.path.dirname(m.vision_path), f) for f in os.listdir(os.path.dirname(m.vision_path)) if f.startswith(os.path.basename(m.vision_path)) and f != os.path.basename(m.vision_path)])
+    vsize = os.path.getsize(m.vision_path) + sum(os.path.getsize(os.path.join(os.path.dirname(m.vision_path), os.path.basename(e))) for e in m.extra_vision)
     row = f"| {a.repo} | {a.variant} | {m.sha[:10]} | {top1/n:.1%} | {top3/n:.1%} | {latency:.0f} ms | {vsize/1e6:.0f} MB |"
     print("\nRESULT", row, f"(n={n}, setup {load:.0f}s)")
     worst = sorted(per.items(), key=lambda kv: kv[1][0] / kv[1][1])[:12]
@@ -272,6 +276,12 @@ def cmd_build(a):
     os.makedirs(a.out, exist_ok=True)
     import shutil
     shutil.copyfile(m.vision_path, os.path.join(a.out, "vision.onnx"))
+    # External weight files must keep the name the model refers to, next to it.
+    externals = []
+    for e in m.extra_vision:
+        name = os.path.basename(e)
+        shutil.copyfile(os.path.join(os.path.dirname(m.vision_path), name), os.path.join(a.out, name))
+        externals.append(name)
     with open(os.path.join(a.out, "text_embeds.bin"), "wb") as f:
         f.write(m.T.astype("<f4").tobytes())
     with open(os.path.join(a.out, "labels.tsv"), "w", encoding="utf-8") as f:
@@ -279,7 +289,8 @@ def cmd_build(a):
             f.write(f"{k}\t{p}\n")
     cfg = dict(m.pc)
     cfg.update({"model": a.repo, "revision": m.sha, "variant": a.variant, "input": m.vin, "output": m.vout,
-                "dim": int(m.T.shape[1]), "count": int(m.T.shape[0]), "vocab_hash": vocab_hash(m.rows)})
+                "dim": int(m.T.shape[1]), "count": int(m.T.shape[0]), "vocab_hash": vocab_hash(m.rows),
+                "external": externals})
     json.dump(cfg, open(os.path.join(a.out, "config.json"), "w"), indent=1)
     print(json.dumps(cfg, indent=1))
     # Self-check: the bundled files reproduce the same ranking.
@@ -287,15 +298,16 @@ def cmd_build(a):
 
 def cmd_discover(a):
     from huggingface_hub import HfApi
+    import traceback
     api = HfApi()
     for author, q in [("onnx-community", "siglip"), ("onnx-community", "clip"), ("onnx-community", "mobileclip"),
                       ("Xenova", "siglip"), ("Xenova", "clip"), ("Xenova", "mobileclip"), ("onnx-community", "dfn"),
                       ("onnx-community", "metaclip")]:
         try:
             for mdl in api.list_models(author=author, search=q, limit=60):
-                print("MODEL", mdl.id)
-        except Exception as e:
-            print("search failed", author, q, e)
+                print("MODEL", mdl.id, flush=True)
+        except Exception:
+            print("search failed", author, q); traceback.print_exc()
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
