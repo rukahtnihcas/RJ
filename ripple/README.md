@@ -22,8 +22,13 @@ To build locally: `cd ripple && ./gradlew :app:assembleDebug` (JDK 17+ and the A
 1. **See.** CameraX feeds frames to ML Kit's on-device object detector, which finds the most
    prominent object and gives it a tracking id. Brackets hug it; hold steady and they close.
 2. **Identify and score**, in three tiers. Each replaces the one before when it arrives:
-   - **On-device (instant, offline).** ML Kit labels are matched to a bundled library of 56 kinds
-     of object, each with scores, reasons, life-cycle stages, dependencies, alternatives and sources.
+   - **On-device (offline).** A SigLIP 2 vision model runs on the phone with ONNX Runtime and compares
+     the photo with about 560 concrete phrases ("a leather boot", "a disposable coffee cup"), which map to
+     a bundled library of 56 kinds of object, each with scores, reasons, life-cycle stages, dependencies,
+     alternatives and sources. On real-photo crops from COCO it picks the right library entry 85% of the
+     time first, and 98% within its top three. The model is downloaded and built into the APK by the
+     GitHub workflow (`tools/recognizer.py build`); the "Ripple recogniser benchmark" workflow compares
+     candidate models. Builds without the model fall back to ML Kit's basic labeler.
    - **Barcode.** A food barcode is looked up in Open Food Facts: carbon from Agribalyse life-cycle
      data, health from Nutri-Score and NOVA, nature from Eco-Score. Freshwater and social are
      estimated from the category and marked low confidence.

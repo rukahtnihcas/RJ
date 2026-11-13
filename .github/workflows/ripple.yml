@@ -12,7 +12,7 @@ permissions:
 
 # The on-device recogniser bundled into the app. Chosen with the "Ripple recogniser benchmark" workflow.
 env:
-  RECOGNIZER_REPO: Xenova/clip-vit-base-patch32
+  RECOGNIZER_REPO: onnx-community/siglip2-base-patch16-224-ONNX
   RECOGNIZER_REVISION: main
   RECOGNIZER_VARIANT: fp32
 
