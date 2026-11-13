@@ -45,6 +45,11 @@ class CoreTest {
             assertTrue(a.stages.all { it.weight in 0..3 }, a.id)
             if (a.id != "unknown") assertTrue(a.stages.any { it.weight >= 2 }, "${a.id} has no significant stage")
             assertTrue(a.questions.all { it.a.isNotBlank() }, "${a.id} offline question without an answer")
+            // Every object says what to be mindful of and what to look for, including what not to trust.
+            assertTrue(a.critical.isNotEmpty() && a.critical.all { it.name.isNotBlank() && it.why.isNotBlank() }, "${a.id} has no critical material or process")
+            assertTrue(a.lookFor.count { it.trusted } >= 2, "${a.id} needs things to look for")
+            assertTrue(a.lookFor.any { !it.trusted }, "${a.id} needs a claim to be wary of")
+            assertTrue(a.lookFor.all { it.name.isNotBlank() && it.meaning.isNotBlank() }, "${a.id} has an unexplained signal")
             // Round-trips through storage.
             assertEquals(a, Json.decodeFromString(Assessment.serializer(), Json.encodeToString(Assessment.serializer(), a)))
         }
@@ -85,6 +90,10 @@ class CoreTest {
         assertEquals("generic-home", match("Home good" to 0.7f))
         assertEquals("unknown", match("Xyzzy" to 0.9f))
         assertEquals("unknown", match())
+        // Runners-up are offered when the first guess is wrong.
+        val c = KnowledgeBase.candidates(listOf(Label("Cup", 0.8f), Label("Coffee", 0.6f), Label("Tableware", 0.5f)))
+        assertTrue("mug" in c && "coffee" in c, c.toString())
+        assertTrue(KnowledgeBase.candidates(emptyList()).isEmpty())
         // Whole-word matching only.
         assertFalse(match("Watermelon" to 0.9f) == "wild")
     }
@@ -99,6 +108,8 @@ class CoreTest {
         assertTrue(a.score(Dimension.HEALTH).score <= -2.5, "Nutri-Score E must read as unhealthy")
         assertTrue(a.score(Dimension.NATURE).score <= -3.5, "low Eco-Score with palm oil")
         assertTrue(a.alternatives.isNotEmpty() && a.stages.any { it.weight == 3 })
+        assertEquals("Palm oil", a.critical.first().name)
+        assertTrue(a.lookFor.any { it.name.startsWith("RSPO") } && a.lookFor.any { !it.trusted })
         println("OFF → ${a.name} ${a.values} | ${a.headline}")
         assertNull(OpenFoodFacts.parse("""{"status":0}""", "0"))
         assertNull(OpenFoodFacts.parse("not json", "0"))
@@ -114,6 +125,8 @@ class CoreTest {
           "stages":[{"name":"Growth","weight":7,"note":""}],
           "dependencies":[{"name":"Fungi","note":"n"}],
           "alternatives":[{"name":"Protect it","why":"y","effort":"EASY","scores":{"carbon":3,"water":3,"health":4,"nature":5,"social":3},"co2_kg_per_year":0,"water_l_per_year":-4}],
+          "critical":[{"name":"Old growth","why":"irreplaceable"}],
+          "look_for":[{"name":"Native species","meaning":"m","trust":"TRUSTED"},{"name":"A tree per purchase","meaning":"m","trust":"CAUTION"}],
           "questions":["Why?"],"sources":["IPCC"]}"""
         val a = assertNotNull(AiProtocol.parse(text, "x"))
         assertEquals(listOf(3.0, 5.0, 4.0, 5.0, -5.0), a.values)
@@ -121,6 +134,8 @@ class CoreTest {
         assertEquals(3, a.stages.single().weight)
         assertEquals(0.0, a.alternatives.single().waterLPerYear)
         assertEquals(Tier.AI, a.tier)
+        assertEquals("Old growth", a.critical.single().name)
+        assertEquals(listOf(true, false), a.lookFor.map { it.trusted })
         assertNull(AiProtocol.parse("I can't help with that", "x"))
         // The schema we send must itself be valid JSON.
         Json.parseToJsonElement(AiProtocol.schema)

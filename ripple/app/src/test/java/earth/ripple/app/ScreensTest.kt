@@ -80,7 +80,7 @@ class ScreensTest {
                 ScanOverlay(
                     ScanState(phase = Phase.REVEALED, entry = e, anchor = Rect(250, 1300, 830, 1800), lockedId = 1),
                     points = 85, questDone = false, quest = Game.quest("2026-11-13").text, settings = Settings(), rewards = Game.onScan(Profile(), e.assessment, "2026-11-13", false).rewards,
-                    onJournal = {}, onSettings = {}, onOpen = {}, onGuess = {}, onSkipGuess = {}, onShutter = {}, onToggleGuess = {}, onToggleAuto = {},
+                    onJournal = {}, onSettings = {}, onOpen = {}, onGuess = {}, onSkipGuess = {}, onShutter = {}, onPhotos = {}, onWrong = {}, onToggleAuto = {},
                 )
             }
         }
@@ -92,7 +92,7 @@ class ScreensTest {
             ScanOverlay(
                 ScanState(target = Target(Rect(240, 800, 840, 1500), 3, "Fashion good"), hint = "Trainers", dwell = 0.55f),
                 points = 0, questDone = false, quest = Game.quest("2026-11-13").text, settings = Settings(), rewards = emptyList(),
-                onJournal = {}, onSettings = {}, onOpen = {}, onGuess = {}, onSkipGuess = {}, onShutter = {}, onToggleGuess = {}, onToggleAuto = {},
+                onJournal = {}, onSettings = {}, onOpen = {}, onGuess = {}, onSkipGuess = {}, onShutter = {}, onPhotos = {}, onWrong = {}, onToggleAuto = {},
             )
         }
     }
@@ -103,7 +103,7 @@ class ScreensTest {
             ScanOverlay(
                 ScanState(phase = Phase.GUESSING, entry = entry("phone"), anchor = Rect(250, 700, 830, 1300)),
                 points = 120, questDone = true, quest = Game.quest("2026-11-13").text, settings = Settings(guessFirst = true), rewards = emptyList(),
-                onJournal = {}, onSettings = {}, onOpen = {}, onGuess = {}, onSkipGuess = {}, onShutter = {}, onToggleGuess = {}, onToggleAuto = {},
+                onJournal = {}, onSettings = {}, onOpen = {}, onGuess = {}, onSkipGuess = {}, onShutter = {}, onPhotos = {}, onWrong = {}, onToggleAuto = {},
             )
         }
     }
@@ -125,6 +125,10 @@ class ScreensTest {
 
     @Test @Config(qualifiers = "w411dp-h1900dp-420dpi")
     fun settings() = shoot("8-settings") { SettingsScreen(Settings(), {}, {}) }
+
+    @Test fun picker() = shoot("11-picker") {
+        ObjectPicker(KnowledgeBase.byId("mug")!!, listOf("coffee", "tea", "water-bottle"), aiEnabled = false, onPick = {}, onClose = {})
+    }
 
     @Test fun shareCards() {
         val shirt = entry("tshirt"); val tree = entry("tree")

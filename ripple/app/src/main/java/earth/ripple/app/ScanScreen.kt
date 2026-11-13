@@ -1,6 +1,13 @@
 package earth.ripple.app
 
 import android.graphics.Rect
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.mlkit.vision.MlKitAnalyzer
@@ -129,13 +136,31 @@ fun ScanScreen(vm: AppViewModel, onJournal: () -> Unit, onSettings: () -> Unit) 
         }
     }
 
+    val pickPhoto = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        val photo = uri?.let { loadPhoto(context, it) } ?: return@rememberLauncherForActivityResult
+        // Hang the chart in the lower-middle of the screen so the picture stays visible above it.
+        val w = preview.width.coerceAtLeast(1); val h = preview.height.coerceAtLeast(1)
+        vm.lockPhoto(photo, Rect(w / 5, h * 62 / 100, w * 4 / 5, h * 72 / 100))
+    }
+    var correcting by remember { mutableStateOf(false) }
+    val current = scan.entry
+    if (correcting && current != null) {
+        BackHandler { correcting = false }
+        ObjectPicker(current.assessment, current.candidates, settings.aiEnabled, onPick = { vm.correct(current, it); correcting = false }, onClose = { correcting = false })
+        return
+    }
+
     Box(Modifier.fillMaxSize().background(Ink.Bg)) {
         AndroidView({ preview }, Modifier.fillMaxSize())
+        scan.photo?.let { photo ->
+            Image(photo.asImageBitmap(), "The photo being assessed", Modifier.fillMaxSize().background(Ink.Bg), contentScale = ContentScale.Fit, alignment = Alignment.TopCenter)
+        }
         ScanOverlay(
             scan, profile.points, profile.questDay == vm.today, Game.quest(vm.today).text, settings, rewards,
             onJournal = onJournal, onSettings = onSettings, onOpen = vm::open, onGuess = vm::guess, onSkipGuess = vm::skipGuess,
             onShutter = { if (scan.phase == Phase.REVEALED) vm.reset() else preview.bitmap?.let(vm::lock) },
-            onToggleGuess = { vm.updateSettings(settings.copy(guessFirst = !settings.guessFirst)) },
+            onPhotos = { pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+            onWrong = { correcting = true },
             onToggleAuto = { vm.updateSettings(settings.copy(autoLock = !settings.autoLock)) },
         )
     }
@@ -146,7 +171,7 @@ fun ScanScreen(vm: AppViewModel, onJournal: () -> Unit, onSettings: () -> Unit) 
 fun ScanOverlay(
     scan: ScanState, points: Int, questDone: Boolean, quest: String, settings: Settings, rewards: List<Reward>,
     onJournal: () -> Unit, onSettings: () -> Unit, onOpen: (Entry) -> Unit, onGuess: (Dimension) -> Unit, onSkipGuess: () -> Unit,
-    onShutter: () -> Unit, onToggleGuess: () -> Unit, onToggleAuto: () -> Unit,
+    onShutter: () -> Unit, onPhotos: () -> Unit, onWrong: () -> Unit, onToggleAuto: () -> Unit,
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val w = constraints.maxWidth.toFloat()
@@ -175,9 +200,21 @@ fun ScanOverlay(
                 RewardToasts(rewards)
                 Spacer(Modifier.height(12.dp))
                 Prompt(scan, settings.aiEnabled)
-                Spacer(Modifier.height(14.dp))
+                if (scan.phase == Phase.REVEALED && entry != null && !scan.refining) {
+                    Text(
+                        "Not ${article(entry.assessment.name)}?  Correct it", color = Ink.Zero, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(top = 4.dp).clip(RoundedCornerShape(16.dp)).clickable(role = Role.Button, onClick = onWrong).padding(horizontal = 16.dp, vertical = 10.dp),
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(26.dp)) {
-                    Toggle("Guess first", settings.guessFirst, onToggleGuess)
+                    Column(
+                        Modifier.width(84.dp).clip(RoundedCornerShape(14.dp)).clickable(role = Role.Button, onClickLabel = "Check a photo from your gallery", onClick = onPhotos).padding(vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text("▣", color = Ink.Text, fontSize = 22.sp)
+                        Text("Photos", color = Ink.Text, style = MaterialTheme.typography.labelSmall)
+                    }
                     Shutter(busy = scan.phase == Phase.THINKING, again = scan.phase == Phase.REVEALED, onClick = onShutter)
                     Toggle("Auto", settings.autoLock, onToggleAuto)
                 }
@@ -223,7 +260,7 @@ private fun HangingTag(anchor: Rect, screenW: Float, screenH: Float, scan: ScanS
     val density = LocalDensity.current
     val thinking = scan.phase == Phase.THINKING
     val tagW = with(density) { (if (thinking) 190.dp else 236.dp).toPx() }
-    val tagH = with(density) { (if (thinking) 46.dp else 318.dp).toPx() }
+    val tagH = with(density) { (if (thinking) 46.dp else 344.dp).toPx() }
     val gap = with(density) { 30.dp.toPx() }
     val topSafe = with(density) { 112.dp.toPx() }
     val bottomSafe = with(density) { 190.dp.toPx() }
@@ -295,14 +332,28 @@ private fun HangingTag(anchor: Rect, screenW: Float, screenH: Float, scan: ScanS
                 }
                 RadarChart(a.values, Modifier.fillMaxWidth().height(186.dp), animateKey = scan.entry.key + a.tier)
                 Text(a.headline, style = MaterialTheme.typography.bodySmall, color = Ink.Text.copy(alpha = 0.9f), maxLines = 3, overflow = TextOverflow.Ellipsis)
+                a.critical.firstOrNull()?.let {
+                    Spacer(Modifier.height(6.dp))
+                    Text("◆ Mind: ${it.name}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = Ink.Zero, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
                 Spacer(Modifier.height(8.dp))
                 val wrong = scan.guessRight == false
                 Text(
-                    if (wrong) "Biggest mark: ${a.standout.label}. Tap to see why  →" else "Tap for why, and better choices  →",
+                    if (wrong) "Biggest mark: ${a.standout.label}  →" else "Why, and what to look for  →",
                     style = MaterialTheme.typography.labelSmall, color = Ink.Leaf,
                 )
             }
         }
+    }
+}
+
+/** "a T-shirt", "an aeroplane", but "trainers" and "jeans" as they are. */
+fun article(name: String): String {
+    val n = name.replaceFirstChar { it.lowercase() }.let { if (name.take(2).uppercase() == name.take(2)) name else it }
+    return when {
+        n.endsWith("s") || n.contains(" & ") || n.startsWith("a ") -> n
+        n.first().lowercaseChar() in "aeiou" -> "an $n"
+        else -> "a $n"
     }
 }
 
@@ -365,7 +416,7 @@ private fun Prompt(scan: ScanState, ai: Boolean) {
         scan.phase == Phase.THINKING -> if (ai) "Looking closely…" else "Identifying…"
         scan.phase == Phase.REVEALED && scan.refining -> "Checking better sources…"
         scan.phase == Phase.REVEALED -> "Tap the chart to explore, or aim at something else"
-        scan.target == null -> "Point at anything: your shoes, your lunch, a tree"
+        scan.target == null -> "Point at anything, or pick a photo"
         scan.hint != null -> "${scan.hint}?  Hold steady, or tap to scan"
         else -> "Hold steady, or tap to scan"
     }

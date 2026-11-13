@@ -52,6 +52,17 @@ data class Alternative(
     val waterLPerYear: Double = 0.0,
 )
 
+/** The one material or process inside the object that carries most of its impact. */
+@Serializable
+data class Hotspot(val name: String, val why: String)
+
+/**
+ * Something to check for when choosing: a certification, rating or label that is independently
+ * verified ([trusted]), or a common claim that sounds good and proves little (not trusted).
+ */
+@Serializable
+data class Signal(val name: String, val meaning: String, val trusted: Boolean = true)
+
 @Serializable
 data class QA(val q: String, val a: String = "")
 
@@ -70,6 +81,10 @@ data class Assessment(
     val stages: List<Stage> = emptyList(),
     val dependencies: List<Dependency> = emptyList(),
     val alternatives: List<Alternative> = emptyList(),
+    /** What to be mindful of inside this object. */
+    val critical: List<Hotspot> = emptyList(),
+    /** What to look for, and what to be wary of, when choosing one. */
+    val lookFor: List<Signal> = emptyList(),
     val questions: List<QA> = emptyList(),
     val sources: List<String> = emptyList(),
     val tier: Tier = Tier.OFFLINE,

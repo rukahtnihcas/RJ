@@ -50,8 +50,8 @@ fun SettingsScreen(settings: Settings, onChange: (Settings) -> Unit, onBack: () 
 
             Section("AI analysis", if (settings.aiEnabled) "On" else "Off — using the on-device library")
             Text(
-                "Without a key, Ripple recognises about 50 common kinds of object on your phone and reads food barcodes. " +
-                    "With a Claude API key it can identify almost anything, score that specific object, and answer your own questions.",
+                "This is what makes identification accurate. Without a key, Ripple can only sort what it sees into about 50 broad kinds of object, and it will often be vague or wrong. " +
+                    "With a Claude API key it looks at the actual photo: it can name the specific object, material and brand, read labels and certifications on the pack, and answer your own questions.",
                 color = Ink.Text.copy(alpha = 0.88f), style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(Modifier.height(12.dp))

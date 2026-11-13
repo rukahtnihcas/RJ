@@ -32,8 +32,11 @@ To build locally: `cd ripple && ./gradlew :app:assembleDebug` (JDK 17+ and the A
      follow-up questions.
 3. **Hang the chart.** The chart is tethered to the tracked object with a spring, so it lags and
    sways as you move. The dashed ring is zero: a shape inside it takes, a shape outside it gives.
-4. **Go deeper.** Tap the chart for the reasoning behind each score, where in its life the impact
+4. **Go deeper.** Tap the chart for the critical material or process to be mindful of, the
+   certifications, ratings and labels worth looking for (and the claims to be wary of), the reasoning behind each score, where in its life the impact
    happens, what it depends on, better choices (each previewable on the chart), and questions.
+   You can also pick a photo from the gallery instead of using the live camera, and correct a wrong
+   identification from a searchable list.
 5. **Act and share.** "I'll do this" adds a commitment to your journal with its yearly saving.
    Share renders a 1080×1350 card. You can compare any two scans on one chart.
 

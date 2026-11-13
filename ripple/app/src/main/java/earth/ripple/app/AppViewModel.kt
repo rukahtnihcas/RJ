@@ -50,6 +50,8 @@ data class ScanState(
     val guess: Dimension? = null,
     val guessRight: Boolean? = null,
     val note: String? = null,
+    /** A picture chosen from the gallery, shown in place of the live camera while it is assessed. */
+    val photo: Bitmap? = null,
 )
 
 data class Chat(val question: String, val answer: String?, val failed: Boolean = false)
@@ -92,6 +94,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     /** Called for every analysed camera frame. Boxes are already in view coordinates. */
     fun onFrame(objects: List<DetectedObject>, codes: List<Barcode>, now: Long) {
+        if (_scan.value.photo != null) return // a gallery photo is on screen; the live camera waits
         codes.firstOrNull { !it.rawValue.isNullOrBlank() }?.rawValue?.let { lastBarcode = it; lastBarcodeAt = now }
         val obj = objects.maxByOrNull { it.boundingBox.width() * it.boundingBox.height() }
         val target = obj?.let { Target(it.boundingBox, it.trackingId, it.labels.maxByOrNull { l -> l.confidence }?.text) }
@@ -136,26 +139,40 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     // ---- Locking on and assessing ------------------------------------------------------------
 
     /** Commit to whatever is in view: identify it, score it, and reveal the chart. */
-    fun lock(frame: Bitmap) {
+    fun lock(frame: Bitmap) = assess(frame, photo = null, view = null)
+
+    /** Assess a picture from the gallery. [view] is the screen area the chart should hang in. */
+    fun lockPhoto(photo: Bitmap, view: Rect) = assess(photo, photo, view)
+
+    private fun assess(frame: Bitmap, photo: Bitmap?, view: Rect?) {
         val before = _scan.value
         if (before.phase == Phase.THINKING) return
-        val target = before.target
-        val box = target?.box ?: Rect(frame.width / 7, frame.height / 4, frame.width * 6 / 7, frame.height * 3 / 4)
+        val target = if (photo != null) null else before.target
+        val box = view ?: target?.box ?: Rect(frame.width / 7, frame.height / 4, frame.width * 6 / 7, frame.height * 3 / 4)
         val key = System.currentTimeMillis().toString(36)
-        val barcode = lastBarcode?.takeIf { System.currentTimeMillis() - lastBarcodeAt < 2500 }
+        val liveBarcode = lastBarcode?.takeIf { photo == null && System.currentTimeMillis() - lastBarcodeAt < 2500 }
         dwellSince = System.currentTimeMillis()
         lostSince = 0L
-        _scan.value = ScanState(target = target, phase = Phase.THINKING, anchor = box, lockedId = target?.id)
+        _scan.value = ScanState(target = target, phase = Phase.THINKING, anchor = box, lockedId = target?.id, photo = photo)
 
         pipeline?.cancel()
         pipeline = viewModelScope.launch {
-            val crop = withContext(Dispatchers.Default) { cropTo(frame, target?.box) }
-            val labels = vision.label(crop)
-            val offline = KnowledgeBase.match(labels + listOfNotNull(target?.coarse?.let { Label(it, 0.5f) })).assessment
+            // A gallery photo is taken whole; a camera frame is cropped to the tracked object.
+            val crop = if (photo != null) photo else withContext(Dispatchers.Default) { cropTo(frame, target?.box) }
+            // The close-up says what the object is; the wider frame adds context the crop can lose.
+            // Labels seen in both are reinforced.
+            val close = vision.label(crop)
+            val wide = if (photo != null || target == null) emptyList() else vision.label(frame).map { it.copy(confidence = it.confidence * 0.7f) }
+            val labels = (close + wide + listOfNotNull(target?.coarse?.let { Label(it, 0.5f) }))
+                .groupBy { it.text.lowercase() }.map { (_, same) -> Label(same.first().text, (same.maxOf { it.confidence } + 0.15f * (same.size - 1)).coerceAtMost(1f)) }
+                .sortedByDescending { it.confidence }
+            val offline = KnowledgeBase.match(labels).assessment
+            val barcode = liveBarcode ?: if (photo != null) vision.barcode(photo) else null
             val thumb = withContext(Dispatchers.IO) { store.saveThumb(key, thumbnail(crop)) }
-            var entry = Entry(key, System.currentTimeMillis(), thumb, offline)
+            var entry = Entry(key, System.currentTimeMillis(), thumb, offline, KnowledgeBase.candidates(labels).filter { it != offline.id })
             val s = _settings.value
             val willRefine = barcode != null || s.aiEnabled
+            val coarse = target?.coarse
 
             if (s.guessFirst && offline.id != "unknown") {
                 _scan.update { it.copy(phase = Phase.GUESSING, entry = entry, refining = willRefine) }
@@ -178,7 +195,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             }
             if (s.aiEnabled) {
                 try {
-                    val refined = client(s).assess(crop, labels, target?.coarse, record?.take(6000), Locale.getDefault().country, entry.assessment.id.takeIf { record != null } ?: "ai-$key")
+                    val refined = client(s).assess(crop, labels, coarse, record?.take(6000), Locale.getDefault().country, entry.assessment.id.takeIf { record != null } ?: "ai-$key")
                     // Same kind of thing, same id: so "new kind" is only awarded once per kind.
                     entry = entry.copy(assessment = if (record != null) refined else refined.copy(id = "ai:" + refined.name.trim().lowercase()))
                 } catch (e: AiFailure) {
@@ -231,6 +248,17 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         val s = _scan.value
         val entry = s.entry ?: return
         if (s.phase == Phase.GUESSING) reveal(entry, entry.assessment.id.startsWith("off-"), s.refining)
+    }
+
+    /** The user says the identification is wrong and picks the right thing from the library. */
+    fun correct(entry: Entry, id: String) {
+        val picked = KnowledgeBase.byId(id) ?: return
+        val fixed = entry.copy(assessment = picked, candidates = (entry.candidates + entry.assessment.id).filter { it != id && !it.startsWith("ai:") && !it.startsWith("off-") }.distinct())
+        pipeline?.cancel() // a late answer must not overwrite the user's own choice
+        _scan.update { if (it.entry?.key == entry.key) it.copy(entry = fixed, refining = false, note = null) else it }
+        _journal.update { list -> list.map { if (it.key == entry.key) fixed else it } }
+        _detail.update { d -> if (d?.entry?.key == entry.key) d.copy(entry = fixed, chat = emptyList()) else d }
+        persist()
     }
 
     fun reset() {

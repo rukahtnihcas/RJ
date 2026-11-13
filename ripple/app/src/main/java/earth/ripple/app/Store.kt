@@ -19,6 +19,8 @@ data class Entry(
     val time: Long,
     val thumb: String = "",
     val assessment: Assessment,
+    /** Other library entries the camera's labels pointed to, offered when the first guess is wrong. */
+    val candidates: List<String> = emptyList(),
 )
 
 data class Settings(

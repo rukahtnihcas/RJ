@@ -141,6 +141,23 @@ object OpenFoodFacts {
                 add(Dependency("Farmland and fertiliser", "Farming is where most of any food's footprint lies."))
             },
             alternatives = alternatives(scores, weakest, palm, fair, nova),
+            critical = buildList {
+                if (palm) add(Hotspot("Palm oil", "The ingredient most linked to tropical deforestation. Uncertified palm oil is the thing to avoid."))
+                if (risk != null && risk != "palm") add(Hotspot("The $risk supply chain", "Where the labour and land-use risks of this product sit: mostly smallholder farms earning very little."))
+                if (nova == 4) add(Hotspot("Ultra-processing", "Industrial formulations with additives; diets high in them are linked to worse long-term health."))
+                if (isEmpty()) add(Hotspot("Farming the main ingredient", "For almost every food, most of the footprint is on the farm, not in transport or packaging."))
+            },
+            lookFor = buildList {
+                val has = { key: String -> labels.any { it.contains(key) } }
+                add(Signal("Eco-Score A or B", if (eco != null) "This product is ${eco.uppercase().replace("-PLUS", "+")}. The grade summarises a full life-cycle assessment." else "Not rated for this product. Where shown, it summarises a full life-cycle assessment."))
+                add(Signal("Nutri-Score A or B", if (nutri != null) "This product is ${nutri.uppercase()}." else "Not rated for this product."))
+                add(Signal("Organic (EU leaf, USDA Organic or national equivalent)", if (organic) "Present on this product. No synthetic pesticides or fertilisers." else "Not listed for this product. Means no synthetic pesticides or fertilisers."))
+                add(Signal("Fairtrade or Rainforest Alliance", if (fair) "Present on this product. Audited standards for farmer pay and practices." else "Not listed for this product. Audited standards for farmer pay and practices."))
+                if (palm) add(Signal("RSPO certified palm oil", if (has("rspo") || has("sustainable-palm")) "Listed for this product." else "Not listed for this product. Segregated or identity-preserved grades are the strongest."))
+                if (catText.contains("fish") || catText.contains("seafood")) add(Signal("MSC or ASC", if (has("msc") || has("asc") || has("sustainable-fish")) "Listed for this product." else "Not listed for this product. The credible labels for wild and farmed seafood."))
+                add(Signal("'Natural', 'farm fresh', 'traditional'", "Unregulated words that say nothing about how the food was produced.", trusted = false))
+                add(Signal("Brand-own sustainability logos", "Self-awarded. A real certification names an independent standard and auditor.", trusted = false))
+            },
             questions = listOf(
                 QA("What is the Eco-Score?", "A grade from A to F based on a life-cycle assessment of the food type (carbon, water pollution, land use and more), adjusted for packaging, origin, labels and threatened species such as palm-oil-linked deforestation."),
                 QA("How reliable is this?", "Carbon, health and nature come from this product's record in Open Food Facts, a public database. Freshwater and social scores are estimated from the product category and are much less certain."),

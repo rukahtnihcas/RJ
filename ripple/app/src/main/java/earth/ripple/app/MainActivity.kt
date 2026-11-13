@@ -74,14 +74,19 @@ private fun App(vm: AppViewModel = viewModel()) {
     }
 
     val d = detail
+    var correcting by remember { mutableStateOf(false) }
     when {
+        d != null && correcting -> {
+            BackHandler { correcting = false }
+            ObjectPicker(d.entry.assessment, d.entry.candidates, settings.aiEnabled, onPick = { vm.correct(d.entry, it); correcting = false }, onClose = { correcting = false })
+        }
         d != null -> {
             BackHandler { vm.closeDetail() }
             DetailScreen(
                 state = d, profile = profile, others = journal.filter { it.key != d.entry.key }, aiEnabled = settings.aiEnabled,
                 onBack = vm::closeDetail,
                 onShare = { runCatching { ShareCard.share(context, d.entry, d.compareWith) }.onSuccess { vm.shared() } },
-                onPledge = vm::pledge, onAsk = vm::ask, onCompare = vm::compare,
+                onPledge = vm::pledge, onAsk = vm::ask, onCompare = vm::compare, onWrong = { correcting = true },
             )
             RewardToasts(rewards, Modifier.fillMaxWidth().statusBarsPadding().padding(top = 64.dp))
         }

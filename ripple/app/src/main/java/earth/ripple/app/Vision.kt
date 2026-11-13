@@ -32,12 +32,17 @@ class Vision {
     )
 
     private val labeler: ImageLabeler = ImageLabeling.getClient(
-        ImageLabelerOptions.Builder().setConfidenceThreshold(0.45f).build()
+        ImageLabelerOptions.Builder().setConfidenceThreshold(0.35f).build()
     )
 
     suspend fun label(bitmap: Bitmap): List<Label> = runCatching {
         labeler.process(InputImage.fromBitmap(bitmap, 0)).await().map { Label(it.text, it.confidence) }
     }.getOrDefault(emptyList())
+
+    /** Reads a product barcode from a still picture, if there is one. */
+    suspend fun barcode(bitmap: Bitmap): String? = runCatching {
+        barcodes.process(InputImage.fromBitmap(bitmap, 0)).await().firstOrNull { !it.rawValue.isNullOrBlank() }?.rawValue
+    }.getOrNull()
 
     fun close() {
         detector.close(); barcodes.close(); labeler.close()

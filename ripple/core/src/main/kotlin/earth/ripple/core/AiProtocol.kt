@@ -52,6 +52,16 @@ FIELDS
   Give each its own five scores on the same rubric, an effort level, and a rough yearly saving for
   a typical person in kg CO₂e and litres of water (0 if unknown). For living things and places the
   "alternatives" are ways to care for or protect it.
+- critical: the 1–3 materials, ingredients or processes INSIDE this object that carry most of its
+  impact and that a buyer should be mindful of (e.g. "Cobalt in the battery", "Cotton growing",
+  "Palm oil", "Chrome tanning"). One sentence each on why it matters.
+- look_for: 4–7 things to check when choosing or buying one. Lead with independently audited
+  certifications, ratings and labels that genuinely apply to this product type (e.g. GOTS,
+  Fairtrade, FSC, MSC, EU energy label, repairability score, TCO Certified), each with what it
+  actually guarantees, and set trust=TRUSTED. Then include 1–3 common claims on this kind of
+  product that sound good but prove little ("eco-friendly", "carbon neutral", "vegan leather",
+  own-brand schemes) with why, and set trust=CAUTION. If a label or claim is visible in the photo,
+  name it and say what it is worth. Only real schemes; never invent a certification.
 - questions: 3 short follow-up questions a curious person would ask next about THIS object.
 - sources: 2–5 named studies, datasets or organisations your figures rest on. Only real ones.
 
@@ -88,14 +98,19 @@ answer briefly and steer back.
             """"name":{"type":"string"},"why":{"type":"string"},"effort":{"type":"string","enum":["EASY","MEDIUM","BIG"]},"scores":$five,"co2_kg_per_year":{"type":"number"},"water_l_per_year":{"type":"number"}""",
             listOf("name", "why", "effort", "scores", "co2_kg_per_year", "water_l_per_year"),
         )
+        val hotspot = obj(""""name":{"type":"string"},"why":{"type":"string"}""", listOf("name", "why"))
+        val signal = obj(
+            """"name":{"type":"string"},"meaning":{"type":"string"},"trust":{"type":"string","enum":["TRUSTED","CAUTION"]}""",
+            listOf("name", "meaning", "trust"),
+        )
         fun arr(item: String) = """{"type":"array","items":$item}"""
         obj(
             """"identified":{"type":"boolean"},"name":{"type":"string"},"emoji":{"type":"string"},""" +
                 """"kind":{"type":"string","enum":[${Kind.entries.joinToString(",") { "\"${it.name}\"" }}]},""" +
                 """"unit":{"type":"string"},"headline":{"type":"string"},"scores":$scores,""" +
-                """"stages":${arr(stage)},"dependencies":${arr(dep)},"alternatives":${arr(alt)},""" +
+                """"stages":${arr(stage)},"dependencies":${arr(dep)},"alternatives":${arr(alt)},"critical":${arr(hotspot)},"look_for":${arr(signal)},""" +
                 """"questions":${arr("""{"type":"string"}""")},"sources":${arr("""{"type":"string"}""")}""",
-            listOf("identified", "name", "emoji", "kind", "unit", "headline", "scores", "stages", "dependencies", "alternatives", "questions", "sources"),
+            listOf("identified", "name", "emoji", "kind", "unit", "headline", "scores", "stages", "dependencies", "alternatives", "critical", "look_for", "questions", "sources"),
         )
     }
 
@@ -147,6 +162,8 @@ answer briefly and steer back.
                     waterLPerYear = alt.num("water_l_per_year").coerceAtLeast(0.0),
                 )
             },
+            critical = o.arr("critical").map { Hotspot(it.str("name"), it.str("why")) },
+            lookFor = o.arr("look_for").map { Signal(it.str("name"), it.str("meaning"), it.str("trust") != "CAUTION") },
             questions = (o["questions"] as? JsonArray)?.mapNotNull { (it as? JsonPrimitive)?.contentOrNull }?.map { QA(it) } ?: emptyList(),
             sources = (o["sources"] as? JsonArray)?.mapNotNull { (it as? JsonPrimitive)?.contentOrNull } ?: emptyList(),
             tier = Tier.AI,

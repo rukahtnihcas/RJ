@@ -82,6 +82,7 @@ fun DetailScreen(
     onPledge: (Alternative) -> Unit,
     onAsk: (String) -> Unit,
     onCompare: (Entry?) -> Unit,
+    onWrong: () -> Unit = {},
 ) {
     val a = state.entry.assessment
     var preview by remember(state.entry.key) { mutableStateOf<Alternative?>(null) }
@@ -114,6 +115,10 @@ fun DetailScreen(
             Text(a.headline, style = MaterialTheme.typography.headlineSmall, color = Ink.Text)
             Spacer(Modifier.height(6.dp))
             Text("Scored for: ${a.unit}", style = MaterialTheme.typography.bodySmall, color = Ink.Muted)
+            Text(
+                "Not ${article(a.name)}?  Correct it", color = Ink.Zero, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 4.dp).clip(RoundedCornerShape(14.dp)).clickable(role = Role.Button, onClick = onWrong).padding(vertical = 10.dp, horizontal = 2.dp),
+            )
 
             RadarChart(a.values, Modifier.fillMaxWidth().height(330.dp), ghost = ghost, animateKey = state.entry.key + a.tier)
             Legend(
@@ -124,6 +129,27 @@ fun DetailScreen(
                 }
             )
             if (a.generic) Note("Ripple could not tell exactly what this is, so these are typical values for the category. Move closer or turn on AI analysis in Settings for a specific answer.")
+
+            if (a.critical.isNotEmpty()) {
+                Section("What to be mindful of", "The material or process inside it that matters most")
+                a.critical.forEach { c ->
+                    Column(Modifier.fillMaxWidth().padding(vertical = 5.dp).clip(RoundedCornerShape(16.dp)).background(Ink.Surface).border(1.dp, Ink.Zero.copy(alpha = 0.55f), RoundedCornerShape(16.dp)).padding(14.dp)) {
+                        Text("◆  ${c.name}", color = Ink.Zero, style = MaterialTheme.typography.titleMedium)
+                        if (c.why.isNotBlank()) { Spacer(Modifier.height(4.dp)); Text(c.why, color = Ink.Text.copy(alpha = 0.9f), style = MaterialTheme.typography.bodyMedium) }
+                    }
+                }
+            }
+            val trusted = a.lookFor.filter { it.trusted }
+            val wary = a.lookFor.filter { !it.trusted }
+            if (trusted.isNotEmpty()) {
+                Section("What to look for", "Certifications, ratings and signs that hold up")
+                trusted.forEach { SignalRow("✓", Ink.Leaf, it.name, it.meaning) }
+            }
+            if (wary.isNotEmpty()) {
+                Spacer(Modifier.height(14.dp))
+                Text("BE WARY OF", color = Ink.Ember, style = MaterialTheme.typography.labelSmall)
+                wary.forEach { SignalRow("!", Ink.Ember, it.name, it.meaning) }
+            }
 
             Section("The five impacts")
             Dimension.entries.forEach { d -> DimensionRow(d, a.score(d)) }
@@ -225,6 +251,20 @@ fun DetailScreen(
                 Text("Sources: " + a.sources.joinToString(" · "), color = Ink.Muted, style = MaterialTheme.typography.bodySmall)
             }
             Spacer(Modifier.height(40.dp))
+        }
+    }
+}
+
+@Composable
+private fun SignalRow(mark: String, color: androidx.compose.ui.graphics.Color, name: String, meaning: String) {
+    Row(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Box(Modifier.size(24.dp).background(color.copy(alpha = 0.16f), CircleShape), contentAlignment = Alignment.Center) {
+            Text(mark, color = color, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+        }
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(name, color = Ink.Text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+            if (meaning.isNotBlank()) Text(meaning, color = Ink.Muted, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
