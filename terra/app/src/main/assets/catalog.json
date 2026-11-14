@@ -1,0 +1,5587 @@
+[
+ {
+  "id": "american_robin",
+  "common": "American Robin",
+  "scientific": "Turdus migratorius",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "GARDEN",
+   "WOODLAND"
+  ],
+  "stages": [
+   "nest",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "leucistic",
+    "name": "Leucistic",
+    "hint": "Pale or patchy white plumage from a rare pigment mutation"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm"
+    ],
+    "hint": "Watch where it hunts on damp lawns — what is it pulling up?"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "It builds a mud-lined nest in a tree fork"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1800,
+   "highHz": 4000,
+   "rateMin": 2,
+   "rateMax": 4,
+   "tonal": true,
+   "sounds": "Rich carolling: cheerily, cheer-up, cheerio"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A lawn-hunting thrush whose carolling opens the dawn chorus.",
+  "deeper": "Robins find worms by sight, not sound — the head-tilt aims one eye at the soil. In autumn they switch to fruit and become major seed carriers."
+ },
+ {
+  "id": "european_robin",
+  "common": "European Robin",
+  "scientific": "Erithacus rubecula",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "EU",
+   "AF",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "leucistic",
+    "name": "Leucistic",
+    "hint": "Pale or patchy white plumage from a rare pigment mutation"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm",
+     "group:INSECT"
+    ],
+    "hint": "It follows anything that disturbs soil"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "english_ivy",
+     "group:TREE"
+    ],
+    "hint": "Look for dense evergreen cover nearby"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2500,
+   "highHz": 7500,
+   "rateMin": 4,
+   "rateMax": 10,
+   "tonal": true,
+   "sounds": "Thin, silvery, wistful warble"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "Orange-breasted and bold, it sings even under winter streetlights.",
+  "deeper": "Both sexes hold winter territories and sing to defend them, which is why the robin is one of the few birds heard all year."
+ },
+ {
+  "id": "house_sparrow",
+  "common": "House Sparrow",
+  "scientific": "Passer domesticus",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "NA",
+   "SA",
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "CANOPY"
+  ],
+  "stages": [
+   "juvenile",
+   "adult female",
+   "adult male"
+  ],
+  "phenotypes": [
+   {
+    "id": "leucistic",
+    "name": "Leucistic",
+    "hint": "Pale or patchy white plumage from a rare pigment mutation"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Chicks need insects — find what the parents are catching"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "english_ivy",
+     "group:TREE"
+    ],
+    "hint": "Colonies roost in dense hedges and creepers"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2000,
+   "highHz": 6000,
+   "rateMin": 2,
+   "rateMax": 5,
+   "tonal": false,
+   "sounds": "Insistent cheep, chirrup, cheep"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "The chattering companion of human settlement for ten thousand years.",
+  "deeper": "Chicks are raised almost entirely on insects, so a street without bugs is a street without sparrows — their decline tracks the loss of urban invertebrates."
+ },
+ {
+  "id": "rock_pigeon",
+  "common": "Rock Pigeon",
+  "scientific": "Columba livia",
+  "group": "BIRD",
+  "glyph": "🕊",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "NA",
+   "SA",
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "CANOPY"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "blue_bar",
+    "name": "Blue-bar (wild type)",
+    "hint": "Grey with two black wing bars"
+   },
+   {
+    "id": "checker",
+    "name": "Checker",
+    "hint": "Wings chequered dark"
+   },
+   {
+    "id": "pied",
+    "name": "Pied",
+    "hint": "Splashed with white"
+   },
+   {
+    "id": "red",
+    "name": "Ash-red",
+    "hint": "Rusty brown replaces the grey"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "peregrine_falcon"
+    ],
+    "hint": "Something hunts these flocks from the tallest ledges"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:PLANT"
+    ],
+    "hint": "Find the weedy seeds it gleans"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 250,
+   "highHz": 700,
+   "rateMin": 0.5,
+   "rateMax": 2,
+   "tonal": true,
+   "sounds": "Rolling, bubbling coo"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "pigeon"
+  ],
+  "blurb": "A cliff-nester that mistook our buildings for sea cliffs.",
+  "deeper": "Town flocks carry many colour morphs because they descend from domestic breeds. They are the staple that lets falcons live downtown."
+ },
+ {
+  "id": "peregrine_falcon",
+  "common": "Peregrine Falcon",
+  "scientific": "Falco peregrinus",
+  "group": "BIRD",
+  "glyph": "🦅",
+  "nativeTo": [
+   "NA",
+   "SA",
+   "EU",
+   "AF",
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": true,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "WATER",
+   "CANOPY"
+  ],
+  "stages": [
+   "eyas (chick)",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "rock_pigeon",
+     "european_starling",
+     "group:BIRD"
+    ],
+    "hint": "Document the flocks it hunts"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER"
+    ],
+    "hint": "Open sky over water gives it room to stoop"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2000,
+   "highHz": 4000,
+   "rateMin": 4,
+   "rateMax": 7,
+   "tonal": false,
+   "sounds": "Harsh, scolding kak-kak-kak near the nest"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "falcon",
+   "eagle"
+  ],
+  "blurb": "The fastest animal alive, now nesting on bridges and towers.",
+  "deeper": "Recovered from near-extinction after DDT was banned. Nest ledges are reused for decades, which is exactly why their locations are kept obscured."
+ },
+ {
+  "id": "red_tailed_hawk",
+  "common": "Red-tailed Hawk",
+  "scientific": "Buteo jamaicensis",
+  "group": "BIRD",
+  "glyph": "🦅",
+  "nativeTo": [
+   "NA",
+   "SA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "MEADOW",
+   "PARK",
+   "WOODLAND"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "dark_morph",
+    "name": "Dark morph",
+    "hint": "Chocolate-brown body, still with the brick-red tail"
+   },
+   {
+    "id": "leucistic",
+    "name": "Leucistic",
+    "hint": "Pale or patchy white plumage from a rare pigment mutation"
+   }
+  ],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Find the tall perching tree it watches from"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "eastern_gray_squirrel",
+     "group:MAMMAL"
+    ],
+    "hint": "Document its prey — squirrels and voles"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "habitat:MEADOW"
+    ],
+    "hint": "Log it over the rough grass that feeds its prey"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2000,
+   "highHz": 4500,
+   "rateMin": 0.3,
+   "rateMax": 1,
+   "tonal": false,
+   "sounds": "Hoarse, descending scream: keee-eeer"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "hawk",
+   "eagle"
+  ],
+  "blurb": "The broad-winged watcher of roadsides and field edges.",
+  "deeper": "A hawk on a pole is a sign of a working food web below: rough grass, the voles within it, and a tall perch to watch from."
+ },
+ {
+  "id": "barn_owl",
+  "common": "Barn Owl",
+  "scientific": "Tyto alba",
+  "group": "BIRD",
+  "glyph": "🦉",
+  "nativeTo": [
+   "NA",
+   "SA",
+   "EU",
+   "AF",
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": true,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "MEADOW",
+   "WETLAND"
+  ],
+  "stages": [
+   "owlet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:MAMMAL"
+    ],
+    "hint": "Small mammals are almost its entire diet"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "habitat:MEADOW"
+    ],
+    "hint": "Log it over tussocky, unmown grass"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1500,
+   "highHz": 4000,
+   "rateMin": 0.3,
+   "rateMax": 1,
+   "tonal": false,
+   "sounds": "A long, rasping shriek — never a hoot"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "owl"
+  ],
+  "blurb": "A pale ghost quartering rough grassland at dusk.",
+  "deeper": "Its heart-shaped face is a sound dish; it can strike a vole in total darkness. One pair needs thousands of small mammals a year — and the tussocky grass that grows them."
+ },
+ {
+  "id": "great_horned_owl",
+  "common": "Great Horned Owl",
+  "scientific": "Bubo virginianus",
+  "group": "BIRD",
+  "glyph": "🦉",
+  "nativeTo": [
+   "NA",
+   "SA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "owlet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "It needs big trees with old stick nests"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:MAMMAL"
+    ],
+    "hint": "Rabbits, squirrels and skunks are all on the menu"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 200,
+   "highHz": 500,
+   "rateMin": 1,
+   "rateMax": 2.5,
+   "tonal": true,
+   "sounds": "Deep, stuttering hoots: hoo, hoo-hoo, hoo, hoo"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "owl"
+  ],
+  "blurb": "The deep-voiced night hunter of woods and suburbs.",
+  "deeper": "It nests in midwinter, taking over old hawk and crow nests, so its hooting duets peak when the trees are bare."
+ },
+ {
+  "id": "mallard",
+  "common": "Mallard",
+  "scientific": "Anas platyrhynchos",
+  "group": "BIRD",
+  "glyph": "🦆",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WATER",
+   "WETLAND",
+   "PARK"
+  ],
+  "stages": [
+   "duckling",
+   "female",
+   "male"
+  ],
+  "phenotypes": [
+   {
+    "id": "eclipse",
+    "name": "Eclipse drake",
+    "hint": "Late-summer male in hen-like plumage with a yellow bill"
+   },
+   {
+    "id": "breeding",
+    "name": "Breeding drake",
+    "hint": "Glossy green head and curled tail feathers"
+   }
+  ],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "cattail",
+     "habitat:WETLAND"
+    ],
+    "hint": "Hens hide nests in waterside vegetation"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:PLANT"
+    ],
+    "hint": "It dabbles for seeds and shoots"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 500,
+   "highHz": 3000,
+   "rateMin": 2,
+   "rateMax": 5,
+   "tonal": false,
+   "sounds": "The classic descending quack-quack-quack"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "duck",
+   "goose"
+  ],
+  "blurb": "The familiar dabbling duck, ancestor of most farmyard ducks.",
+  "deeper": "In late summer drakes moult into a drab 'eclipse' plumage and briefly cannot fly — look for the tell-tale yellow bill."
+ },
+ {
+  "id": "barn_swallow",
+  "common": "Barn Swallow",
+  "scientific": "Hirundo rustica",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "NA",
+   "SA",
+   "EU",
+   "AF",
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "MEADOW",
+   "WATER",
+   "WETLAND"
+  ],
+  "stages": [
+   "nest",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Find the flying insects it is hawking"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER"
+    ],
+    "hint": "It needs wet mud nearby to build its nest cup"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2500,
+   "highHz": 7000,
+   "rateMin": 5,
+   "rateMax": 12,
+   "tonal": false,
+   "sounds": "Cheerful twittering ending in a dry rattle"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A fork-tailed long-distance migrant that feeds entirely on the wing.",
+  "deeper": "Each bird crosses continents twice a year. Its arrival date is one of the oldest phenology records humans keep."
+ },
+ {
+  "id": "great_tit",
+  "common": "Great Tit",
+  "scientific": "Parus major",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "GARDEN",
+   "PARK"
+  ],
+  "stages": [
+   "fledgling",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Find the caterpillars it feeds its brood"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "english_oak",
+     "silver_birch",
+     "group:TREE"
+    ],
+    "hint": "It nests in tree holes"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 3000,
+   "highHz": 6500,
+   "rateMin": 2,
+   "rateMax": 5,
+   "tonal": true,
+   "sounds": "A two-note see-saw: tea-cher, tea-cher"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A bold, black-capped acrobat of woods and feeders.",
+  "deeper": "It times its brood to the brief peak of oak caterpillars. As springs warm, birds and caterpillars are drifting out of step."
+ },
+ {
+  "id": "black_capped_chickadee",
+  "common": "Black-capped Chickadee",
+  "scientific": "Poecile atricapillus",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "GARDEN",
+   "PARK"
+  ],
+  "stages": [
+   "fledgling",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "silver_birch",
+     "group:TREE"
+    ],
+    "hint": "It excavates nests in soft, rotting wood"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "In summer it gleans insects from bark and leaves"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 3000,
+   "highHz": 7500,
+   "rateMin": 2,
+   "rateMax": 6,
+   "tonal": true,
+   "sounds": "Whistled fee-bee, and a buzzy chick-a-dee-dee-dee"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A tiny, curious bird that stays through the hardest winters.",
+  "deeper": "Each autumn it grows new neurons to remember thousands of seed caches. More 'dee' notes in its call means a more dangerous predator."
+ },
+ {
+  "id": "northern_cardinal",
+  "common": "Northern Cardinal",
+  "scientific": "Cardinalis cardinalis",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "SCRUB"
+  ],
+  "stages": [
+   "juvenile",
+   "adult female",
+   "adult male"
+  ],
+  "phenotypes": [
+   {
+    "id": "yellow",
+    "name": "Yellow morph",
+    "hint": "A golden bird where red should be — exceptionally rare"
+   },
+   {
+    "id": "leucistic",
+    "name": "Leucistic",
+    "hint": "Pale or patchy white plumage from a rare pigment mutation"
+   }
+  ],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "It nests low in dense shrubs and vines"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:PLANT"
+    ],
+    "hint": "Seeds and berries colour its feathers"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1500,
+   "highHz": 5000,
+   "rateMin": 2,
+   "rateMax": 5,
+   "tonal": true,
+   "sounds": "Loud slurred whistles: cheer, cheer, birdie-birdie"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "The crested red songster of hedges and backyards.",
+  "deeper": "The male's red comes from pigments in its food. A rare mutation blocks the conversion, producing a yellow cardinal — roughly one in a million."
+ },
+ {
+  "id": "american_goldfinch",
+  "common": "American Goldfinch",
+  "scientific": "Spinus tristis",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "breeding",
+    "name": "Breeding plumage",
+    "hint": "Brilliant yellow with a black cap"
+   },
+   {
+    "id": "winter",
+    "name": "Winter plumage",
+    "hint": "Soft olive-brown with buffy wing bars"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "purple_coneflower",
+     "common_dandelion"
+    ],
+    "hint": "It feeds on seedheads — leave them standing"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:MEADOW"
+    ],
+    "hint": "Log it in weedy, unmown ground"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 3000,
+   "highHz": 6500,
+   "rateMin": 3,
+   "rateMax": 8,
+   "tonal": true,
+   "sounds": "Bouncing flight call: po-ta-to-chip"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A late-nesting finch that waits for thistledown.",
+  "deeper": "One of very few songbirds that moults twice a year, so the same bird is lemon-yellow in July and olive-drab in January."
+ },
+ {
+  "id": "ruby_throated_hummingbird",
+  "common": "Ruby-throated Hummingbird",
+  "scientific": "Archilochus colubris",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "NA",
+   "SA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WOODLAND",
+   "MEADOW"
+  ],
+  "stages": [
+   "female",
+   "male"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "wild_bergamot",
+     "group:PLANT"
+    ],
+    "hint": "Find the tubular flowers it visits"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A three-gram migrant that crosses the Gulf of Mexico non-stop.",
+  "deeper": "Red tubular flowers evolved around this bird's bill. Its spring arrival tracks the northward bloom of its nectar plants."
+ },
+ {
+  "id": "european_starling",
+  "common": "Common Starling",
+  "scientific": "Sturnus vulgaris",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [
+   "OC",
+   "AF",
+   "SA"
+  ],
+  "invasiveIn": [
+   "NA"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "MEADOW",
+   "CANOPY"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "breeding",
+    "name": "Breeding plumage",
+    "hint": "Glossy purple-green with a yellow bill"
+   },
+   {
+    "id": "winter",
+    "name": "Winter plumage",
+    "hint": "Covered in white spots, dark bill"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm",
+     "group:INSECT"
+    ],
+    "hint": "It probes lawns for grubs"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "peregrine_falcon"
+    ],
+    "hint": "Murmurations are a defence — against what?"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1500,
+   "highHz": 7000,
+   "rateMin": 4,
+   "rateMax": 12,
+   "tonal": false,
+   "sounds": "Wheezes, clicks, rattles and stolen phrases"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A glossy mimic famous for its swirling evening murmurations.",
+  "deeper": "About a hundred birds released in New York in 1890 became some two hundred million, out-competing native hole-nesters across a continent."
+ },
+ {
+  "id": "common_blackbird",
+  "common": "Common Blackbird",
+  "scientific": "Turdus merula",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "juvenile",
+   "adult female",
+   "adult male"
+  ],
+  "phenotypes": [
+   {
+    "id": "leucistic",
+    "name": "Leucistic",
+    "hint": "Pale or patchy white plumage from a rare pigment mutation"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm"
+    ],
+    "hint": "Watch it listen and stab on wet lawns"
+   },
+   {
+    "type": "DISPERSES",
+    "targets": [
+     "english_ivy",
+     "group:TREE"
+    ],
+    "hint": "Find the winter berries it carries away"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1500,
+   "highHz": 4000,
+   "rateMin": 2,
+   "rateMax": 4,
+   "tonal": true,
+   "sounds": "Slow, mellow fluting that ends in a squeaky flourish"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "The fluting evening voice of gardens.",
+  "deeper": "Blackbirds strip ivy and rowan berries in winter and deposit the seeds far away — a quiet forester of hedgerows."
+ },
+ {
+  "id": "common_myna",
+  "common": "Common Myna",
+  "scientific": "Acridotheres tristis",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [
+   "NA"
+  ],
+  "invasiveIn": [
+   "OC",
+   "AF"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "GARDEN",
+   "CANOPY"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "It nests in tree hollows — and fights for them"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "It follows grazing animals and mowers for flushed insects"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1000,
+   "highHz": 5000,
+   "rateMin": 2,
+   "rateMax": 6,
+   "tonal": false,
+   "sounds": "Gurgles, squawks and whistles in rapid mix"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A confident, yellow-masked starling of towns and fields.",
+  "deeper": "Beloved at home, but among the world's most damaging invasive birds elsewhere, evicting native parrots from nest hollows."
+ },
+ {
+  "id": "house_crow",
+  "common": "House Crow",
+  "scientific": "Corvus splendens",
+  "group": "BIRD",
+  "glyph": "🐦‍⬛",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "AF"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "CANOPY",
+   "GARDEN"
+  ],
+  "stages": [
+   "nest",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "banyan",
+     "neem",
+     "group:TREE"
+    ],
+    "hint": "Find the big trees where it roosts communally"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "asian_koel"
+    ],
+    "hint": "Another bird is hiding eggs in its nest — listen for it"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 800,
+   "highHz": 2200,
+   "rateMin": 1,
+   "rateMax": 3,
+   "tonal": false,
+   "sounds": "Flat, nasal kaaw, kaaw"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "crow"
+  ],
+  "blurb": "The grey-collared crow that lives wherever people do.",
+  "deeper": "It is found almost nowhere without humans. Its nests are the chosen nursery of the Asian koel."
+ },
+ {
+  "id": "asian_koel",
+  "common": "Asian Koel",
+  "scientific": "Eudynamys scolopaceus",
+  "group": "BIRD",
+  "glyph": "🐦‍⬛",
+  "nativeTo": [
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "WOODLAND"
+  ],
+  "stages": [
+   "juvenile",
+   "female",
+   "male"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "BROOD_PARASITE",
+    "targets": [
+     "house_crow"
+    ],
+    "hint": "Whose nest raises its chicks?"
+   },
+   {
+    "type": "DISPERSES",
+    "targets": [
+     "banyan",
+     "group:TREE"
+    ],
+    "hint": "Find the fruiting fig it feeds in"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 800,
+   "highHz": 1900,
+   "rateMin": 0.5,
+   "rateMax": 1.5,
+   "tonal": true,
+   "sounds": "Loud, rising ko-el, ko-el, ko-EL"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A hidden cuckoo whose rising call announces the hot season.",
+  "deeper": "A brood parasite: the female slips her egg into a crow's nest. As a fig-eater she is also a key planter of banyans."
+ },
+ {
+  "id": "rose_ringed_parakeet",
+  "common": "Rose-ringed Parakeet",
+  "scientific": "Psittacula krameri",
+  "group": "BIRD",
+  "glyph": "🦜",
+  "nativeTo": [
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "EU",
+   "NA"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "GARDEN",
+   "CANOPY"
+  ],
+  "stages": [
+   "juvenile",
+   "female",
+   "male"
+  ],
+  "phenotypes": [
+   {
+    "id": "lutino",
+    "name": "Lutino",
+    "hint": "All-yellow escapee morph"
+   },
+   {
+    "id": "blue",
+    "name": "Blue morph",
+    "hint": "Sky-blue aviary mutation"
+   }
+  ],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "It nests in old tree hollows"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "neem",
+     "banyan",
+     "group:TREE"
+    ],
+    "hint": "Find the fruiting tree the flock raids"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2000,
+   "highHz": 5000,
+   "rateMin": 2,
+   "rateMax": 5,
+   "tonal": false,
+   "sounds": "Shrill, squealing kee-ak, kee-ak"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "parrot"
+  ],
+  "blurb": "A lime-green parrot at home from Sahel scrub to London parks.",
+  "deeper": "Escaped cage birds now breed across Europe, competing with bats and woodpeckers for tree hollows."
+ },
+ {
+  "id": "australian_magpie",
+  "common": "Australian Magpie",
+  "scientific": "Gymnorhina tibicen",
+  "group": "BIRD",
+  "glyph": "🐦‍⬛",
+  "nativeTo": [
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "MEADOW",
+   "GARDEN"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm",
+     "group:INSECT"
+    ],
+    "hint": "It listens for grubs under turf"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "river_red_gum",
+     "group:TREE"
+    ],
+    "hint": "Find its nest tree"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 500,
+   "highHz": 3000,
+   "rateMin": 2,
+   "rateMax": 6,
+   "tonal": true,
+   "sounds": "Rich, yodelling carol: quardle-oodle-ardle"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A black-and-white songster with a flute-like dawn carol.",
+  "deeper": "Family groups hold the same territory for years and recognise individual human faces."
+ },
+ {
+  "id": "rainbow_lorikeet",
+  "common": "Rainbow Lorikeet",
+  "scientific": "Trichoglossus moluccanus",
+  "group": "BIRD",
+  "glyph": "🦜",
+  "nativeTo": [
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "GARDEN",
+   "WOODLAND"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "river_red_gum",
+     "group:TREE"
+    ],
+    "hint": "Find the flowering tree the flock is working"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2500,
+   "highHz": 6000,
+   "rateMin": 3,
+   "rateMax": 8,
+   "tonal": false,
+   "sounds": "Sharp rolling screeches in flight"
+  },
+  "visual": [
+   "bird",
+   "waterfowl",
+   "parrot"
+  ],
+  "blurb": "A brush-tongued parrot that chases the eucalypt bloom.",
+  "deeper": "Its tongue ends in a brush for mopping nectar and pollen, making it a major pollinator of gum trees."
+ },
+ {
+  "id": "great_kiskadee",
+  "common": "Great Kiskadee",
+  "scientific": "Pitangus sulphuratus",
+  "group": "BIRD",
+  "glyph": "🐦",
+  "nativeTo": [
+   "SA",
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "WATER",
+   "GARDEN"
+  ],
+  "stages": [
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Find what it sallies out to catch"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER"
+    ],
+    "hint": "It often hunts from perches over water"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1500,
+   "highHz": 4000,
+   "rateMin": 1,
+   "rateMax": 3,
+   "tonal": false,
+   "sounds": "Loud, exuberant kis-ka-dee!"
+  },
+  "visual": [
+   "bird",
+   "waterfowl"
+  ],
+  "blurb": "A bold yellow flycatcher that shouts its own name.",
+  "deeper": "It fishes like a kingfisher, hawks insects like a flycatcher and eats fruit like a thrush — a generalist thriving in cities."
+ },
+ {
+  "id": "common_milkweed",
+  "common": "Common Milkweed",
+  "scientific": "Asclepias syriaca",
+  "group": "PLANT",
+  "glyph": "🌿",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN"
+  ],
+  "stages": [
+   "shoot",
+   "flowering",
+   "seed pod"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "monarch"
+    ],
+    "hint": "Check the leaf undersides for a striped specialist"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "common_eastern_bumblebee",
+     "western_honey_bee",
+     "group:INSECT"
+    ],
+    "hint": "Find who visits its flowers"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "A milky-sapped meadow plant with globes of fragrant pink flowers.",
+  "deeper": "Its toxins defend it from almost everything except a few specialists that turn the poison into their own armour."
+ },
+ {
+  "id": "crown_flower",
+  "common": "Crown Flower",
+  "scientific": "Calotropis gigantea",
+  "group": "PLANT",
+  "glyph": "🌿",
+  "nativeTo": [
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "OC",
+   "SA"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "SCRUB",
+   "GARDEN",
+   "MEADOW"
+  ],
+  "stages": [
+   "flowering",
+   "seed pod"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "plain_tiger",
+     "monarch"
+    ],
+    "hint": "Search the leaves for banded caterpillars"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Carpenter bees are its main pollinators — who is visiting?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "A waxy-flowered giant milkweed of waysides and wasteland.",
+  "deeper": "Often dismissed as a weed, it is the nursery of tiger butterflies; its floss once stuffed pillows."
+ },
+ {
+  "id": "common_dandelion",
+  "common": "Common Dandelion",
+  "scientific": "Taraxacum officinale",
+  "group": "PLANT",
+  "glyph": "🌼",
+  "nativeTo": [
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [
+   "NA",
+   "SA",
+   "OC",
+   "AF"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "MEADOW"
+  ],
+  "stages": [
+   "rosette",
+   "flowering",
+   "seed clock"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "western_honey_bee",
+     "buff_tailed_bumblebee",
+     "common_eastern_bumblebee",
+     "group:INSECT"
+    ],
+    "hint": "Find an early pollinator feeding on it"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora",
+   "dandelion"
+  ],
+  "blurb": "The sun-yellow first meal of spring for hungry pollinators.",
+  "deeper": "Each 'flower' is around a hundred florets. Its deep taproot mines calcium and loosens compacted soil."
+ },
+ {
+  "id": "white_clover",
+  "common": "White Clover",
+  "scientific": "Trifolium repens",
+  "group": "PLANT",
+  "glyph": "☘",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "NA",
+   "SA",
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "MEADOW"
+  ],
+  "stages": [
+   "leaf",
+   "flowering"
+  ],
+  "phenotypes": [
+   {
+    "id": "four_leaf",
+    "name": "Four-leaf",
+    "hint": "A lucky mutation — roughly 1 in 5,000 leaves"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "western_honey_bee",
+     "buff_tailed_bumblebee",
+     "common_eastern_bumblebee"
+    ],
+    "hint": "Its flowers are built for bees — find one at work"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora",
+   "clover"
+  ],
+  "blurb": "A creeping lawn legume that feeds bees and soil alike.",
+  "deeper": "Bacteria in its root nodules pull nitrogen from the air, fertilising the grass around it for free."
+ },
+ {
+  "id": "purple_coneflower",
+  "common": "Purple Coneflower",
+  "scientific": "Echinacea purpurea",
+  "group": "PLANT",
+  "glyph": "🌸",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [
+   "EU"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN"
+  ],
+  "stages": [
+   "flowering",
+   "seedhead"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "monarch",
+     "common_eastern_bumblebee",
+     "group:INSECT"
+    ],
+    "hint": "Find a pollinator on the cone"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "american_goldfinch"
+    ],
+    "hint": "Who eats the seedheads in autumn?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "A prairie daisy with a bristling orange cone.",
+  "deeper": "It feeds in two seasons: nectar for butterflies in summer, then oily seeds for finches if the heads are left standing."
+ },
+ {
+  "id": "wild_bergamot",
+  "common": "Wild Bergamot",
+  "scientific": "Monarda fistulosa",
+  "group": "PLANT",
+  "glyph": "🌸",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN"
+  ],
+  "stages": [
+   "flowering",
+   "seedhead"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "ruby_throated_hummingbird",
+     "common_eastern_bumblebee",
+     "group:INSECT"
+    ],
+    "hint": "Find a long-tongued visitor"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "Shaggy lavender pom-poms smelling of oregano.",
+  "deeper": "Its tubular florets fit long tongues: bumblebees, hawk-moths and hummingbirds."
+ },
+ {
+  "id": "common_nettle",
+  "common": "Stinging Nettle",
+  "scientific": "Urtica dioica",
+  "group": "PLANT",
+  "glyph": "🌿",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF",
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "GARDEN",
+   "WETLAND"
+  ],
+  "stages": [
+   "shoot",
+   "flowering"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "red_admiral",
+     "painted_lady"
+    ],
+    "hint": "Look for leaves folded into tents"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "seven_spot_ladybird",
+     "group:INSECT"
+    ],
+    "hint": "Who patrols it for aphids?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "The stinging herb that is a butterfly nursery in disguise.",
+  "deeper": "A nettle patch can raise several butterfly species and shelter the aphids that feed spring ladybirds."
+ },
+ {
+  "id": "cattail",
+  "common": "Broadleaf Cattail",
+  "scientific": "Typha latifolia",
+  "group": "PLANT",
+  "glyph": "🌾",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS",
+   "AF",
+   "SA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WETLAND",
+   "WATER"
+  ],
+  "stages": [
+   "green spike",
+   "brown spike",
+   "seeding fluff"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "mallard",
+     "group:BIRD"
+    ],
+    "hint": "Which birds hide or nest in the stand?"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WETLAND"
+    ],
+    "hint": "Log it in standing water or a marsh"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "The brown-sausage reed of marsh edges.",
+  "deeper": "Its stands filter run-off and hide nests; a single spike releases some two hundred thousand seeds."
+ },
+ {
+  "id": "white_trillium",
+  "common": "White Trillium",
+  "scientific": "Trillium grandiflorum",
+  "group": "PLANT",
+  "glyph": "🌸",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": true,
+  "seasons": [
+   "SPRING"
+  ],
+  "habitats": [
+   "WOODLAND"
+  ],
+  "stages": [
+   "bud",
+   "white flower",
+   "pink (ageing) flower"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "FUNGAL_PARTNER",
+    "targets": [
+     "group:FUNGUS"
+    ],
+    "hint": "Its roots depend on woodland fungi — find any nearby"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WOODLAND"
+    ],
+    "hint": "Log it beneath a closed canopy"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "A three-petalled spring ephemeral of old woodland.",
+  "deeper": "It takes seven years or more to flower and its seeds are planted by ants. Picked and poached, colonies rarely recover."
+ },
+ {
+  "id": "bee_orchid",
+  "common": "Bee Orchid",
+  "scientific": "Ophrys apifera",
+  "group": "PLANT",
+  "glyph": "🌸",
+  "nativeTo": [
+   "EU",
+   "AF",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": true,
+  "seasons": [
+   "SPRING",
+   "SUMMER"
+  ],
+  "habitats": [
+   "MEADOW",
+   "SCRUB"
+  ],
+  "stages": [
+   "rosette",
+   "flowering"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "FUNGAL_PARTNER",
+    "targets": [
+     "group:FUNGUS"
+    ],
+    "hint": "No fungus, no orchid — log a fungus in the same ground"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:MEADOW"
+    ],
+    "hint": "It needs unfertilised, lightly-mown grassland"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "An orchid whose flower impersonates a female bee.",
+  "deeper": "The disguise evolved to lure male bees into mating with it. Its dust-like seed cannot germinate without a partner fungus."
+ },
+ {
+  "id": "garlic_mustard",
+  "common": "Garlic Mustard",
+  "scientific": "Alliaria petiolata",
+  "group": "PLANT",
+  "glyph": "🌿",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "NA"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "rosette",
+   "flowering",
+   "seed pods"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "COMPETES_WITH",
+    "targets": [
+     "white_trillium",
+     "group:PLANT"
+    ],
+    "hint": "Record which woodland flowers it is displacing"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "A garlic-scented hedgerow herb — and a woodland invader abroad.",
+  "deeper": "Its roots leak chemicals that poison the soil fungi native wildflowers and tree seedlings depend on."
+ },
+ {
+  "id": "japanese_knotweed",
+  "common": "Japanese Knotweed",
+  "scientific": "Reynoutria japonica",
+  "group": "PLANT",
+  "glyph": "🎋",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "EU",
+   "NA",
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WATER",
+   "PARK",
+   "SCRUB"
+  ],
+  "stages": [
+   "red shoots",
+   "full canes",
+   "flowering",
+   "dead canes"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "COMPETES_WITH",
+    "targets": [
+     "group:PLANT"
+    ],
+    "hint": "Record the bankside plants at its edge"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "Bamboo-like canes forming dense thickets along rivers and rail lines.",
+  "deeper": "A fingernail of root regrows a whole stand. Never cut and dump it — report it to the land manager."
+ },
+ {
+  "id": "english_ivy",
+  "common": "Common Ivy",
+  "scientific": "Hedera helix",
+  "group": "PLANT",
+  "glyph": "🍃",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "NA",
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "GARDEN",
+   "PARK"
+  ],
+  "stages": [
+   "juvenile (lobed leaves)",
+   "flowering",
+   "berries"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "red_admiral",
+     "western_honey_bee",
+     "group:INSECT"
+    ],
+    "hint": "Who drinks from its late flowers?"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "common_blackbird",
+     "group:BIRD"
+    ],
+    "hint": "Who eats or hides in it?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora",
+   "ivy"
+  ],
+  "blurb": "An evergreen climber: wildlife larder at home, smothering carpet abroad.",
+  "deeper": "In Europe its autumn flowers are the last big nectar source of the year. In North American forests it forms 'ivy deserts' and topples trees."
+ },
+ {
+  "id": "lantana",
+  "common": "Lantana",
+  "scientific": "Lantana camara",
+  "group": "PLANT",
+  "glyph": "🌺",
+  "nativeTo": [
+   "SA",
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "AS",
+   "AF",
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "SCRUB",
+   "WOODLAND",
+   "GARDEN"
+  ],
+  "stages": [
+   "flowering",
+   "berries"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "plain_tiger",
+     "monarch",
+     "group:INSECT"
+    ],
+    "hint": "Which butterflies does it lure?"
+   },
+   {
+    "type": "COMPETES_WITH",
+    "targets": [
+     "group:PLANT"
+    ],
+    "hint": "Record what still grows beneath it"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "A multicoloured garden shrub that has overrun forests on three continents.",
+  "deeper": "Butterflies love it, but it carpets forest floors and its leaves poison grazing animals."
+ },
+ {
+  "id": "water_hyacinth",
+  "common": "Water Hyacinth",
+  "scientific": "Pontederia crassipes",
+  "group": "PLANT",
+  "glyph": "🪻",
+  "nativeTo": [
+   "SA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "AS",
+   "AF",
+   "NA",
+   "OC",
+   "EU"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WATER",
+   "WETLAND"
+  ],
+  "stages": [
+   "floating rosette",
+   "flowering"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER"
+    ],
+    "hint": "Log exactly which water body it has reached"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "plant",
+   "flower",
+   "petal",
+   "flora"
+  ],
+  "blurb": "A beautiful floating plant that can double its mat in two weeks.",
+  "deeper": "Mats block light and oxygen, suffocating the water beneath. Mapping new outbreaks early is the cheapest control there is."
+ },
+ {
+  "id": "english_oak",
+  "common": "English Oak",
+  "scientific": "Quercus robur",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [
+   "NA",
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK",
+   "CANOPY"
+  ],
+  "stages": [
+   "acorn",
+   "seedling",
+   "sapling",
+   "mature",
+   "veteran"
+  ],
+  "phenotypes": [
+   {
+    "id": "autumn",
+    "name": "Autumn colour",
+    "hint": "Leaves turned bronze or russet"
+   },
+   {
+    "id": "mast",
+    "name": "Mast year",
+    "hint": "A bumper acorn crop"
+   }
+  ],
+  "links": [
+   {
+    "type": "FUNGAL_PARTNER",
+    "targets": [
+     "chicken_of_the_woods",
+     "group:FUNGUS"
+    ],
+    "hint": "Find a fungus on or beneath it"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "great_tit",
+     "group:BIRD"
+    ],
+    "hint": "Which birds feed in its canopy?"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "red_squirrel",
+     "eastern_gray_squirrel",
+     "group:MAMMAL"
+    ],
+    "hint": "Who buries its acorns?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "A long-lived giant that is less a tree than a town.",
+  "deeper": "A mature oak supports over two thousand species, hundreds found nowhere else. Veterans can pass eight hundred years."
+ },
+ {
+  "id": "white_oak",
+  "common": "White Oak",
+  "scientific": "Quercus alba",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK",
+   "CANOPY"
+  ],
+  "stages": [
+   "acorn",
+   "seedling",
+   "sapling",
+   "mature",
+   "veteran"
+  ],
+  "phenotypes": [
+   {
+    "id": "autumn",
+    "name": "Autumn colour",
+    "hint": "Leaves turned bronze or russet"
+   },
+   {
+    "id": "mast",
+    "name": "Mast year",
+    "hint": "A bumper acorn crop"
+   }
+  ],
+  "links": [
+   {
+    "type": "FUNGAL_PARTNER",
+    "targets": [
+     "chicken_of_the_woods",
+     "group:FUNGUS"
+    ],
+    "hint": "Find a fungus on or beneath it"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "black_capped_chickadee",
+     "group:BIRD"
+    ],
+    "hint": "Which birds glean its caterpillars?"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "eastern_gray_squirrel",
+     "group:MAMMAL"
+    ],
+    "hint": "Who plants its acorns?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "The pale-barked keystone of eastern forests.",
+  "deeper": "Oaks host more caterpillar species than any other North American trees — the baby food of nearly every songbird."
+ },
+ {
+  "id": "silver_birch",
+  "common": "Silver Birch",
+  "scientific": "Betula pendula",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [
+   "NA",
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK",
+   "SCRUB"
+  ],
+  "stages": [
+   "seedling",
+   "sapling",
+   "mature",
+   "standing dead"
+  ],
+  "phenotypes": [
+   {
+    "id": "autumn",
+    "name": "Autumn colour",
+    "hint": "Leaves turned butter-yellow"
+   },
+   {
+    "id": "catkins",
+    "name": "In catkin",
+    "hint": "Spring catkins shedding pollen"
+   }
+  ],
+  "links": [
+   {
+    "type": "FUNGAL_PARTNER",
+    "targets": [
+     "fly_agaric",
+     "birch_polypore",
+     "group:FUNGUS"
+    ],
+    "hint": "Look for a red-capped partner at its feet"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "A white-barked pioneer, first to colonise open ground.",
+  "deeper": "Short-lived and generous: its roots partner with fly agaric, and its soft dead wood houses tits and woodpeckers."
+ },
+ {
+  "id": "red_maple",
+  "common": "Red Maple",
+  "scientific": "Acer rubrum",
+  "group": "TREE",
+  "glyph": "🍁",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "WETLAND",
+   "CANOPY",
+   "PARK"
+  ],
+  "stages": [
+   "seedling",
+   "sapling",
+   "mature"
+  ],
+  "phenotypes": [
+   {
+    "id": "autumn",
+    "name": "Autumn foliage",
+    "hint": "Crown turned scarlet"
+   },
+   {
+    "id": "flowers",
+    "name": "Spring flowers",
+    "hint": "Red tassels on bare twigs"
+   },
+   {
+    "id": "samaras",
+    "name": "Winged seeds",
+    "hint": "Paired red 'helicopters'"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "common_eastern_bumblebee",
+     "western_honey_bee",
+     "group:INSECT"
+    ],
+    "hint": "Find an early bee at its flowers"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest",
+   "maple"
+  ],
+  "blurb": "Red in every season: buds, flowers, leaf-stalks and autumn fire.",
+  "deeper": "Among the first trees to flower, feeding early bees before leaves emerge. Its autumn colour is a sunscreen for withdrawing nutrients."
+ },
+ {
+  "id": "white_ash",
+  "common": "White Ash",
+  "scientific": "Fraxinus americana",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "CANOPY",
+   "PARK"
+  ],
+  "stages": [
+   "sapling",
+   "mature",
+   "declining",
+   "standing dead"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "emerald_ash_borer"
+    ],
+    "hint": "Check the bark for D-shaped exit holes"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "A tall, diamond-barked tree now fighting for survival.",
+  "deeper": "Emerald ash borer has killed hundreds of millions of ash. Surviving 'lingering ash' are precious to breeders — map them."
+ },
+ {
+  "id": "tree_of_heaven",
+  "common": "Tree of Heaven",
+  "scientific": "Ailanthus altissima",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "NA",
+   "EU",
+   "OC",
+   "AF"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "CANOPY",
+   "SCRUB",
+   "PARK"
+  ],
+  "stages": [
+   "sucker",
+   "sapling",
+   "mature"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "spotted_lanternfly"
+    ],
+    "hint": "Inspect the trunk for a spotted sap-feeder"
+   },
+   {
+    "type": "COMPETES_WITH",
+    "targets": [
+     "group:PLANT"
+    ],
+    "hint": "Record what it is shading out"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "A fast, foul-smelling tree that sprouts from pavement cracks.",
+  "deeper": "It poisons neighbouring plants through its roots and is the favourite host of the spotted lanternfly."
+ },
+ {
+  "id": "banyan",
+  "common": "Banyan",
+  "scientific": "Ficus benghalensis",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "CANOPY",
+   "WOODLAND"
+  ],
+  "stages": [
+   "epiphyte seedling",
+   "young tree",
+   "mature with prop roots",
+   "ancient grove"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "asian_koel",
+     "common_myna",
+     "indian_flying_fox",
+     "group:BIRD"
+    ],
+    "hint": "Who carries its seeds away?"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Every fig depends on a wasp — find any insect on it"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "A fig that walks: aerial roots become trunks until one tree is a grove.",
+  "deeper": "Each fig species has its own tiny wasp pollinator. Fruiting year-round, a banyan is a keystone feeding entire bird and bat communities."
+ },
+ {
+  "id": "neem",
+  "common": "Neem",
+  "scientific": "Azadirachta indica",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [
+   "AF",
+   "SA"
+  ],
+  "invasiveIn": [
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "CANOPY",
+   "GARDEN"
+  ],
+  "stages": [
+   "sapling",
+   "mature",
+   "flowering",
+   "fruiting"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "rose_ringed_parakeet",
+     "house_crow",
+     "group:BIRD"
+    ],
+    "hint": "Which birds eat the yellow fruit?"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "western_honey_bee",
+     "group:INSECT"
+    ],
+    "hint": "Who visits the spring flowers?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "The village pharmacy tree, with honey-scented spring flowers.",
+  "deeper": "Its bitter compounds deter over two hundred insect pests, yet its flowers feed bees and its fruit feeds birds."
+ },
+ {
+  "id": "river_red_gum",
+  "common": "River Red Gum",
+  "scientific": "Eucalyptus camaldulensis",
+  "group": "TREE",
+  "glyph": "🌳",
+  "nativeTo": [
+   "OC"
+  ],
+  "introducedTo": [
+   "AF",
+   "AS",
+   "EU",
+   "SA",
+   "NA"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WATER",
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "seedling",
+   "sapling",
+   "mature",
+   "hollow-bearing veteran"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "rainbow_lorikeet",
+     "group:BIRD"
+    ],
+    "hint": "Find the nectar-feeders in its bloom"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER"
+    ],
+    "hint": "It follows rivers and floodplains"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "tree",
+   "plant",
+   "flora",
+   "trunk",
+   "branch",
+   "twig",
+   "forest"
+  ],
+  "blurb": "The great hollow-bearing eucalypt of inland waterways.",
+  "deeper": "Hollows take a century or more to form and house parrots, owls, bats and possums. An old tree cannot be replaced by planting."
+ },
+ {
+  "id": "fly_agaric",
+  "common": "Fly Agaric",
+  "scientific": "Amanita muscaria",
+  "group": "FUNGUS",
+  "glyph": "🍄",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [
+   "OC",
+   "SA",
+   "AF"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "egg (button)",
+   "domed cap",
+   "flat cap"
+  ],
+  "phenotypes": [
+   {
+    "id": "yellow",
+    "name": "Yellow-orange form",
+    "hint": "Cap orange-yellow rather than scarlet"
+   }
+  ],
+  "links": [
+   {
+    "type": "FUNGAL_PARTNER",
+    "targets": [
+     "silver_birch",
+     "group:TREE"
+    ],
+    "hint": "Which tree is it partnered with?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mushroom",
+   "fungus"
+  ],
+  "blurb": "The red-and-white toadstool of fairy tales. Poisonous.",
+  "deeper": "The mushroom is only the fruit. Below ground its threads sheath tree roots, trading water and minerals for sugar."
+ },
+ {
+  "id": "turkey_tail",
+  "common": "Turkey Tail",
+  "scientific": "Trametes versicolor",
+  "group": "FUNGUS",
+  "glyph": "🍄",
+  "nativeTo": [
+   "NA",
+   "SA",
+   "EU",
+   "AF",
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK",
+   "GARDEN"
+  ],
+  "stages": [
+   "fresh brackets",
+   "weathered brackets"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "DECOMPOSES",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Identify the dead wood it is consuming"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mushroom",
+   "fungus"
+  ],
+  "blurb": "Thin, velvety brackets banded like a turkey's fan.",
+  "deeper": "One of the great recyclers: it dismantles lignin, the toughest part of wood, returning dead trees to the soil."
+ },
+ {
+  "id": "chicken_of_the_woods",
+  "common": "Chicken of the Woods",
+  "scientific": "Laetiporus sulphureus",
+  "group": "FUNGUS",
+  "glyph": "🍄",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "young knobs",
+   "fresh shelves",
+   "chalky old shelves"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "DECOMPOSES",
+    "targets": [
+     "english_oak",
+     "white_oak",
+     "group:TREE"
+    ],
+    "hint": "Identify its host tree"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mushroom",
+   "fungus"
+  ],
+  "blurb": "Sulphur-yellow shelves erupting from old trunks.",
+  "deeper": "It hollows the heartwood of veteran trees — bad for timber, superb for the owls and bats that need hollows."
+ },
+ {
+  "id": "birch_polypore",
+  "common": "Birch Polypore",
+  "scientific": "Fomitopsis betulina",
+  "group": "FUNGUS",
+  "glyph": "🍄",
+  "nativeTo": [
+   "EU",
+   "NA",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "fresh bracket",
+   "old bracket"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "DECOMPOSES",
+    "targets": [
+     "silver_birch"
+    ],
+    "hint": "It grows on one kind of tree only — find it"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mushroom",
+   "fungus"
+  ],
+  "blurb": "A pale, rounded hoof found only on birch.",
+  "deeper": "Ötzi the Iceman carried it 5,300 years ago. Its old brackets become beetle nurseries."
+ },
+ {
+  "id": "shaggy_ink_cap",
+  "common": "Shaggy Ink Cap",
+  "scientific": "Coprinus comatus",
+  "group": "FUNGUS",
+  "glyph": "🍄",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "PARK",
+   "GARDEN",
+   "MEADOW"
+  ],
+  "stages": [
+   "white cylinder",
+   "opening bell",
+   "dripping ink"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:PARK",
+     "habitat:GARDEN",
+     "habitat:MEADOW"
+    ],
+    "hint": "Log it in disturbed, grassy ground"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mushroom",
+   "fungus"
+  ],
+  "blurb": "A shaggy white cylinder that melts into black ink within a day.",
+  "deeper": "It digests its own cap to release spores — and its threads hunt nematode worms in the soil."
+ },
+ {
+  "id": "oyster_mushroom",
+  "common": "Oyster Mushroom",
+  "scientific": "Pleurotus ostreatus",
+  "group": "FUNGUS",
+  "glyph": "🍄",
+  "nativeTo": [
+   "NA",
+   "SA",
+   "EU",
+   "AF",
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "AUTUMN",
+   "WINTER",
+   "SPRING"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "pins",
+   "mature tiers"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "DECOMPOSES",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Identify the log or trunk it is fruiting from"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mushroom",
+   "fungus"
+  ],
+  "blurb": "Pale, shell-shaped tiers on dead hardwood — even in frost.",
+  "deeper": "A winter-fruiting recycler that also lassoes and digests nematodes for nitrogen."
+ },
+ {
+  "id": "orange_wall_lichen",
+  "common": "Common Orange Lichen",
+  "scientific": "Xanthoria parietina",
+  "group": "FUNGUS",
+  "glyph": "🟡",
+  "nativeTo": [
+   "NA",
+   "SA",
+   "EU",
+   "AF",
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "CANOPY",
+   "PARK",
+   "GARDEN",
+   "SCRUB"
+  ],
+  "stages": [
+   "leafy lobes",
+   "with orange cups"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Record which tree it is growing on"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mushroom",
+   "fungus",
+   "lichen",
+   "moss"
+  ],
+  "blurb": "Egg-yolk crusts on twigs, walls and gravestones.",
+  "deeper": "A lichen is a fungus farming algae. This one thrives on nitrogen, so its abundance maps fertiliser and traffic pollution."
+ },
+ {
+  "id": "monarch",
+  "common": "Monarch",
+  "scientific": "Danaus plexippus",
+  "group": "INSECT",
+  "glyph": "🦋",
+  "nativeTo": [
+   "NA",
+   "SA"
+  ],
+  "introducedTo": [
+   "OC",
+   "EU"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN"
+  ],
+  "stages": [
+   "egg",
+   "caterpillar",
+   "chrysalis",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "white",
+    "name": "White monarch (nivosus)",
+    "hint": "Greyish-white where orange should be — very rare"
+   }
+  ],
+  "links": [
+   {
+    "type": "HOST_PLANT",
+    "targets": [
+     "common_milkweed",
+     "crown_flower"
+    ],
+    "hint": "Its caterpillars eat one family of plant only — find it nearby"
+   },
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "purple_coneflower",
+     "wild_bergamot",
+     "lantana",
+     "group:PLANT"
+    ],
+    "hint": "Find the nectar flowers fuelling the adults"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "butterfly",
+   "moth"
+  ],
+  "blurb": "The orange-and-black migrant that crosses a continent in relays.",
+  "deeper": "No single butterfly completes the round trip. The autumn 'super generation' lives eight times longer than its parents to reach Mexico."
+ },
+ {
+  "id": "plain_tiger",
+  "common": "Plain Tiger",
+  "scientific": "Danaus chrysippus",
+  "group": "INSECT",
+  "glyph": "🦋",
+  "nativeTo": [
+   "AF",
+   "AS",
+   "OC"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "SCRUB",
+   "GARDEN",
+   "MEADOW"
+  ],
+  "stages": [
+   "egg",
+   "caterpillar",
+   "chrysalis",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "alcippus",
+    "name": "White-hindwing form",
+    "hint": "Hindwings largely white"
+   },
+   {
+    "id": "dorippus",
+    "name": "Dorippus form",
+    "hint": "Lacks the black-and-white wingtips"
+   }
+  ],
+  "links": [
+   {
+    "type": "HOST_PLANT",
+    "targets": [
+     "crown_flower"
+    ],
+    "hint": "Find the giant milkweed its caterpillars eat"
+   },
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "lantana",
+     "group:PLANT"
+    ],
+    "hint": "Find its nectar plants"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "butterfly",
+   "moth"
+  ],
+  "blurb": "The tawny 'African monarch', painted in Egyptian tombs 3,500 years ago.",
+  "deeper": "Unpalatable thanks to its milkweed diet, it is copied by several harmless butterflies that borrow its warning colours."
+ },
+ {
+  "id": "painted_lady",
+  "common": "Painted Lady",
+  "scientific": "Vanessa cardui",
+  "group": "INSECT",
+  "glyph": "🦋",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN",
+   "SCRUB"
+  ],
+  "stages": [
+   "egg",
+   "caterpillar",
+   "chrysalis",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "HOST_PLANT",
+    "targets": [
+     "common_nettle",
+     "group:PLANT"
+    ],
+    "hint": "Find the thistle or nettle its caterpillars tent"
+   },
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "group:PLANT"
+    ],
+    "hint": "Find its nectar flowers"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "butterfly",
+   "moth"
+  ],
+  "blurb": "The most widespread butterfly on Earth.",
+  "deeper": "Its 12,000 km round trip between Africa and the Arctic Circle, flown over several generations, is the longest known butterfly migration."
+ },
+ {
+  "id": "red_admiral",
+  "common": "Red Admiral",
+  "scientific": "Vanessa atalanta",
+  "group": "INSECT",
+  "glyph": "🦋",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "egg",
+   "caterpillar",
+   "chrysalis",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "HOST_PLANT",
+    "targets": [
+     "common_nettle"
+    ],
+    "hint": "Its caterpillars eat a stinging plant — find the patch"
+   },
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "english_ivy",
+     "group:PLANT"
+    ],
+    "hint": "Find its late-season nectar source"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "butterfly",
+   "moth"
+  ],
+  "blurb": "Velvet black with red sashes; a strong-flying migrant.",
+  "deeper": "Its caterpillar lives inside a folded nettle leaf. In autumn the adults get drunk on rotting fruit and ivy nectar."
+ },
+ {
+  "id": "western_honey_bee",
+  "common": "Western Honey Bee",
+  "scientific": "Apis mellifera",
+  "group": "INSECT",
+  "glyph": "🐝",
+  "nativeTo": [
+   "EU",
+   "AF",
+   "AS"
+  ],
+  "introducedTo": [
+   "NA",
+   "SA",
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "MEADOW",
+   "PARK"
+  ],
+  "stages": [
+   "worker",
+   "swarm"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "white_clover",
+     "common_dandelion",
+     "group:PLANT"
+    ],
+    "hint": "Record what it is foraging on"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "bee"
+  ],
+  "blurb": "The managed pollinator, dancing directions to its sisters.",
+  "deeper": "A returning forager's waggle dance encodes distance and direction relative to the sun. Outside its native range it is, in effect, livestock."
+ },
+ {
+  "id": "buff_tailed_bumblebee",
+  "common": "Buff-tailed Bumblebee",
+  "scientific": "Bombus terrestris",
+  "group": "INSECT",
+  "glyph": "🐝",
+  "nativeTo": [
+   "EU",
+   "AF",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "SA",
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "MEADOW",
+   "PARK"
+  ],
+  "stages": [
+   "queen",
+   "worker",
+   "male"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "white_clover",
+     "common_dandelion",
+     "group:PLANT"
+    ],
+    "hint": "Record the flowers it works"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:GARDEN",
+     "habitat:MEADOW"
+    ],
+    "hint": "Queens nest underground in rough, undug ground"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 150,
+   "highHz": 400,
+   "rateMin": 0,
+   "rateMax": 1,
+   "tonal": false,
+   "sounds": "A deep, steady, droning buzz"
+  },
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "bee"
+  ],
+  "blurb": "A big, furry, early-flying bee with a buff-white tail.",
+  "deeper": "It 'buzz-pollinates', shaking pollen loose at a pitch near middle C — the only way tomatoes and many wildflowers release it."
+ },
+ {
+  "id": "common_eastern_bumblebee",
+  "common": "Common Eastern Bumblebee",
+  "scientific": "Bombus impatiens",
+  "group": "INSECT",
+  "glyph": "🐝",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "MEADOW",
+   "PARK"
+  ],
+  "stages": [
+   "queen",
+   "worker",
+   "male"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "POLLINATES",
+    "targets": [
+     "wild_bergamot",
+     "purple_coneflower",
+     "common_milkweed",
+     "white_clover",
+     "group:PLANT"
+    ],
+    "hint": "Record the flowers it works"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:GARDEN",
+     "habitat:MEADOW"
+    ],
+    "hint": "Queens overwinter in leaf litter — leave the leaves"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 150,
+   "highHz": 400,
+   "rateMin": 0,
+   "rateMax": 1,
+   "tonal": false,
+   "sounds": "A deep, steady, droning buzz"
+  },
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "bee"
+  ],
+  "blurb": "The yellow-vested bumblebee of eastern gardens.",
+  "deeper": "Only new queens survive winter, alone underground. Every bee you see in spring is a founding queen."
+ },
+ {
+  "id": "seven_spot_ladybird",
+  "common": "Seven-spot Ladybird",
+  "scientific": "Coccinella septempunctata",
+  "group": "INSECT",
+  "glyph": "🐞",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [
+   "NA"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "MEADOW",
+   "PARK"
+  ],
+  "stages": [
+   "eggs",
+   "larva",
+   "pupa",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_nettle",
+     "common_milkweed",
+     "group:PLANT"
+    ],
+    "hint": "Find the aphid-laden plant it patrols"
+   },
+   {
+    "type": "COMPETES_WITH",
+    "targets": [
+     "harlequin_ladybird"
+    ],
+    "hint": "A larger rival is moving in — find it"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "ladybug",
+   "beetle"
+  ],
+  "blurb": "The classic red beetle with seven black spots.",
+  "deeper": "One ladybird eats around five thousand aphids in its life. Its spiky grey larva looks nothing like the adult."
+ },
+ {
+  "id": "harlequin_ladybird",
+  "common": "Harlequin Ladybird",
+  "scientific": "Harmonia axyridis",
+  "group": "INSECT",
+  "glyph": "🐞",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "EU",
+   "NA",
+   "SA",
+   "AF"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "CANOPY"
+  ],
+  "stages": [
+   "eggs",
+   "larva",
+   "pupa",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "succinea",
+    "name": "Succinea",
+    "hint": "Orange with up to nineteen black spots"
+   },
+   {
+    "id": "spectabilis",
+    "name": "Spectabilis",
+    "hint": "Black with four red spots"
+   },
+   {
+    "id": "conspicua",
+    "name": "Conspicua",
+    "hint": "Black with two red spots"
+   }
+  ],
+  "links": [
+   {
+    "type": "COMPETES_WITH",
+    "targets": [
+     "seven_spot_ladybird",
+     "group:INSECT"
+    ],
+    "hint": "Record the native insects sharing its plant"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "ladybug",
+   "beetle"
+  ],
+  "blurb": "A shape-shifting ladybird in dozens of colour forms.",
+  "deeper": "Released for pest control, it now out-eats native ladybirds and preys on their larvae. Look for the 'M' behind its head."
+ },
+ {
+  "id": "green_darner",
+  "common": "Common Green Darner",
+  "scientific": "Anax junius",
+  "group": "INSECT",
+  "glyph": "🪰",
+  "nativeTo": [
+   "NA",
+   "SA",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WATER",
+   "WETLAND",
+   "MEADOW"
+  ],
+  "stages": [
+   "nymph",
+   "shed skin (exuvia)",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "habitat:WETLAND"
+    ],
+    "hint": "Its young live underwater — log it at its pond"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Find the smaller insects it hunts"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "dragonfly"
+  ],
+  "blurb": "A big green-and-blue dragonfly that migrates like a bird.",
+  "deeper": "It takes three generations to complete one annual north–south migration. The nymph is a pond's top insect predator."
+ },
+ {
+  "id": "emperor_dragonfly",
+  "common": "Emperor Dragonfly",
+  "scientific": "Anax imperator",
+  "group": "INSECT",
+  "glyph": "🪰",
+  "nativeTo": [
+   "EU",
+   "AF",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WATER",
+   "WETLAND"
+  ],
+  "stages": [
+   "nymph",
+   "shed skin (exuvia)",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "habitat:WETLAND"
+    ],
+    "hint": "Log it at the pond where it breeds"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Find the insects it catches on the wing"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "dragonfly"
+  ],
+  "blurb": "A large, sky-blue dragonfly that rarely stops patrolling.",
+  "deeper": "It is spreading north as the climate warms — your records document that shift in real time."
+ },
+ {
+  "id": "big_dipper_firefly",
+  "common": "Common Eastern Firefly",
+  "scientific": "Photinus pyralis",
+  "group": "INSECT",
+  "glyph": "✨",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN",
+   "PARK",
+   "WETLAND"
+  ],
+  "stages": [
+   "glowing larva",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:MEADOW",
+     "habitat:WETLAND",
+     "habitat:GARDEN"
+    ],
+    "hint": "Log it over long, unlit, damp grass"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva"
+  ],
+  "blurb": "The J-stroke flasher of warm dusk lawns.",
+  "deeper": "Each species has its own flash code. Larvae live two years in damp leaf litter — raked, lit-up gardens have none."
+ },
+ {
+  "id": "field_cricket",
+  "common": "Field Cricket",
+  "scientific": "Gryllus sp.",
+  "group": "INSECT",
+  "glyph": "🦗",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "MEADOW",
+   "GARDEN",
+   "SCRUB"
+  ],
+  "stages": [
+   "nymph",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:MEADOW",
+     "habitat:GARDEN",
+     "habitat:SCRUB"
+    ],
+    "hint": "Log it in the rough ground it sings from"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 3800,
+   "highHz": 5500,
+   "rateMin": 2,
+   "rateMax": 5,
+   "tonal": true,
+   "sounds": "Clear, musical chirp… chirp… chirp"
+  },
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "cricket",
+   "grasshopper"
+  ],
+  "blurb": "The glossy black fiddler of warm evenings.",
+  "deeper": "Chirp rate rises with temperature — count chirps in a fixed interval and you have a thermometer."
+ },
+ {
+  "id": "annual_cicada",
+  "common": "Dog-day Cicada",
+  "scientific": "Neotibicen canicularis",
+  "group": "INSECT",
+  "glyph": "🪲",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER"
+  ],
+  "habitats": [
+   "CANOPY",
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "shed shell",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Find the tree it is singing from"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 4500,
+   "highHz": 9500,
+   "rateMin": 0,
+   "rateMax": 1,
+   "tonal": false,
+   "sounds": "A rising, whining buzz like a tiny circular saw"
+  },
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "cicada"
+  ],
+  "blurb": "The buzz-saw soundtrack of high summer.",
+  "deeper": "Nymphs spend years underground sipping root sap. Look for their split, empty shells clinging to bark."
+ },
+ {
+  "id": "emerald_ash_borer",
+  "common": "Emerald Ash Borer",
+  "scientific": "Agrilus planipennis",
+  "group": "INSECT",
+  "glyph": "🪲",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "NA",
+   "EU"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER"
+  ],
+  "habitats": [
+   "CANOPY",
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "larval galleries",
+   "D-shaped exit holes",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "HOST_PLANT",
+    "targets": [
+     "white_ash"
+    ],
+    "hint": "Identify and log the ash tree it is attacking"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "beetle"
+  ],
+  "blurb": "A metallic-green beetle and the costliest forest insect in North American history.",
+  "deeper": "Larvae carve S-shaped galleries under bark, girdling the tree. Never move firewood — that is how it travels."
+ },
+ {
+  "id": "spotted_lanternfly",
+  "common": "Spotted Lanternfly",
+  "scientific": "Lycorma delicatula",
+  "group": "INSECT",
+  "glyph": "🪲",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "NA"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "CANOPY",
+   "PARK",
+   "GARDEN"
+  ],
+  "stages": [
+   "egg mass",
+   "black nymph",
+   "red nymph",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "HOST_PLANT",
+    "targets": [
+     "tree_of_heaven"
+    ],
+    "hint": "Find its favourite host tree nearby"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva"
+  ],
+  "blurb": "A spotted grey planthopper with startling red hindwings.",
+  "deeper": "It lays putty-like egg masses on anything — cars, stone, pallets. Reports of egg masses in new areas matter most."
+ },
+ {
+  "id": "garden_spider",
+  "common": "European Garden Spider",
+  "scientific": "Araneus diadematus",
+  "group": "INSECT",
+  "glyph": "🕷",
+  "nativeTo": [
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [
+   "NA"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "SCRUB"
+  ],
+  "stages": [
+   "spiderlings",
+   "adult",
+   "egg sac"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Record what flies into its web"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "insect",
+   "pest",
+   "larva",
+   "spider"
+  ],
+  "blurb": "The cross-backed orb weaver of autumn hedges.",
+  "deeper": "It eats and re-spins its web most nights, recycling the silk protein."
+ },
+ {
+  "id": "common_earthworm",
+  "common": "Common Earthworm",
+  "scientific": "Lumbricus terrestris",
+  "group": "OTHER",
+  "glyph": "🪱",
+  "nativeTo": [
+   "EU"
+  ],
+  "introducedTo": [
+   "AS",
+   "OC",
+   "SA"
+  ],
+  "invasiveIn": [
+   "NA"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "WOODLAND"
+  ],
+  "stages": [
+   "cocoon",
+   "adult",
+   "casts & middens"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "DECOMPOSES",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Whose fallen leaves is it pulling under?"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "american_robin",
+     "common_blackbird",
+     "european_robin",
+     "group:BIRD"
+    ],
+    "hint": "Find a bird hunting it"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "worm",
+   "invertebrate"
+  ],
+  "blurb": "The deep-burrowing nightcrawler that drags leaves underground.",
+  "deeper": "Darwin spent forty years on it. A gardener's friend in Europe — but in once-glaciated North American forests it strips the leaf litter wildflowers need."
+ },
+ {
+  "id": "american_bullfrog",
+  "common": "American Bullfrog",
+  "scientific": "Lithobates catesbeianus",
+  "group": "AMPHIBIAN",
+  "glyph": "🐸",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "EU",
+   "SA",
+   "AS"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WATER",
+   "WETLAND"
+  ],
+  "stages": [
+   "spawn",
+   "tadpole",
+   "froglet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "habitat:WETLAND"
+    ],
+    "hint": "Log the permanent pond it needs"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT",
+     "group:AMPHIBIAN"
+    ],
+    "hint": "It eats anything it can swallow — what lives alongside it?"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 150,
+   "highHz": 600,
+   "rateMin": 0.5,
+   "rateMax": 2,
+   "tonal": true,
+   "sounds": "Deep, resonant jug-o-rum, jug-o-rum"
+  },
+  "visual": [
+   "frog",
+   "amphibian",
+   "toad"
+  ],
+  "blurb": "A dinner-plate frog with a foghorn voice.",
+  "deeper": "Farmed worldwide for its legs, escapees now eat native frogs and spread a lethal amphibian fungus."
+ },
+ {
+  "id": "spring_peeper",
+  "common": "Spring Peeper",
+  "scientific": "Pseudacris crucifer",
+  "group": "AMPHIBIAN",
+  "glyph": "🐸",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING"
+  ],
+  "habitats": [
+   "WETLAND",
+   "WOODLAND"
+  ],
+  "stages": [
+   "spawn",
+   "tadpole",
+   "froglet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WETLAND",
+     "habitat:WATER"
+    ],
+    "hint": "Log the temporary pool it breeds in"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Outside spring it lives in woodland — record the trees"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 2600,
+   "highHz": 3500,
+   "rateMin": 1,
+   "rateMax": 2.5,
+   "tonal": true,
+   "sounds": "A piercing, rising peep, repeated — sleigh-bells en masse"
+  },
+  "visual": [
+   "frog",
+   "amphibian",
+   "toad"
+  ],
+  "blurb": "A thumbnail-sized frog whose chorus is the sound of spring.",
+  "deeper": "It survives winter partly frozen, its cells protected by glucose antifreeze, and sings from pools too short-lived for fish."
+ },
+ {
+  "id": "common_frog",
+  "common": "Common Frog",
+  "scientific": "Rana temporaria",
+  "group": "AMPHIBIAN",
+  "glyph": "🐸",
+  "nativeTo": [
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WETLAND",
+   "WATER"
+  ],
+  "stages": [
+   "spawn",
+   "tadpole",
+   "froglet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "habitat:WETLAND",
+     "habitat:GARDEN"
+    ],
+    "hint": "Log the pond where it spawns"
+   },
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm",
+     "group:INSECT"
+    ],
+    "hint": "It hunts slugs and insects on damp nights"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 300,
+   "highHz": 1500,
+   "rateMin": 6,
+   "rateMax": 14,
+   "tonal": false,
+   "sounds": "A low, purring croak, like a distant motorbike"
+  },
+  "visual": [
+   "frog",
+   "amphibian",
+   "toad"
+  ],
+  "blurb": "The smooth-skinned garden frog with a dark eye-mask.",
+  "deeper": "A garden pond without fish is among the most valuable things one household can give wildlife."
+ },
+ {
+  "id": "asian_common_toad",
+  "common": "Asian Common Toad",
+  "scientific": "Duttaphrynus melanostictus",
+  "group": "AMPHIBIAN",
+  "glyph": "🐸",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "AF",
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WETLAND",
+   "PARK"
+  ],
+  "stages": [
+   "spawn strings",
+   "tadpole",
+   "toadlet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Record the insects it gathers to eat"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "habitat:WETLAND",
+     "habitat:GARDEN"
+    ],
+    "hint": "Log the rain pool where it breeds"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1000,
+   "highHz": 2000,
+   "rateMin": 8,
+   "rateMax": 18,
+   "tonal": false,
+   "sounds": "A long, rattling creo-o-o, cro-ro-ro"
+  },
+  "visual": [
+   "frog",
+   "amphibian",
+   "toad"
+  ],
+  "blurb": "A warty, black-crested toad under every monsoon streetlight.",
+  "deeper": "It gathers under lamps to eat the insects they attract. Introduced to Madagascar, it now threatens predators with no defence against its toxins."
+ },
+ {
+  "id": "cane_toad",
+  "common": "Cane Toad",
+  "scientific": "Rhinella marina",
+  "group": "AMPHIBIAN",
+  "glyph": "🐸",
+  "nativeTo": [
+   "SA",
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "OC",
+   "AS"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WETLAND",
+   "MEADOW"
+  ],
+  "stages": [
+   "spawn strings",
+   "tadpole",
+   "toadlet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "habitat:WETLAND"
+    ],
+    "hint": "Log the water body it is breeding in"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 400,
+   "highHz": 900,
+   "rateMin": 9,
+   "rateMax": 18,
+   "tonal": false,
+   "sounds": "A low, purring trill like a distant idling engine"
+  },
+  "visual": [
+   "frog",
+   "amphibian",
+   "toad"
+  ],
+  "blurb": "A huge toad released to save sugar cane — which it did not.",
+  "deeper": "Its toxin kills the quolls, snakes and goannas that try to eat it. Records at the invasion front guide control."
+ },
+ {
+  "id": "spotted_salamander",
+  "common": "Spotted Salamander",
+  "scientific": "Ambystoma maculatum",
+  "group": "AMPHIBIAN",
+  "glyph": "🦎",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": true,
+  "seasons": [
+   "SPRING"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "WETLAND"
+  ],
+  "stages": [
+   "egg mass",
+   "larva",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WETLAND",
+     "habitat:WATER"
+    ],
+    "hint": "Log the fishless vernal pool"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "It spends the year under woodland logs — record the trees"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "frog",
+   "amphibian",
+   "toad",
+   "salamander",
+   "lizard",
+   "reptile"
+  ],
+  "blurb": "A stout black salamander with yellow polka dots, seen on one rainy night a year.",
+  "deeper": "Its embryos host algae inside their own cells — the only known vertebrate to do so. Breeding pools are few and easily destroyed."
+ },
+ {
+  "id": "common_garter_snake",
+  "common": "Common Garter Snake",
+  "scientific": "Thamnophis sirtalis",
+  "group": "REPTILE",
+  "glyph": "🐍",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "WETLAND",
+   "MEADOW"
+  ],
+  "stages": [
+   "juvenile",
+   "adult",
+   "shed skin"
+  ],
+  "phenotypes": [
+   {
+    "id": "melanistic",
+    "name": "Melanistic",
+    "hint": "Entirely black"
+   },
+   {
+    "id": "red_sided",
+    "name": "Red-sided",
+    "hint": "Red bars between the stripes"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm",
+     "group:AMPHIBIAN"
+    ],
+    "hint": "Record the worms or frogs it hunts"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WETLAND",
+     "habitat:MEADOW",
+     "habitat:GARDEN"
+    ],
+    "hint": "Log the damp, grassy ground it needs"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "reptile",
+   "lizard",
+   "snake"
+  ],
+  "blurb": "A striped, harmless snake of gardens and pond edges.",
+  "deeper": "It can eat toxic newts and toads that would kill other predators, and overwinters in communal dens of hundreds."
+ },
+ {
+  "id": "oriental_garden_lizard",
+  "common": "Oriental Garden Lizard",
+  "scientific": "Calotes versicolor",
+  "group": "REPTILE",
+  "glyph": "🦎",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [
+   "AF",
+   "NA"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "SCRUB",
+   "PARK"
+  ],
+  "stages": [
+   "hatchling",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "breeding_male",
+    "name": "Breeding colours",
+    "hint": "Head and throat flushed bright red"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Record the insects it ambushes"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Find the shrub or trunk it displays from"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "reptile",
+   "lizard",
+   "snake"
+  ],
+  "blurb": "A crested hedge lizard — the 'bloodsucker' that sucks no blood.",
+  "deeper": "Breeding males flush crimson on the head and throat within minutes, then fade again."
+ },
+ {
+  "id": "common_house_gecko",
+  "common": "Common House Gecko",
+  "scientific": "Hemidactylus frenatus",
+  "group": "REPTILE",
+  "glyph": "🦎",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [
+   "OC",
+   "AF",
+   "NA",
+   "SA"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "CANOPY",
+   "PARK"
+  ],
+  "stages": [
+   "egg",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Record the moths and flies it hunts at the light"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1500,
+   "highHz": 4500,
+   "rateMin": 4,
+   "rateMax": 8,
+   "tonal": false,
+   "sounds": "A sharp chuck-chuck-chuck-chuck"
+  },
+  "visual": [
+   "reptile",
+   "lizard",
+   "snake",
+   "gecko"
+  ],
+  "blurb": "The chirping wall-walker beside every porch light.",
+  "deeper": "Its toes grip with millions of microscopic hairs, no glue required. It has ridden ships to nearly every warm port."
+ },
+ {
+  "id": "eastern_gray_squirrel",
+  "common": "Eastern Gray Squirrel",
+  "scientific": "Sciurus carolinensis",
+  "group": "MAMMAL",
+  "glyph": "🐿",
+  "nativeTo": [
+   "NA"
+  ],
+  "introducedTo": [
+   "AF"
+  ],
+  "invasiveIn": [
+   "EU"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "WOODLAND",
+   "CANOPY",
+   "GARDEN"
+  ],
+  "stages": [
+   "drey (nest)",
+   "tracks & signs",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [
+   {
+    "id": "melanistic",
+    "name": "Black morph",
+    "hint": "Jet-black coat, commoner in northern cities"
+   },
+   {
+    "id": "white",
+    "name": "White morph",
+    "hint": "Leucistic or albino — a local celebrity"
+   }
+  ],
+  "links": [
+   {
+    "type": "DISPERSES",
+    "targets": [
+     "white_oak",
+     "english_oak",
+     "group:TREE"
+    ],
+    "hint": "Find the tree whose seeds it plants"
+   },
+   {
+    "type": "EATEN_BY",
+    "targets": [
+     "red_tailed_hawk",
+     "great_horned_owl",
+     "group:BIRD"
+    ],
+    "hint": "What watches it from above?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mammal",
+   "squirrel",
+   "gerbil",
+   "fur"
+  ],
+  "blurb": "The acrobatic nut-burier of city parks.",
+  "deeper": "It forgets a share of its buried acorns — and so plants forests. In Britain and Italy it is displacing the native red squirrel."
+ },
+ {
+  "id": "red_squirrel",
+  "common": "Eurasian Red Squirrel",
+  "scientific": "Sciurus vulgaris",
+  "group": "MAMMAL",
+  "glyph": "🐿",
+  "nativeTo": [
+   "EU",
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "PARK"
+  ],
+  "stages": [
+   "drey (nest)",
+   "chewed cones",
+   "tracks & signs",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Identify the trees it depends on"
+   },
+   {
+    "type": "COMPETES_WITH",
+    "targets": [
+     "eastern_gray_squirrel"
+    ],
+    "hint": "Is its rival present here?"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mammal",
+   "squirrel",
+   "gerbil",
+   "fur"
+  ],
+  "blurb": "The tuft-eared native squirrel of Eurasian woods.",
+  "deeper": "It survives where conifers or pine martens give it an edge over the introduced grey. Each record helps map its retreat — or return."
+ },
+ {
+  "id": "indian_palm_squirrel",
+  "common": "Three-striped Palm Squirrel",
+  "scientific": "Funambulus palmarum",
+  "group": "MAMMAL",
+  "glyph": "🐿",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [
+   "OC"
+  ],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "CANOPY"
+  ],
+  "stages": [
+   "nest",
+   "juvenile",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "DISPERSES",
+    "targets": [
+     "neem",
+     "banyan",
+     "group:TREE"
+    ],
+    "hint": "Find the fruiting tree it raids"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 3000,
+   "highHz": 6500,
+   "rateMin": 2,
+   "rateMax": 5,
+   "tonal": true,
+   "sounds": "A sharp, repeated bird-like chip-chip-chip"
+  },
+  "visual": [
+   "mammal",
+   "squirrel",
+   "gerbil",
+   "fur"
+  ],
+  "blurb": "A chirruping, striped squirrel of gardens and temple walls.",
+  "deeper": "A busy pollinator and seed-carrier of garden trees; its bird-like alarm call warns the whole neighbourhood."
+ },
+ {
+  "id": "european_hedgehog",
+  "common": "European Hedgehog",
+  "scientific": "Erinaceus europaeus",
+  "group": "MAMMAL",
+  "glyph": "🦔",
+  "nativeTo": [
+   "EU"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "GARDEN",
+   "PARK",
+   "MEADOW"
+  ],
+  "stages": [
+   "droppings & tracks",
+   "hoglet",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm",
+     "group:INSECT"
+    ],
+    "hint": "Record the beetles and worms it forages"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:GARDEN",
+     "habitat:PARK"
+    ],
+    "hint": "Log the connected, untidy garden it needs"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mammal",
+   "hedgehog"
+  ],
+  "blurb": "A snuffling night gardener in sharp decline.",
+  "deeper": "One hedgehog roams a mile a night. A 13 cm gap under a fence links gardens into the territory it needs."
+ },
+ {
+  "id": "red_fox",
+  "common": "Red Fox",
+  "scientific": "Vulpes vulpes",
+  "group": "MAMMAL",
+  "glyph": "🦊",
+  "nativeTo": [
+   "NA",
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [
+   "OC"
+  ],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "PARK",
+   "MEADOW",
+   "WOODLAND",
+   "GARDEN"
+  ],
+  "stages": [
+   "tracks & scat",
+   "cub",
+   "adult"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "common_earthworm",
+     "group:MAMMAL"
+    ],
+    "hint": "Record its prey — rodents, rabbits, even worms"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WOODLAND",
+     "habitat:SCRUB",
+     "habitat:PARK"
+    ],
+    "hint": "Log the cover where it dens"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 700,
+   "highHz": 2500,
+   "rateMin": 0.3,
+   "rateMax": 1.5,
+   "tonal": false,
+   "sounds": "A hoarse triple bark, or a blood-curdling winter scream"
+  },
+  "visual": [
+   "mammal",
+   "fox",
+   "dog"
+  ],
+  "blurb": "The most widespread wild carnivore on Earth.",
+  "deeper": "It thrives in cities on rodents, worms and fallen fruit. In Australia, introduced foxes have driven small marsupials extinct."
+ },
+ {
+  "id": "common_pipistrelle",
+  "common": "Common Pipistrelle",
+  "scientific": "Pipistrellus pipistrellus",
+  "group": "MAMMAL",
+  "glyph": "🦇",
+  "nativeTo": [
+   "EU",
+   "AS",
+   "AF"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "WATER",
+   "PARK",
+   "WOODLAND",
+   "GARDEN"
+  ],
+  "stages": [
+   "in flight",
+   "roost"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Record the insects that are flying where it hunts"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "group:TREE"
+    ],
+    "hint": "It follows tree lines to water — log the route"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mammal",
+   "bat"
+  ],
+  "blurb": "A thumb-sized bat flickering round treetops at dusk.",
+  "deeper": "It eats up to three thousand midges a night. Its calls are far above human hearing, so log it by sight at dusk."
+ },
+ {
+  "id": "big_brown_bat",
+  "common": "Big Brown Bat",
+  "scientific": "Eptesicus fuscus",
+  "group": "MAMMAL",
+  "glyph": "🦇",
+  "nativeTo": [
+   "NA",
+   "SA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN"
+  ],
+  "habitats": [
+   "PARK",
+   "WATER",
+   "WOODLAND",
+   "GARDEN"
+  ],
+  "stages": [
+   "in flight",
+   "roost"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "group:INSECT"
+    ],
+    "hint": "Record the insects flying where it hunts"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WATER",
+     "group:TREE"
+    ],
+    "hint": "It needs old trees and open water"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mammal",
+   "bat"
+  ],
+  "blurb": "A sturdy, glossy bat of barns, attics and streetlights.",
+  "deeper": "A colony eats enough beetles each summer to spare farmers millions of crop-pest larvae. Its calls are ultrasonic — log it by sight."
+ },
+ {
+  "id": "indian_flying_fox",
+  "common": "Indian Flying Fox",
+  "scientific": "Pteropus medius",
+  "group": "MAMMAL",
+  "glyph": "🦇",
+  "nativeTo": [
+   "AS"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": true,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "CANOPY",
+   "PARK",
+   "WOODLAND"
+  ],
+  "stages": [
+   "in flight",
+   "roost camp"
+  ],
+  "phenotypes": [],
+  "links": [
+   {
+    "type": "DISPERSES",
+    "targets": [
+     "banyan",
+     "neem",
+     "group:TREE"
+    ],
+    "hint": "Find the fruiting trees it visits by night"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "group:TREE"
+    ],
+    "hint": "Record the kind of tree the camp hangs in"
+   }
+  ],
+  "acoustic": {
+   "lowHz": 1000,
+   "highHz": 5000,
+   "rateMin": 2,
+   "rateMax": 6,
+   "tonal": false,
+   "sounds": "Squabbling shrieks and chatter from the roost"
+  },
+  "visual": [
+   "mammal",
+   "bat"
+  ],
+  "blurb": "A fox-faced fruit bat with a wingspan over a metre.",
+  "deeper": "Roost trees are used for generations and carry seeds for tens of kilometres each night. Camps are easily disturbed, so their locations are obscured."
+ },
+ {
+  "id": "white_tailed_deer",
+  "common": "White-tailed Deer",
+  "scientific": "Odocoileus virginianus",
+  "group": "MAMMAL",
+  "glyph": "🦌",
+  "nativeTo": [
+   "NA",
+   "SA"
+  ],
+  "introducedTo": [],
+  "invasiveIn": [],
+  "sensitive": false,
+  "seasons": [
+   "SPRING",
+   "SUMMER",
+   "AUTUMN",
+   "WINTER"
+  ],
+  "habitats": [
+   "WOODLAND",
+   "MEADOW",
+   "PARK"
+  ],
+  "stages": [
+   "tracks & signs",
+   "fawn",
+   "doe",
+   "buck"
+  ],
+  "phenotypes": [
+   {
+    "id": "piebald",
+    "name": "Piebald",
+    "hint": "Blotched white and brown"
+   },
+   {
+    "id": "velvet",
+    "name": "In velvet",
+    "hint": "Summer antlers sheathed in fuzzy skin"
+   }
+  ],
+  "links": [
+   {
+    "type": "EATS",
+    "targets": [
+     "white_trillium",
+     "group:PLANT"
+    ],
+    "hint": "Record the wildflowers and saplings it browses"
+   },
+   {
+    "type": "SHELTERS_IN",
+    "targets": [
+     "habitat:WOODLAND"
+    ],
+    "hint": "Log it at the woodland edge"
+   }
+  ],
+  "acoustic": null,
+  "visual": [
+   "mammal",
+   "deer"
+  ],
+  "blurb": "A flag-tailed browser, most often known by its tracks.",
+  "deeper": "With wolves gone, dense deer herds eat forests bare of seedlings and wildflowers — a browse line at head height is their signature."
+ }
+]
