@@ -1,0 +1,33 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    plugins {
+        id 'com.android.application' version '8.9.1'
+        id 'org.jetbrains.kotlin.android' version '2.1.20'
+        id 'org.jetbrains.kotlin.jvm' version '2.1.20'
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = 'ProCam'
+
+// The image pipeline is plain Kotlin and builds/tests on any JDK.
+include ':imaging'
+
+// The Android app needs the Android SDK; skip it when none is installed so
+// `./gradlew :imaging:test` still works on a machine without one.
+def hasSdk = System.getenv('ANDROID_HOME') || System.getenv('ANDROID_SDK_ROOT') ||
+        new File(rootDir, 'local.properties').exists()
+if (hasSdk) {
+    include ':app'
+} else {
+    println 'ProCam: no Android SDK found - building :imaging only'
+}

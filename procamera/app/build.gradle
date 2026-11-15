@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.rj.procam'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.rj.procam'
+        minSdk 29
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    androidResources {
+        // The model is memory-mapped straight out of the APK.
+        noCompress += 'tflite'
+    }
+
+    lint {
+        abortOnError false
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
+
+dependencies {
+    implementation project(':imaging')
+    // LiteRT (formerly TensorFlow Lite): free, runs entirely on the device.
+    implementation 'com.google.ai.edge.litert:litert:1.4.0'
+    implementation 'com.google.ai.edge.litert:litert-gpu:1.4.0'
+}
