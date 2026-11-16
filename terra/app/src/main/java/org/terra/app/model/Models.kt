@@ -128,7 +128,9 @@ data class Observation(
     val heritage: Boolean = false,
     val note: String = "",
     val habitatId: Long? = null,
-    val sensitive: Boolean = false
+    val sensitive: Boolean = false,
+    /** Set once this record has been shared: its observation id on iNaturalist. */
+    val inatId: Long? = null
 )
 
 enum class HabitatSource { OSM, PLAYER }

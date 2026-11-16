@@ -308,4 +308,91 @@ class DomainTest {
         assertEquals(3, d.health.size)
         assertTrue(d.health.getValue(1).score > d.health.getValue(3).score)
     }
+
+    // ── iNaturalist & GBIF ──
+    @Test fun inaturalistObservationsAreRead() {
+        val json = """{"total_results":3,"results":[
+          {"id":101,"species_guess":"Blue Jay","observed_on":"2026-10-01","obscured":false,"license_code":"cc-by-nc","uri":"https://www.inaturalist.org/observations/101",
+           "geojson":{"type":"Point","coordinates":[-79.38,43.65]},"user":{"login":"ada"},
+           "taxon":{"id":8229,"name":"Cyanocitta cristata","preferred_common_name":"Blue Jay","iconic_taxon_name":"Aves"}},
+          {"id":102,"observed_on":"2026-09-01","obscured":true,"license_code":null,"geojson":{"type":"Point","coordinates":["-79.4","43.7"]},"user":{"login":"bo"},
+           "taxon":{"id":1,"name":"Ambystoma maculatum","iconic_taxon_name":"Amphibia"}},
+          {"id":103,"geojson":null,"taxon":{"name":"X y"}},
+          {"id":104,"geojson":{"coordinates":[1,2]},"taxon":null}]}"""
+        val r = org.terra.app.domain.Community.parseInatObservations(json)
+        assertEquals(2, r.size)
+        assertEquals("Blue Jay", r[0].name)
+        assertEquals(LifeGroup.BIRD, r[0].group)
+        assertEquals(43.65, r[0].lat, 1e-9)
+        assertEquals(-79.38, r[0].lon, 1e-9)
+        assertEquals("© ada · CC-BY-NC", r[0].credit)
+        assertTrue(r[1].obscured)
+        assertEquals("Ambystoma maculatum", r[1].name)
+        assertEquals("© bo · all rights reserved", r[1].credit)
+        assertEquals("https://www.inaturalist.org/observations/102", r[1].url)
+        assertTrue(org.terra.app.domain.Community.parseInatObservations("{}").isEmpty())
+    }
+
+    @Test fun speciesCountsAndTaxaAreRead() {
+        val c = org.terra.app.domain.Community
+        val sp = c.parseInatSpecies("""{"results":[{"count":230,"taxon":{"id":48662,"name":"Danaus plexippus","preferred_common_name":"Monarch","iconic_taxon_name":"Insecta"}},{"count":2,"taxon":{"id":5,"name":"Lumbricus terrestris","iconic_taxon_name":"Animalia"}}]}""")
+        assertEquals(listOf(230, 2), sp.map { it.count })
+        assertEquals(LifeGroup.INSECT, sp[0].group)
+        assertEquals(LifeGroup.OTHER, sp[1].group)
+        assertEquals(48662L, c.parseInatTaxonId("""{"results":[{"id":48662,"name":"Danaus plexippus"}]}"""))
+        assertNull(c.parseInatTaxonId("""{"results":[]}"""))
+        val boosted = catalog.suggest(listOf("Insect" to 0.8f), Region.NA, Season.SUMMER, null, nearby = setOf("danaus plexippus"))
+        assertEquals("what others record nearby rises to the top", "monarch", boosted.first().species.id)
+        assertTrue(c.inatSpeciesUrl(43.65, -79.38, 1.5).contains("lat=43.65000&lng=-79.38000&radius=1.5"))
+        assertTrue(c.gbifUrl(43.65, -79.38, 1.5).contains("geoDistance=43.65000,-79.38000,1.5km"))
+    }
+
+    @Test fun gbifOccurrencesAreReadWithoutDuplicatingInaturalist() {
+        val json = """{"count":3,"results":[
+          {"key":4001,"datasetKey":"abc","datasetName":"Royal Ontario Museum Herbarium","species":"Quercus alba","scientificName":"Quercus alba L.","kingdom":"Plantae","class":"Magnoliopsida",
+           "decimalLatitude":43.66,"decimalLongitude":-79.39,"eventDate":"1998-06-04T00:00:00","license":"http://creativecommons.org/licenses/by/4.0/legalcode"},
+          {"key":4002,"datasetKey":"50c9509d-22c7-4a22-a47d-8c48425ef4a7","species":"Turdus migratorius","class":"Aves","decimalLatitude":43.6,"decimalLongitude":-79.3},
+          {"key":4003,"datasetKey":"def","scientificName":"Falco peregrinus Tunstall, 1771","class":"Aves","decimalLatitude":43.6,"decimalLongitude":-79.3,"informationWithheld":"coordinates generalised"},
+          {"key":4004,"species":"No coordinates"}]}"""
+        val r = org.terra.app.domain.Community.parseGbif(json)
+        assertEquals(listOf("4001", "4003"), r.map { it.id })
+        assertEquals("Quercus alba", r[0].scientific)
+        assertEquals(LifeGroup.PLANT, r[0].group)
+        assertEquals("1998-06-04", r[0].date)
+        assertTrue(r[0].credit, r[0].credit.startsWith("Royal Ontario Museum Herbarium · CC BY/4.0"))
+        assertEquals("https://www.gbif.org/occurrence/4001", r[0].url)
+        assertTrue(r[1].obscured)
+        assertEquals(LifeGroup.BIRD, r[1].group)
+    }
+
+    @Test fun sharingProtectsSensitiveSpecies() {
+        val c = org.terra.app.domain.Community
+        val falcon = Fixtures.obs("peregrine_falcon", at(2026, 10, 11), lat = 43.6457).copy(note = "On the bridge pier", lifeStage = "adult")
+        val body = kotlinx.serialization.json.Json.parseToJsonElement(c.inatBody(falcon, "Falco peregrinus", 4647, true)).jsonObject["observation"]!!.jsonObject
+        assertEquals("obscured", body["geoprivacy"]!!.jsonPrimitive.content)
+        assertEquals("4647", body["taxon_id"]!!.jsonPrimitive.content)
+        assertEquals("Falco peregrinus", body["species_guess"]!!.jsonPrimitive.content)
+        assertTrue(body["observed_on_string"]!!.jsonPrimitive.content.startsWith("2026-10-11T12:00"))
+        assertTrue(body["description"]!!.jsonPrimitive.content.contains("On the bridge pier"))
+        val open = kotlinx.serialization.json.Json.parseToJsonElement(c.inatBody(Fixtures.obs("turkey_tail", 0), null, null, false)).jsonObject["observation"]!!.jsonObject
+        assertEquals("open", open["geoprivacy"]!!.jsonPrimitive.content)
+        assertNull(open["taxon_id"])
+        assertEquals("Turkey Tail", open["species_guess"]!!.jsonPrimitive.content)
+    }
+
+    @Test fun darwinCoreTableFollowsTheFuzzingRule() {
+        val w = Fixtures.world()
+        val pub = org.terra.app.domain.Community.darwinCoreCsv(w.observations, catalog, false).lines()
+        val res = org.terra.app.domain.Community.darwinCoreCsv(w.observations, catalog, true).lines()
+        assertEquals(w.observations.size + 2, pub.size)
+        assertTrue(pub[0].startsWith("occurrenceID,basisOfRecord,scientificName"))
+        val p = pub.first { it.contains("Falco peregrinus") }
+        val r = res.first { it.contains("Falco peregrinus") }
+        assertTrue(r, r.contains("43.64570,-79.37700"))
+        assertFalse(p, p.contains("43.645"))
+        assertTrue(p, p.contains("15700") && p.contains("generalised"))
+        assertEquals("ordinary species are identical in both", pub.first { it.contains("Trametes") }, res.first { it.contains("Trametes") })
+        val quoted = org.terra.app.domain.Community.darwinCoreCsv(listOf(Fixtures.obs("turkey_tail", 0).copy(note = "on a log, \"big\" one")), catalog, false)
+        assertTrue(quoted, quoted.contains("\"on a log, \"\"big\"\" one\""))
+    }
 }

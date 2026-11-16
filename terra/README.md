@@ -34,6 +34,7 @@ Needs JDK 17+ and the Android SDK (platform 35). Min Android 8.0 (API 26). The G
 | **Poaching protection** | Sensitive species (nesting raptors, orchids, roosts…) are snapped to a 0.2° grid in the public view and public export; exact coordinates appear only in the separate research-grade export. |
 | **Phenological seasons** | Season, focus and bounties are derived from the date and your latitude. |
 | **Legacy landmarks** | Adopt a tree or pond and build a dated timeline of photos, notes and girth measurements; a full archive (JSON + photos) can be saved and restored on another phone. |
+| **iNaturalist & GBIF** | *Read:* a map layer of nearby iNaturalist observations and GBIF occurrences (with credit, licence and a link to the source), a "Recorded nearby" list of what the community has found within 1.5 km versus what you have, and a ranking boost for those species in bio-scan suggestions. *Share:* post your records (photo, date, place, notes) to iNaturalist with a personal token — research-grade records are then published to GBIF by iNaturalist — or export a Darwin Core CSV for a records centre. Sensitive species are sent with `geoprivacy: obscured`. Nothing is shared without an explicit confirmation. |
 | **Eyes-up UX** | Walk mode keeps location alive with the screen off and gives a haptic pulse — plus a chime panned toward the habitat — when you cross into one. No push notifications, streaks or timers. |
 
 ## What is deliberately *not* claimed
@@ -42,6 +43,10 @@ Needs JDK 17+ and the Android SDK (platform 35). Min Android 8.0 (API 26). The G
   acoustic matcher is a transparent heuristic, not a trained classifier. Both narrow the field and
   the observer decides. `Vision` and `AcousticMatcher` are the two seams where a species-level model
   (e.g. a TFLite plant/bird model, or BirdNET) would slot in.
+- **Live iNaturalist/GBIF verification.** The integration is written to the published API formats and its
+  parsing and request bodies are unit-tested against fixtures, but it has not yet been run against the
+  live services. Sharing uses iNaturalist's 24-hour personal token (pasted by the user); a one-tap
+  sign-in needs an OAuth application registered with iNaturalist.
 - **A server.** There is no backend yet, so community peer review, scientist-issued regional
   bounties and the shared public map are not live. The app ships sample briefs and produces the
   open-data files (`public` and `research` GeoJSON with Darwin Core fields) that such a service

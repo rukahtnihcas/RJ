@@ -50,7 +50,17 @@ class ScreenshotTest {
     }
 
     @Test fun field() = shot("field") {
-        FieldScreen(d, fix, true, false, false, false, {}, {}, {}, {}, {}, { _, _, _ -> }, {}, {}, {}, {}) { m -> Box(m.background(pigments.wash)) }
+        FieldScreen(d, fix, true, false, false, false, CommunityState(true, false, List(37) { sampleRecord }), {}, {}, {}, {}, {}, { _, _, _ -> }, {}, {}, {}, {}, {}) { m -> Box(m.background(pigments.wash)) }
+    }
+    private val sampleRecord = org.terra.app.domain.CommunityRecord(org.terra.app.domain.Source.INATURALIST, "1", "Blue Jay", "Cyanocitta cristata", org.terra.app.model.LifeGroup.BIRD, LAT, LON, "2026-10-01", false, "© someone", "")
+    @Test fun nearby() = shot("nearby") {
+        val sp = listOf(
+            org.terra.app.domain.NearbySpecies("eastern gray squirrel", "Sciurus carolinensis", org.terra.app.model.LifeGroup.MAMMAL, 412, 1),
+            org.terra.app.domain.NearbySpecies("monarch", "Danaus plexippus", org.terra.app.model.LifeGroup.INSECT, 230, 2),
+            org.terra.app.domain.NearbySpecies("american robin", "Turdus migratorius", org.terra.app.model.LifeGroup.BIRD, 198, 3),
+            org.terra.app.domain.NearbySpecies("blue jay", "Cyanocitta cristata", org.terra.app.model.LifeGroup.BIRD, 150, 4),
+            org.terra.app.domain.NearbySpecies("Dryad's saddle", "Cerioporus squamosus", org.terra.app.model.LifeGroup.FUNGUS, 61, 5))
+        org.terra.app.ui.NearbyScreen(d, CommunityState(true, false, emptyList(), sp), catalog, {}, {}) {}
     }
     @Test fun codex() = shot("codex") { CodexScreen(d) {} }
     @Test fun codexDark() = shot("codex_dark", dark = true) { CodexScreen(d) {} }
@@ -62,7 +72,7 @@ class ScreenshotTest {
     @Test fun journal() = shot("journal") { JournalScreen(d, catalog, {}, {}, {}, {}, {}, {}, {}) }
     @Test fun landmark() = shot("landmark") { LandmarkDetailScreen(d, d.world.landmarks[0], {}, {}, { _, _, _ -> }) }
     @Test fun stillness() = shot("stillness") { StillnessScreen(StillnessStatus(true, 252, 600, 1, true), d, catalog, {}, {}, {}, {}) }
-    @Test fun data() = shot("data") { DataScreen(true, true, {}, {}, {}, {}, {}, {}, {}) }
+    @Test fun data() = shot("data") { DataScreen(true, true, {}, {}, {}, {}, {}, {}, {}, "", 13, 0) }
     @Test fun identify() = shot("identify") {
         val c = catalog.suggest(listOf("Bird" to 0.86f), Region.NA, d.season, null).take(4).map { Candidate(it.species, it.score, it.why) }
         IdentifyPanel(Draft(ObsMethod.PHOTO, null, c, "The camera sees: birds (86%)"), catalog, Region.NA, true) { _, _, _, _, _, _, _ -> }

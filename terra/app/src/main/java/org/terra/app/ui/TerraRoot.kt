@@ -62,6 +62,12 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
     val reward by vm.reward.collectAsStateWithLifecycle()
     val charting by vm.charting.collectAsStateWithLifecycle()
     val publicView by vm.publicView.collectAsStateWithLifecycle()
+    val community by vm.community.collectAsStateWithLifecycle()
+    val sharing by vm.sharing.collectAsStateWithLifecycle()
+    val inatToken by vm.inatToken.collectAsStateWithLifecycle()
+    var shownRecord by remember { mutableStateOf<org.terra.app.domain.CommunityRecord?>(null) }
+    var confirmShare by remember { mutableStateOf<List<org.terra.app.model.Observation>?>(null) }
+    val uri = androidx.compose.ui.platform.LocalUriHandler.current
     val stillness by StillnessService.status.collectAsStateWithLifecycle()
     val walking by WalkService.running.collectAsStateWithLifecycle()
     val snack = remember { SnackbarHostState() }
@@ -92,6 +98,7 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
     val taker = rememberPhotoTaker(vm.photos) { vm.say(it) }
     val savePublic = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/geo+json")) { it?.let { u -> vm.exportGeoJson(u, false) } }
     val saveResearch = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/geo+json")) { it?.let { u -> vm.exportGeoJson(u, true) } }
+    val saveDwc = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { it?.let { u -> vm.exportDarwinCore(u, false) } }
     val saveArchive = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { it?.let(vm::exportBackup) }
     val openArchive = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { it?.let(vm::restoreBackup) }
 
@@ -120,16 +127,18 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
                 Screen.Home -> when (tab) {
                     Tab.FIELD -> {
                         val moss = p.moss.toArgb(); val ochre = p.ochre.toArgb(); val rust = p.rust.toArgb()
-                        val model = remember(d, fix, publicView, p) {
-                            mapModel(d, fix, publicView, { s -> if (s >= 60) moss else if (s >= 35) ochre else rust }, p.card.toArgb(), p.ink.toArgb()) { vm.catalog[it]?.glyph }
+                        val model = remember(d, fix, publicView, p, community) {
+                            mapModel(d, fix, publicView, { s -> if (s >= 60) moss else if (s >= 35) ochre else rust }, p.card.toArgb(), p.ink.toArgb(),
+                                if (community.on) community.records else emptyList(), p.water.toArgb()) { vm.catalog[it]?.glyph }
                         }
                         val start = remember { vm.here.let { it.lat to it.lon } }
                         FieldScreen(
-                            d, fix, locationGranted, publicView, charting, walking,
+                            d, fix, locationGranted, publicView, charting, walking, community,
                             onGrant = grantLocation,
                             onScan = { vm.open(Screen.Scan) }, onSweep = { vm.open(Screen.Sweep) }, onStillness = { vm.open(Screen.Stillness) },
                             onChart = vm::chart, onMark = vm::markHabitat, onTogglePublic = { vm.publicView.value = !publicView },
                             onHabitat = { vm.open(Screen.HabitatDetail(it)) }, onRecenter = { if (fix == null) vm.say("Still waiting for a GPS fix.") else recenter++ },
+                            onCommunity = vm::toggleCommunity,
                             onWalk = {
                                 when {
                                     walking -> WalkService.stop(context)
@@ -140,18 +149,22 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
                             }
                         ) { m ->
                             OsmMap(model, start, recenter, m, onArea = { vm.open(Screen.HabitatDetail(it)) },
-                                onPin = { if (vm.catalog[it] != null) vm.open(Screen.SpeciesDetail(it)) }, onCenter = { la, lo -> vm.mapCenter = la to lo })
+                                onPin = { key ->
+                                    if (key.startsWith("ext:")) shownRecord = community.records.getOrNull(key.removePrefix("ext:").toInt())
+                                    else if (vm.catalog[key] != null) vm.open(Screen.SpeciesDetail(key))
+                                }, onCenter = { la, lo -> vm.mapCenter = la to lo })
                         }
                     }
-                    Tab.CODEX -> CodexScreen(d) { vm.open(Screen.SpeciesDetail(it)) }
+                    Tab.CODEX -> CodexScreen(d, { vm.open(Screen.Nearby) }) { vm.open(Screen.SpeciesDetail(it)) }
                     Tab.HABITATS -> HabitatsScreen(d, vm.here, charting, { vm.open(Screen.HabitatDetail(it)) }, vm::chart)
                     Tab.QUESTS -> QuestScreen(d)
                     Tab.JOURNAL -> JournalScreen(d, vm.catalog, { vm.open(Screen.Stillness) }, { vm.open(Screen.NewLandmark) }, { vm.open(Screen.LandmarkDetail(it)) },
                         { vm.open(Screen.Data) }, vm::reviewDetection, { vm.dismissDetection(it) }, { vm.open(Screen.SpeciesDetail(it)) })
                 }
                 is Screen.SpeciesDetail -> d.entry(top.id)?.let { e ->
-                    SpeciesDetailScreen(d, e, vm.catalog, { vm.back() }, { vm.open(Screen.SpeciesDetail(it)) }, { vm.deleteObservation(it) })
+                    SpeciesDetailScreen(d, e, vm.catalog, { vm.back() }, { vm.open(Screen.SpeciesDetail(it)) }, { vm.deleteObservation(it) }, { confirmShare = listOf(it) })
                 }
+                Screen.Nearby -> NearbyScreen(d, community, vm.catalog, { vm.back() }, vm::loadCommunity) { vm.open(Screen.SpeciesDetail(it)) }
                 is Screen.HabitatDetail -> d.world.habitats.firstOrNull { it.id == top.id }?.let { h ->
                     HabitatDetailScreen(d, h, vm.catalog, { vm.back() }, { vm.open(Screen.SpeciesDetail(it)) }, { vm.open(Screen.NewAction(h.id)) },
                         { a -> taker.take("after") { f -> vm.completeAction(a, f) } })
@@ -171,11 +184,39 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
                 }
                 Screen.Data -> DataScreen(haptics, chimes, { haptics = it; vm.cues.haptics = it }, { chimes = it; vm.cues.chimes = it }, { vm.back() },
                     { savePublic.launch("terra-public-atlas.geojson") }, { saveResearch.launch("terra-research-precise.geojson") },
-                    { saveArchive.launch("terra-archive.zip") }, { openArchive.launch(arrayOf("application/zip", "application/octet-stream")) })
+                    { saveArchive.launch("terra-archive.zip") }, { openArchive.launch(arrayOf("application/zip", "application/octet-stream")) },
+                    inatToken, vm.unshared(d).size, vm.unshared(d).count { it.photoPath != null }, sharing, vm::setInatToken,
+                    { uri.openUri(org.terra.app.domain.Community.INAT_TOKEN_PAGE) }, { confirmShare = vm.unshared(d).filter { it.photoPath != null } },
+                    { saveDwc.launch("terra-darwin-core.csv") })
             }
         }
     }
     reward?.let { RewardDialog(it) { vm.reward.value = null } }
+    shownRecord?.let { r ->
+        AlertDialog(
+            onDismissRequest = { shownRecord = null },
+            title = { Text(r.name.replaceFirstChar { it.uppercase() }) },
+            text = {
+                Column {
+                    Text(r.scientific, style = MaterialTheme.typography.titleSmall)
+                    Text(listOf(r.source.label, r.date).filter { it.isNotBlank() }.joinToString(" · "), style = MaterialTheme.typography.bodyMedium)
+                    Text(r.credit, style = MaterialTheme.typography.bodySmall)
+                    if (r.obscured) Text("Its publisher has obscured the true position.", style = MaterialTheme.typography.bodySmall)
+                }
+            },
+            confirmButton = { Button(onClick = { uri.openUri(r.url); shownRecord = null }) { Text("View on ${r.source.label}") } },
+            dismissButton = { androidx.compose.material3.TextButton(onClick = { shownRecord = null }) { Text("Close") } }
+        )
+    }
+    confirmShare?.let { list ->
+        AlertDialog(
+            onDismissRequest = { confirmShare = null },
+            title = { Text(if (list.size == 1) "Share this record?" else "Share ${list.size} records?") },
+            text = { Text(if (inatToken.isBlank()) "Add your iNaturalist token in Journal → Data & ethics first." else "This posts ${if (list.size == 1) "it" else "them"} publicly on iNaturalist under your account, with the photo, date and location. Sensitive species are sent with the location obscured. You can edit or delete records on iNaturalist afterwards.") },
+            confirmButton = { Button(enabled = inatToken.isNotBlank(), onClick = { vm.shareToInat(list); confirmShare = null }) { Text("Share publicly") } },
+            dismissButton = { androidx.compose.material3.TextButton(onClick = { confirmShare = null }) { Text("Cancel") } }
+        )
+    }
 }
 
 @Composable

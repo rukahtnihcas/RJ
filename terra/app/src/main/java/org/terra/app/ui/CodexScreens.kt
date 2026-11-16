@@ -52,7 +52,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-fun CodexScreen(d: Derived, onOpen: (String) -> Unit) {
+fun CodexScreen(d: Derived, onNearby: () -> Unit = {}, onOpen: (String) -> Unit) {
     var group by rememberSaveable { mutableStateOf<LifeGroup?>(null) }
     var local by rememberSaveable { mutableStateOf(true) }
     val shown = d.entries.filter { (group == null || it.species.group == group) && (!local || it.species.occursIn(d.region) || it.level != CodexLevel.UNSEEN) }
@@ -60,7 +60,7 @@ fun CodexScreen(d: Derived, onOpen: (String) -> Unit) {
     val found = shown.count { it.level != CodexLevel.UNSEEN }
     val webs = shown.count { it.level == CodexLevel.COMPLETE }
     Column(Modifier.fillMaxSize()) {
-        ScreenHeader("Field Codex", "$found of ${shown.size} found · $webs webs complete")
+        ScreenHeader("Field Codex", "$found of ${shown.size} found · $webs webs complete", trailing = { TextButton(onClick = onNearby) { Text("Recorded nearby") } })
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(local, { local = !local }, label = { Text(if (local) d.region.label else "All regions") })
             FilterChip(group == null, { group = null }, label = { Text("All life") })
@@ -107,7 +107,7 @@ private fun NodeDots(done: Int, total: Int, seen: Boolean) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SpeciesDetailScreen(d: Derived, e: CodexEntry, catalog: Catalog, onBack: () -> Unit, onOpen: (String) -> Unit, onDelete: (Long) -> Unit) {
+fun SpeciesDetailScreen(d: Derived, e: CodexEntry, catalog: Catalog, onBack: () -> Unit, onOpen: (String) -> Unit, onDelete: (Long) -> Unit, onShare: (org.terra.app.model.Observation) -> Unit = {}) {
     val s = e.species
     val seen = e.level != CodexLevel.UNSEEN
     val habitats = d.world.habitats.associateBy { it.id }
@@ -205,8 +205,12 @@ fun SpeciesDetailScreen(d: Derived, e: CodexEntry, catalog: Catalog, onBack: () 
                             Text(listOfNotNull(o.method.label, habitats[o.habitatId ?: -1]?.name, o.lifeStage, o.phenotype, if (o.heritage) "heritage tree" else null).joinToString(" · "),
                                 style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
                             if (o.note.isNotBlank()) Text(o.note, style = MaterialTheme.typography.bodyMedium)
+                            if (o.inatId != null) Text("Shared · iNaturalist #${o.inatId}", style = MaterialTheme.typography.bodySmall, color = pigments.water)
                         }
-                        TextButton(onClick = { onDelete(o.id) }) { Text("Remove") }
+                        Column(horizontalAlignment = Alignment.End) {
+                            if (o.inatId == null) TextButton(onClick = { onShare(o) }) { Text("Share") }
+                            TextButton(onClick = { onDelete(o.id) }) { Text("Remove") }
+                        }
                     }
                 }
             }

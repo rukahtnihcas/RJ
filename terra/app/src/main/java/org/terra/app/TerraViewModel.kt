@@ -24,6 +24,11 @@ import org.terra.app.domain.BountyEngine
 import org.terra.app.domain.BountyProgress
 import org.terra.app.domain.Catalog
 import org.terra.app.domain.CodexEngine
+import org.terra.app.domain.Community
+import org.terra.app.domain.CommunityRecord
+import org.terra.app.domain.NearbySpecies
+import org.terra.app.data.ApiException
+import org.terra.app.data.CommunityApi
 import org.terra.app.domain.CodexEntry
 import org.terra.app.domain.CodexLevel
 import org.terra.app.domain.Exporter
@@ -61,6 +66,7 @@ sealed interface Screen {
     data class LandmarkDetail(val id: Long) : Screen
     data class NewAction(val habitatId: Long) : Screen
     data object Data : Screen
+    data object Nearby : Screen
 }
 
 enum class Tab(val label: String) { FIELD("Field"), CODEX("Codex"), HABITATS("Habitats"), QUESTS("Quests"), JOURNAL("Journal") }
@@ -93,6 +99,13 @@ data class Draft(
 
 data class Reward(val title: String, val lines: List<String>)
 
+/** What iNaturalist and GBIF hold for the ground around the player. */
+data class CommunityState(
+    val on: Boolean = false, val loading: Boolean = false,
+    val records: List<CommunityRecord> = emptyList(), val species: List<NearbySpecies> = emptyList(),
+    val loadedAt: Pair<Double, Double>? = null
+)
+
 sealed interface SweepState {
     data object Idle : SweepState
     data class Listening(val progress: Float, val spectrum: FloatArray?) : SweepState
@@ -117,6 +130,10 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
     val reward = MutableStateFlow<Reward?>(null)
     val charting = MutableStateFlow(false)
     val publicView = MutableStateFlow(false)
+    val community = MutableStateFlow(CommunityState())
+    val sharing = MutableStateFlow(false)
+    private val prefs = app.getSharedPreferences("terra", android.content.Context.MODE_PRIVATE)
+    val inatToken = MutableStateFlow(prefs.getString("inat_token", "").orEmpty())
     /** Where the map is looking — the fallback position when there is no GPS fix. */
     var mapCenter: Pair<Double, Double>? = null
     private var sweepJob: Job? = null
@@ -155,7 +172,7 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
         val d = derived.value
         val habitat = HabitatEngine.containing(d.world.habitats, f.lat, f.lon)
         val groups = Catalog.groupsSeen(labels)
-        val suggestions = catalog.suggest(labels, d.region, d.season, habitat?.type)
+        val suggestions = catalog.suggest(labels, d.region, d.season, habitat?.type, nearby = community.value.species.map { it.scientific.lowercase() }.toSet())
         val evidence = if (groups.isEmpty()) "The camera could not place this. It can tell birds, plants, trees and insects apart; for fungi, frogs, reptiles and mammals, choose the group below."
         else "The camera sees: " + groups.entries.sortedByDescending { it.value }.joinToString(", ") { "${it.key.label.lowercase()} (${(it.value * 100).toInt()}%)" }
         draft.value = Draft(ObsMethod.PHOTO, file.path, if (groups.isEmpty()) emptyList() else suggestions.map { Candidate(it.species, it.score, it.why) }, evidence)
@@ -296,6 +313,62 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun deleteObservation(id: Long) = viewModelScope.launch { repo.deleteObservation(id) }
+
+    // ── the commons: iNaturalist & GBIF ──
+    fun toggleCommunity() {
+        if (community.value.on) community.value = community.value.copy(on = false) else loadCommunity()
+    }
+
+    fun loadCommunity() = viewModelScope.launch {
+        if (community.value.loading) return@launch
+        val f = mapCenter?.let { Fix(it.first, it.second, null, 0) } ?: here
+        community.value = community.value.copy(on = true, loading = true)
+        val r = CommunityApi.nearby(f.lat, f.lon)
+        community.value = CommunityState(true, false, r.records, r.species, f.lat to f.lon)
+        say(when {
+            r.failed.size == 2 -> "Could not reach iNaturalist or GBIF."
+            r.failed.isNotEmpty() -> "${r.records.size} community records loaded; ${r.failed[0]} did not answer."
+            else -> "${r.records.size} community records and ${r.species.size} species loaded for 1.5 km around the map centre."
+        })
+    }
+
+    fun setInatToken(t: String) {
+        val clean = t.trim().removeSurrounding("\"").removePrefix("{\"api_token\":\"").removeSuffix("\"}")
+        inatToken.value = clean
+        prefs.edit().putString("inat_token", clean).apply()
+    }
+
+    /** Records not yet on iNaturalist. Custom entries are shared too, as a name for the community to identify. */
+    fun unshared(d: Derived = derived.value) = d.world.observations.filter { it.inatId == null }
+
+    fun shareToInat(list: List<Observation>) = viewModelScope.launch {
+        val token = inatToken.value
+        if (token.isBlank()) { say("Add your iNaturalist token in Data & ethics first."); return@launch }
+        if (sharing.value || list.isEmpty()) return@launch
+        sharing.value = true
+        var done = 0
+        var problem: String? = null
+        for (o in list) {
+            val s = catalog[o.speciesId]
+            try {
+                repo.markShared(o.id, CommunityApi.shareToInat(o, s?.scientific, o.sensitive || s?.sensitive == true, token))
+                done++
+            } catch (e: ApiException) {
+                problem = if (e.code == 401) "iNaturalist rejected the token — they expire after 24 hours. Fetch a fresh one." else "iNaturalist answered ${e.code}."
+                break
+            } catch (e: Exception) {
+                problem = "Could not reach iNaturalist."
+                break
+            }
+        }
+        sharing.value = false
+        say(listOfNotNull(if (done > 0) "Shared $done ${if (done == 1) "record" else "records"} with iNaturalist." else null, problem).joinToString(" "))
+    }
+
+    fun exportDarwinCore(uri: Uri, research: Boolean) = viewModelScope.launch {
+        runCatching { repo.writeText(uri, Community.darwinCoreCsv(derived.value.world.observations, catalog, research)) }
+            .fold({ say("Darwin Core table saved.") }, { say("Export failed.") })
+    }
 
     // ── open data ──
     fun exportGeoJson(uri: Uri, research: Boolean) = viewModelScope.launch {

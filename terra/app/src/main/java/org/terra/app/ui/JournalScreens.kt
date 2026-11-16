@@ -255,7 +255,9 @@ fun StillnessScreen(status: StillnessStatus, d: Derived, catalog: Catalog, onBac
 @Composable
 fun DataScreen(
     haptics: Boolean, chimes: Boolean, onHaptics: (Boolean) -> Unit, onChimes: (Boolean) -> Unit, onBack: () -> Unit,
-    onPublic: () -> Unit, onResearch: () -> Unit, onArchive: () -> Unit, onRestore: () -> Unit
+    onPublic: () -> Unit, onResearch: () -> Unit, onArchive: () -> Unit, onRestore: () -> Unit,
+    token: String = "", unshared: Int = 0, unsharedWithPhoto: Int = 0, sharing: Boolean = false, onToken: (String) -> Unit = {},
+    onGetToken: () -> Unit = {}, onShareAll: () -> Unit = {}, onDarwinCore: () -> Unit = {}
 ) {
     Column(Modifier.fillMaxSize()) {
         ScreenHeader("Data & ethics", "Your records, your terms", onBack)
@@ -275,6 +277,27 @@ fun DataScreen(
             PaperCard(padding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) { Text("Haptic pulse on entering a habitat", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium); Switch(haptics, onHaptics) }
                 Row(verticalAlignment = Alignment.CenterVertically) { Text("Directional chime for new habitats", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium); Switch(chimes, onChimes) }
+            }
+            Eyebrow("Share with iNaturalist & GBIF")
+            PaperCard {
+                Text("iNaturalist is the open community where naturalists confirm each other's records. Once a record with a photo is confirmed there, iNaturalist publishes it to GBIF, the global biodiversity database researchers use. GBIF takes no individual uploads, so this is the route in.", style = MaterialTheme.typography.bodyMedium)
+                Gap(8.dp)
+                Text("1. Sign in at inaturalist.org and fetch a personal token. It lasts 24 hours.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                OutlinedButton(onClick = onGetToken) { Text("Open the token page") }
+                Gap(4.dp)
+                Text("2. Paste it here. It is kept only on this phone.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                OutlinedTextField(token, onToken, label = { Text("iNaturalist token") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                Gap(8.dp)
+                Text("3. Share. $unshared ${if (unshared == 1) "record is" else "records are"} not yet shared, $unsharedWithPhoto with a photo. Records are posted publicly under your iNaturalist account; sensitive species are sent with their location obscured. Sharing is always your choice — nothing is sent automatically.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                Gap(4.dp)
+                Button(onClick = onShareAll, enabled = !sharing && token.isNotBlank() && unsharedWithPhoto > 0) { Text(if (sharing) "Sharing…" else "Share $unsharedWithPhoto photo records") }
+                Text("Records without a photo can be shared one at a time from a species page; iNaturalist keeps those as 'casual' and does not pass them to GBIF.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                Gap(8.dp)
+                Rule()
+                Gap(8.dp)
+                Text("Darwin Core table", style = MaterialTheme.typography.titleMedium)
+                Text("A CSV in the standard GBIF publishers use, for handing your records to a local records centre, society or museum. Sensitive species are generalised.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                OutlinedButton(onClick = onDarwinCore) { Text("Export Darwin Core CSV") }
             }
             Eyebrow("Open data")
             PaperCard {
@@ -297,7 +320,56 @@ fun DataScreen(
                     OutlinedButton(onClick = onRestore) { Text("Restore") }
                 }
             }
-            Text("Base map and habitat outlines © OpenStreetMap contributors (ODbL).", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+            Text("Base map and habitat outlines © OpenStreetMap contributors (ODbL). Community records come from iNaturalist and GBIF and remain under each contributor's licence.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+            Gap(24.dp)
+        }
+    }
+}
+
+/** What the commons has recorded around you — and which of it you have yet to find yourself. */
+@Composable
+fun NearbyScreen(d: Derived, state: org.terra.app.CommunityState, catalog: Catalog, onBack: () -> Unit, onLoad: () -> Unit, onSpecies: (String) -> Unit) {
+    val byScientific = catalog.species.associateBy { it.scientific.lowercase() }
+    val mine = d.world.observations.mapNotNull { catalog[it.speciesId]?.scientific?.lowercase() }.toSet()
+    val found = state.species.count { it.scientific.lowercase() in mine }
+    Column(Modifier.fillMaxSize()) {
+        ScreenHeader("Recorded nearby", "What others have found within 1.5 km", onBack)
+        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            if (state.species.isEmpty()) {
+                PaperCard {
+                    Text("See your neighbourhood through thousands of other eyes.", style = MaterialTheme.typography.titleMedium)
+                    Gap(6.dp)
+                    Text("TERRA asks iNaturalist which species people have recorded around the centre of your map, and GBIF for museum and survey records. Only the map position is sent — nothing about you.", style = MaterialTheme.typography.bodyMedium)
+                }
+                Button(onClick = onLoad, enabled = !state.loading, modifier = Modifier.fillMaxWidth()) { Text(if (state.loading) "Asking iNaturalist & GBIF…" else "Load community records") }
+            } else {
+                PaperCard(tint = pigments.wash) {
+                    Eyebrow("${state.species.size} species recorded here by the community", color = pigments.water)
+                    Gap(4.dp)
+                    Text("You have found $found of them.", style = MaterialTheme.typography.headlineSmall)
+                    Meter(found.toFloat() / state.species.size, color = pigments.water)
+                    Gap(4.dp)
+                    Text("Most-recorded first. Species counts from iNaturalist.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                }
+                for (n in state.species) {
+                    val known = byScientific[n.scientific.lowercase()]
+                    PaperCard(onClick = known?.let { { onSpecies(it.id) } }, padding = PaddingValues(10.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Stamp(known?.glyph ?: n.group.glyph, 40.dp, modifier = Modifier.alpha(if (n.scientific.lowercase() in mine) 1f else 0.45f))
+                            GapW(10.dp)
+                            Column(Modifier.weight(1f)) {
+                                Text(n.name.replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.titleMedium)
+                                Text("${n.scientific} · ${n.count} ${if (n.count == 1) "record" else "records"}", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                            }
+                            when {
+                                n.scientific.lowercase() in mine -> Tag("Found", pigments.moss)
+                                known != null -> Tag("In the guide", pigments.ochre)
+                            }
+                        }
+                    }
+                }
+                OutlinedButton(onClick = onLoad, enabled = !state.loading, modifier = Modifier.fillMaxWidth()) { Text(if (state.loading) "Loading…" else "Reload for the current map centre") }
+            }
             Gap(24.dp)
         }
     }

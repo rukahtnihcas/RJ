@@ -44,6 +44,7 @@ interface TerraDao {
     @Query("UPDATE habitats SET firstVisitedAt = :at WHERE id = :id AND firstVisitedAt IS NULL")
     suspend fun markVisited(id: Long, at: Long)
     @Query("UPDATE detections SET resolved = :state WHERE id = :id") suspend fun resolve(id: Long, state: Int)
+    @Query("UPDATE observations SET inatId = :inatId WHERE id = :id") suspend fun markShared(id: Long, inatId: Long)
     @Query("DELETE FROM observations WHERE id = :id") suspend fun deleteObservation(id: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun restoreObservations(x: List<Observation>)
@@ -58,13 +59,19 @@ interface TerraDao {
 @Database(
     entities = [Observation::class, Habitat::class, StewardAction::class, Landmark::class,
         LandmarkEntry::class, StillnessSession::class, Detection::class],
-    version = 1, exportSchema = true
+    version = 2, exportSchema = true
 )
 abstract class TerraDb : RoomDatabase() {
     abstract fun dao(): TerraDao
 
     companion object {
         fun open(context: Context): TerraDb =
-            Room.databaseBuilder(context, TerraDb::class.java, "terra.db").build()
+            Room.databaseBuilder(context, TerraDb::class.java, "terra.db").addMigrations(MIGRATION_1_2).build()
+
+        val MIGRATION_1_2 = object : androidx.room.migration.Migration(1, 2) {
+            override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE observations ADD COLUMN inatId INTEGER")
+            }
+        }
     }
 }

@@ -80,6 +80,7 @@ class Repository(private val context: Context, val dao: TerraDao, val catalog: C
     suspend fun addDetection(d: Detection) = dao.insert(d)
     suspend fun resolveDetection(id: Long, state: Int) = dao.resolve(id, state)
     suspend fun deleteObservation(id: Long) = dao.deleteObservation(id)
+    suspend fun markShared(id: Long, inatId: Long) = dao.markShared(id, inatId)
 
     suspend fun writeText(uri: Uri, text: String) = withContext(Dispatchers.IO) {
         context.contentResolver.openOutputStream(uri)!!.use { it.write(text.toByteArray()) }

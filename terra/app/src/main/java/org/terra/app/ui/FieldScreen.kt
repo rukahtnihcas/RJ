@@ -45,10 +45,10 @@ import org.terra.app.sensing.Fix
 
 @Composable
 fun FieldScreen(
-    d: Derived, fix: Fix?, locationGranted: Boolean, publicView: Boolean, charting: Boolean, walking: Boolean,
+    d: Derived, fix: Fix?, locationGranted: Boolean, publicView: Boolean, charting: Boolean, walking: Boolean, community: org.terra.app.CommunityState,
     onGrant: () -> Unit, onScan: () -> Unit, onSweep: () -> Unit, onStillness: () -> Unit,
     onChart: () -> Unit, onMark: (String, HabitatType, Double) -> Unit, onTogglePublic: () -> Unit,
-    onHabitat: (Long) -> Unit, onRecenter: () -> Unit, onWalk: () -> Unit, map: @Composable (Modifier) -> Unit
+    onHabitat: (Long) -> Unit, onRecenter: () -> Unit, onWalk: () -> Unit, onCommunity: () -> Unit, map: @Composable (Modifier) -> Unit
 ) {
     val here: Habitat? = fix?.let { HabitatEngine.containing(d.world.habitats, it.lat, it.lon) }
     var marking by remember { mutableStateOf(false) }
@@ -85,6 +85,10 @@ fun FieldScreen(
                 OutlinedButton(onClick = onWalk, colors = if (walking) androidx.compose.material3.ButtonDefaults.outlinedButtonColors(containerColor = pigments.moss, contentColor = pigments.card) else paperButton(), contentPadding = PaddingValues(horizontal = 12.dp)) {
                     Text(if (walking) "Walk mode on" else "Start walk mode", style = MaterialTheme.typography.labelMedium)
                 }
+            }
+            OutlinedButton(onClick = onCommunity, enabled = !community.loading, colors = if (community.on) androidx.compose.material3.ButtonDefaults.outlinedButtonColors(containerColor = pigments.water, contentColor = pigments.card) else paperButton(), contentPadding = PaddingValues(horizontal = 12.dp)) {
+                if (community.loading) { CircularProgressIndicator(Modifier.size(14.dp), strokeWidth = 2.dp); GapW(8.dp) }
+                Text(when { community.loading -> "Asking iNaturalist & GBIF…"; community.on -> "Community records: ${community.records.size}"; else -> "Show iNaturalist & GBIF records" }, style = MaterialTheme.typography.labelMedium)
             }
             if (publicView) PaperCard(Modifier.widthIn(max = 280.dp), padding = PaddingValues(10.dp)) {
                 Text("This is what the open atlas shows. Dashed pins are sensitive species, moved to a ~20 km grid so they cannot be found.", style = MaterialTheme.typography.bodySmall)
@@ -146,7 +150,10 @@ fun MarkHabitatDialog(onDismiss: () -> Unit, onConfirm: (String, HabitatType, Do
 }
 
 /** Builds what the map draws. In public view, sensitive records are shown where the open atlas would show them. */
-fun mapModel(d: Derived, fix: Fix?, publicView: Boolean, healthColor: (Int) -> Int, paper: Int, ink: Int, glyphOf: (String) -> String?): MapModel {
+fun mapModel(
+    d: Derived, fix: Fix?, publicView: Boolean, healthColor: (Int) -> Int, paper: Int, ink: Int,
+    community: List<org.terra.app.domain.CommunityRecord> = emptyList(), communityInk: Int = ink, glyphOf: (String) -> String?
+): MapModel {
     val pins = d.world.observations.groupBy { it.speciesId }.flatMap { (id, list) ->
         // One pin per species per ~30 m spot keeps a well-watched park legible.
         list.distinctBy { ((it.lat * 3000).toInt()) to ((it.lon * 3000).toInt()) }.map { o ->
@@ -156,6 +163,7 @@ fun mapModel(d: Derived, fix: Fix?, publicView: Boolean, healthColor: (Int) -> I
     }.distinctBy { Triple(it.key, it.lat, it.lon) }
     return MapModel(
         d.world.habitats.map { MapArea(it.id, it.lat, it.lon, it.radiusM, healthColor(d.health[it.id]?.score ?: 15), it.firstVisitedAt != null) },
-        pins, fix?.let { Triple(it.lat, it.lon, it.accuracyM) }, paper, ink
+        // Community records sit underneath the player's own, in a different ink.
+        community.mapIndexed { i, r -> MapPin("ext:$i", r.lat, r.lon, r.group.glyph, communityInk, r.obscured) } + pins, fix?.let { Triple(it.lat, it.lon, it.accuracyM) }, paper, ink
     )
 }

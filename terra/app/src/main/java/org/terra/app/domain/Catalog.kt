@@ -21,7 +21,9 @@ class Catalog(val species: List<Species>) {
      */
     fun suggest(
         labels: List<Pair<String, Float>>, region: Region, season: Season,
-        habitat: HabitatType?, limit: Int = 12
+        habitat: HabitatType?, limit: Int = 12,
+        /** Scientific names the community has recorded nearby (from iNaturalist), lower-cased. */
+        nearby: Set<String> = emptySet()
     ): List<Suggestion> {
         val groups = groupsSeen(labels)
         return species.mapNotNull { s ->
@@ -33,6 +35,7 @@ class Catalog(val species: List<Species>) {
             else if (groups[s.group] != null) { score += 0.6f * groups.getValue(s.group) }
             if (score == 0f && labels.isNotEmpty()) return@mapNotNull null
             if (s.occursIn(region)) { score += 0.8f; why += "found in ${region.label}" } else score -= 1.5f
+            if (s.scientific.lowercase() in nearby) { score += 0.6f; why += "recorded nearby by others" }
             if (season in s.seasons) { score += 0.3f; why += "in season" }
             if (habitat != null && habitat in s.habitats) { score += 0.3f; why += "fits this habitat" }
             if (score <= 0f) null else Suggestion(s, score, why.joinToString(" · "))
