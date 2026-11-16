@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -133,7 +134,12 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
     val community = MutableStateFlow(CommunityState())
     val sharing = MutableStateFlow(false)
     private val prefs = app.getSharedPreferences("terra", android.content.Context.MODE_PRIVATE)
-    val inatToken = MutableStateFlow(prefs.getString("inat_token", "").orEmpty())
+    val inat = terra.inat
+    val inatToken = MutableStateFlow(inat.pastedToken)
+    val signedIn = MutableStateFlow(inat.signedIn)
+    val autoShare = MutableStateFlow(inat.autoShare)
+    val autoSync = MutableStateFlow(inat.autoSync)
+    val syncing = MutableStateFlow(false)
     /** Where the map is looking — the fallback position when there is no GPS fix. */
     var mapCenter: Pair<Double, Double>? = null
     private var sweepJob: Job? = null
@@ -146,6 +152,8 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
 
     init {
         viewModelScope.launch { terra.notices.collect { say(it) } }
+        // Habitats keep themselves in step with the open databases; shared records follow if the player opted in.
+        viewModelScope.launch { derived.first { it.loaded }; syncHabitats(quiet = true); autoShareNow() }
     }
 
     val here: Fix get() = fix.value ?: mapCenter?.let { Fix(it.first, it.second, null, System.currentTimeMillis()) } ?: location.home
@@ -231,6 +239,7 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
         cues.pulse(1)
         draft.value = null
         home()
+        autoShareNow()
     }
 
     private fun rewardFor(o: Observation, species: Species?, before: Derived, after: Derived): Reward {
@@ -263,7 +272,7 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
         charting.value = true
         val f = here
         repo.chartHabitats(f.lat, f.lon).fold(
-            { say(if (it == 0) "No new habitats found within 1.5 km." else "Charted $it habitats nearby.") },
+            { say(if (it == 0) "No new habitats found within 1.5 km." else "Charted $it habitats nearby."); syncHabitats(quiet = true) },
             { say("Could not reach the map service. You can still mark a habitat by hand.") })
         charting.value = false
     }
@@ -332,29 +341,73 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
         })
     }
 
+    /** Pulls iNaturalist, eBird and GBIF knowledge into the nearest habitats that are due. Needs no account. */
+    fun syncHabitats(quiet: Boolean = false, force: Boolean = false) = viewModelScope.launch {
+        if (syncing.value || (quiet && !autoSync.value)) return@launch
+        syncing.value = true
+        val f = here
+        val n = runCatching { repo.syncDue(f.lat, f.lon, maxAgeMs = if (force) 0 else 7 * 86_400_000L) }.getOrDefault(0)
+        syncing.value = false
+        if (!quiet) say(if (n == 0) "Habitats could not be refreshed — are you online?" else "Refreshed $n ${if (n == 1) "habitat" else "habitats"} from iNaturalist, eBird and GBIF.")
+    }
+
+    fun syncHabitat(h: Habitat, force: Boolean = false) = viewModelScope.launch {
+        if (!force && (!autoSync.value || System.currentTimeMillis() - repo.syncedAt(h.id) < 7 * 86_400_000L)) return@launch
+        syncing.value = true
+        val ok = runCatching { repo.syncHabitat(h) }.getOrDefault(false)
+        syncing.value = false
+        if (force) say(if (ok) "${h.name} refreshed from iNaturalist, eBird and GBIF." else "Could not reach the databases.")
+    }
+
+    fun setAutoSync(on: Boolean) { inat.autoSync = on; autoSync.value = on; if (on) syncHabitats(quiet = true) }
+    fun setAutoShare(on: Boolean) { inat.autoShare = on; autoShare.value = on; if (on) autoShareNow() }
+
     fun setInatToken(t: String) {
         val clean = t.trim().removeSurrounding("\"").removePrefix("{\"api_token\":\"").removeSuffix("\"}")
         inatToken.value = clean
-        prefs.edit().putString("inat_token", clean).apply()
+        inat.pastedToken = clean
     }
+
+    fun finishSignIn(code: String?) = viewModelScope.launch {
+        if (code == null) { say("iNaturalist sign-in was cancelled."); return@launch }
+        val ok = inat.finishSignIn(code)
+        signedIn.value = inat.signedIn
+        say(if (ok) "Signed in to iNaturalist. TERRA will not ask again." else "iNaturalist sign-in did not complete.")
+        if (ok) autoShareNow()
+    }
+    fun signOut() { inat.signOut(); signedIn.value = false }
 
     /** Records not yet on iNaturalist. Custom entries are shared too, as a name for the community to identify. */
     fun unshared(d: Derived = derived.value) = d.world.observations.filter { it.inatId == null }
 
-    fun shareToInat(list: List<Observation>) = viewModelScope.launch {
-        val token = inatToken.value
-        if (token.isBlank()) { say("Add your iNaturalist token in Data & ethics first."); return@launch }
+    /** If the player has opted in and is linked, new photo records go to iNaturalist without further prompts. */
+    private fun autoShareNow() {
+        if (autoShare.value && inat.ready) shareToInat(unshared().filter { it.photoPath != null }, quiet = true)
+    }
+
+    fun shareToInat(list: List<Observation>, quiet: Boolean = false) = viewModelScope.launch {
+        if (!inat.ready) { if (!quiet) say("Link iNaturalist in Data & ethics first."); return@launch }
         if (sharing.value || list.isEmpty()) return@launch
         sharing.value = true
         var done = 0
         var problem: String? = null
+        var token = runCatching { inat.apiToken() }.getOrNull()
         for (o in list) {
             val s = catalog[o.speciesId]
+            val sensitive = o.sensitive || s?.sensitive == true
             try {
-                repo.markShared(o.id, CommunityApi.shareToInat(o, s?.scientific, o.sensitive || s?.sensitive == true, token))
+                val id = try {
+                    CommunityApi.shareToInat(o, s?.scientific, sensitive, token ?: throw ApiException(401, "no token"))
+                } catch (e: ApiException) {
+                    // A stale API token is renewed once, silently, when the player is signed in.
+                    if (e.code != 401 || !inat.signedIn) throw e
+                    token = inat.apiToken(forceFresh = true)
+                    CommunityApi.shareToInat(o, s?.scientific, sensitive, token ?: throw e)
+                }
+                repo.markShared(o.id, id)
                 done++
             } catch (e: ApiException) {
-                problem = if (e.code == 401) "iNaturalist rejected the token — they expire after 24 hours. Fetch a fresh one." else "iNaturalist answered ${e.code}."
+                problem = if (e.code == 401) (if (inat.signedIn) "iNaturalist no longer accepts this sign-in. Sign in again." else "iNaturalist rejected the token — pasted tokens expire after 24 hours.") else "iNaturalist answered ${e.code}."
                 break
             } catch (e: Exception) {
                 problem = "Could not reach iNaturalist."
@@ -362,7 +415,7 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
         sharing.value = false
-        say(listOfNotNull(if (done > 0) "Shared $done ${if (done == 1) "record" else "records"} with iNaturalist." else null, problem).joinToString(" "))
+        if (!quiet || done > 0) say(listOfNotNull(if (done > 0) "Shared $done ${if (done == 1) "record" else "records"} with iNaturalist." else null, problem.takeIf { !quiet }).joinToString(" "))
     }
 
     fun exportDarwinCore(uri: Uri, research: Boolean) = viewModelScope.launch {
@@ -389,7 +442,7 @@ class TerraViewModel(app: Application) : AndroidViewModel(app) {
             val entries = CodexEngine.entries(catalog, w.observations, w.habitats)
             return Derived(
                 w, entries,
-                w.habitats.associate { it.id to HabitatEngine.health(it, w.observations, w.actions, catalog, now) },
+                w.habitats.associate { it.id to HabitatEngine.health(it, w.observations, w.actions, catalog, now, w.habitatSpecies) },
                 BadgeEngine.badges(w, catalog, entries),
                 BountyEngine.current(w, catalog, at.lat, at.lon, now),
                 Region.of(at.lat, at.lon), Phenology.season(now, at.lat), loaded = true

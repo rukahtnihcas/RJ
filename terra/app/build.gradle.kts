@@ -15,8 +15,11 @@ android {
         applicationId = "org.terra.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
+        // Client id of an application registered at inaturalist.org/oauth/applications (redirect: terra://inat-auth).
+        // Supply with -Pterra.inatClientId=… or in ~/.gradle/gradle.properties. Empty = token-paste fallback.
+        buildConfigField("String", "INAT_CLIENT_ID", "\"${providers.gradleProperty("terra.inatClientId").orElse("").get()}\"")
     }
 
     buildTypes {
@@ -31,7 +34,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
     testOptions {
         unitTests {
             isIncludeAndroidResources = true

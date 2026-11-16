@@ -33,8 +33,8 @@ class Repository(private val context: Context, val dao: TerraDao, val catalog: C
     val world: Flow<World> = combine(
         combine(dao.observations(), dao.habitats(), dao.actions()) { o, h, a -> Triple(o, h, a) },
         combine(dao.landmarks(), dao.entries()) { l, e -> l to e },
-        combine(dao.sessions(), dao.detections()) { s, d -> s to d }
-    ) { (o, h, a), (l, e), (s, d) -> World(o, h, a, l, e, s, d) }
+        combine(dao.sessions(), dao.detections(), dao.habitatSpecies()) { s, d, hs -> Triple(s, d, hs) }
+    ) { (o, h, a), (l, e), (s, d, hs) -> World(o, h, a, l, e, s, d, hs) }
 
     /** Saves an observation, attaching the habitat it falls in and its sensitivity flag. */
     suspend fun addObservation(o: Observation): Observation {
@@ -64,6 +64,28 @@ class Repository(private val context: Context, val dao: TerraDao, val catalog: C
         val now = System.currentTimeMillis()
         return dao.insert(Habitat(name = name, type = type, lat = lat, lon = lon, radiusM = radiusM,
             source = HabitatSource.PLAYER, firstVisitedAt = now, createdAt = now))
+    }
+
+    private val syncPrefs = context.getSharedPreferences("terra_sync", Context.MODE_PRIVATE)
+    fun syncedAt(habitatId: Long): Long = syncPrefs.getLong("h$habitatId", 0)
+
+    /** Refreshes one habitat from iNaturalist, eBird and GBIF. No account or key is involved. */
+    suspend fun syncHabitat(h: Habitat): Boolean {
+        val now = System.currentTimeMillis()
+        val rows = CommunityApi.habitat(h, now) ?: return false
+        dao.replaceHabitatSpecies(h.id, rows)
+        syncPrefs.edit().putLong("h${h.id}", now).apply()
+        return true
+    }
+
+    /** Keeps the nearest habitats fresh: anything not synced in the last [maxAgeMs], closest first, a few per pass. */
+    suspend fun syncDue(lat: Double, lon: Double, maxAgeMs: Long = 7 * 86_400_000L, limit: Int = 6): Int {
+        val now = System.currentTimeMillis()
+        val due = dao.habitatsNow().filter { now - syncedAt(it.id) > maxAgeMs }
+            .sortedBy { org.terra.app.domain.Geo.distanceM(lat, lon, it.lat, it.lon) }.take(limit)
+        var done = 0
+        for (h in due) { if (syncHabitat(h)) done++ else break }
+        return done
     }
 
     suspend fun markVisited(id: Long) = dao.markVisited(id, System.currentTimeMillis())

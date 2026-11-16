@@ -20,7 +20,9 @@ data class World(
     val landmarks: List<Landmark> = emptyList(),
     val entries: List<LandmarkEntry> = emptyList(),
     val sessions: List<StillnessSession> = emptyList(),
-    val detections: List<Detection> = emptyList()
+    val detections: List<Detection> = emptyList(),
+    /** What iNaturalist, eBird and GBIF hold for each habitat. */
+    val habitatSpecies: List<org.terra.app.model.HabitatSpecies> = emptyList()
 )
 
 data class Bounty(

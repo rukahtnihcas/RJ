@@ -65,6 +65,10 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
     val community by vm.community.collectAsStateWithLifecycle()
     val sharing by vm.sharing.collectAsStateWithLifecycle()
     val inatToken by vm.inatToken.collectAsStateWithLifecycle()
+    val signedIn by vm.signedIn.collectAsStateWithLifecycle()
+    val autoShare by vm.autoShare.collectAsStateWithLifecycle()
+    val autoSync by vm.autoSync.collectAsStateWithLifecycle()
+    val syncing by vm.syncing.collectAsStateWithLifecycle()
     var shownRecord by remember { mutableStateOf<org.terra.app.domain.CommunityRecord?>(null) }
     var confirmShare by remember { mutableStateOf<List<org.terra.app.model.Observation>?>(null) }
     val uri = androidx.compose.ui.platform.LocalUriHandler.current
@@ -167,7 +171,9 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
                 Screen.Nearby -> NearbyScreen(d, community, vm.catalog, { vm.back() }, vm::loadCommunity) { vm.open(Screen.SpeciesDetail(it)) }
                 is Screen.HabitatDetail -> d.world.habitats.firstOrNull { it.id == top.id }?.let { h ->
                     HabitatDetailScreen(d, h, vm.catalog, { vm.back() }, { vm.open(Screen.SpeciesDetail(it)) }, { vm.open(Screen.NewAction(h.id)) },
-                        { a -> taker.take("after") { f -> vm.completeAction(a, f) } })
+                        { a -> taker.take("after") { f -> vm.completeAction(a, f) } },
+                        syncing, remember(d, h.id) { vm.repo.syncedAt(h.id) }, { vm.syncHabitat(h, force = true) })
+                    LaunchedEffect(h.id) { vm.syncHabitat(h) }
                 }
                 is Screen.NewAction -> d.world.habitats.firstOrNull { it.id == top.habitatId }?.let { h ->
                     NewActionScreen(h, { vm.back() }) { kind, note -> taker.take("before") { f -> vm.beginAction(h.id, kind, note, f) } }
@@ -187,7 +193,9 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
                     { saveArchive.launch("terra-archive.zip") }, { openArchive.launch(arrayOf("application/zip", "application/octet-stream")) },
                     inatToken, vm.unshared(d).size, vm.unshared(d).count { it.photoPath != null }, sharing, vm::setInatToken,
                     { uri.openUri(org.terra.app.domain.Community.INAT_TOKEN_PAGE) }, { confirmShare = vm.unshared(d).filter { it.photoPath != null } },
-                    { saveDwc.launch("terra-darwin-core.csv") })
+                    { saveDwc.launch("terra-darwin-core.csv") },
+                    vm.inat.canSignIn, signedIn, autoShare, autoSync, { uri.openUri(vm.inat.beginSignIn()) }, vm::signOut, vm::setAutoShare, vm::setAutoSync,
+                    { vm.syncHabitats(force = true) })
             }
         }
     }
@@ -212,8 +220,8 @@ fun TerraRoot(vm: TerraViewModel = viewModel()) {
         AlertDialog(
             onDismissRequest = { confirmShare = null },
             title = { Text(if (list.size == 1) "Share this record?" else "Share ${list.size} records?") },
-            text = { Text(if (inatToken.isBlank()) "Add your iNaturalist token in Journal → Data & ethics first." else "This posts ${if (list.size == 1) "it" else "them"} publicly on iNaturalist under your account, with the photo, date and location. Sensitive species are sent with the location obscured. You can edit or delete records on iNaturalist afterwards.") },
-            confirmButton = { Button(enabled = inatToken.isNotBlank(), onClick = { vm.shareToInat(list); confirmShare = null }) { Text("Share publicly") } },
+            text = { Text(if (!signedIn && inatToken.isBlank()) "Link iNaturalist in Journal → Data & ethics first." else "This posts ${if (list.size == 1) "it" else "them"} publicly on iNaturalist under your account, with the photo, date and location. Sensitive species are sent with the location obscured. You can edit or delete records on iNaturalist afterwards.") },
+            confirmButton = { Button(enabled = signedIn || inatToken.isNotBlank(), onClick = { vm.shareToInat(list); confirmShare = null }) { Text("Share publicly") } },
             dismissButton = { androidx.compose.material3.TextButton(onClick = { confirmShare = null }) { Text("Cancel") } }
         )
     }

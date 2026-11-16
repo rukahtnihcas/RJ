@@ -257,7 +257,9 @@ fun DataScreen(
     haptics: Boolean, chimes: Boolean, onHaptics: (Boolean) -> Unit, onChimes: (Boolean) -> Unit, onBack: () -> Unit,
     onPublic: () -> Unit, onResearch: () -> Unit, onArchive: () -> Unit, onRestore: () -> Unit,
     token: String = "", unshared: Int = 0, unsharedWithPhoto: Int = 0, sharing: Boolean = false, onToken: (String) -> Unit = {},
-    onGetToken: () -> Unit = {}, onShareAll: () -> Unit = {}, onDarwinCore: () -> Unit = {}
+    onGetToken: () -> Unit = {}, onShareAll: () -> Unit = {}, onDarwinCore: () -> Unit = {},
+    canSignIn: Boolean = false, signedIn: Boolean = false, autoShare: Boolean = false, autoSync: Boolean = true,
+    onSignIn: () -> Unit = {}, onSignOut: () -> Unit = {}, onAutoShare: (Boolean) -> Unit = {}, onAutoSync: (Boolean) -> Unit = {}, onSyncNow: () -> Unit = {}
 ) {
     Column(Modifier.fillMaxSize()) {
         ScreenHeader("Data & ethics", "Your records, your terms", onBack)
@@ -267,7 +269,7 @@ fun DataScreen(
                 Gap(6.dp)
                 for (line in listOf(
                     "No advertising, loot boxes, streaks or countdown pressure.",
-                    "No push notifications. The only notification is the one shown while a Stillness sit is listening.",
+                    "No push notifications. The only notifications are the ones shown while a Stillness sit or Walk mode is running.",
                     "Photos and sound are analysed on this phone. Audio is never stored.",
                     "Sensitive species are never published at their true location.",
                     "Everything you record can be exported in open formats and restored on another phone."
@@ -278,19 +280,48 @@ fun DataScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) { Text("Haptic pulse on entering a habitat", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium); Switch(haptics, onHaptics) }
                 Row(verticalAlignment = Alignment.CenterVertically) { Text("Directional chime for new habitats", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium); Switch(chimes, onChimes) }
             }
+            Eyebrow("Kept in step with iNaturalist, eBird & GBIF")
+            PaperCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Sync habitats automatically", style = MaterialTheme.typography.titleMedium)
+                        Text("Each habitat is refreshed weekly with the species the open databases hold for it. Bird records come from eBird — the database behind Merlin — through GBIF. No account or key is needed; only the habitat's position is sent.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                    }
+                    Switch(autoSync, onAutoSync)
+                }
+                OutlinedButton(onClick = onSyncNow) { Text("Sync nearby habitats now") }
+            }
             Eyebrow("Share with iNaturalist & GBIF")
             PaperCard {
                 Text("iNaturalist is the open community where naturalists confirm each other's records. Once a record with a photo is confirmed there, iNaturalist publishes it to GBIF, the global biodiversity database researchers use. GBIF takes no individual uploads, so this is the route in.", style = MaterialTheme.typography.bodyMedium)
                 Gap(8.dp)
-                Text("1. Sign in at inaturalist.org and fetch a personal token. It lasts 24 hours.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
-                OutlinedButton(onClick = onGetToken) { Text("Open the token page") }
-                Gap(4.dp)
-                Text("2. Paste it here. It is kept only on this phone.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
-                OutlinedTextField(token, onToken, label = { Text("iNaturalist token") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                when {
+                    signedIn -> {
+                        Text("● Signed in to iNaturalist. TERRA renews its access quietly; you will not be asked again.", style = MaterialTheme.typography.bodyMedium, color = pigments.moss)
+                        TextButton(onClick = onSignOut, contentPadding = PaddingValues(0.dp)) { Text("Sign out") }
+                    }
+                    canSignIn -> {
+                        Text("Sign in once. After that TERRA keeps itself signed in.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                        Button(onClick = onSignIn) { Text("Sign in with iNaturalist") }
+                    }
+                    else -> {
+                        Text("This build has no iNaturalist sign-in configured, so it uses a personal token instead. Fetch one at inaturalist.org (it lasts 24 hours) and paste it here; it is kept only on this phone.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                        OutlinedButton(onClick = onGetToken) { Text("Open the token page") }
+                        OutlinedTextField(token, onToken, label = { Text("iNaturalist token") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                    }
+                }
                 Gap(8.dp)
-                Text("3. Share. $unshared ${if (unshared == 1) "record is" else "records are"} not yet shared, $unsharedWithPhoto with a photo. Records are posted publicly under your iNaturalist account; sensitive species are sent with their location obscured. Sharing is always your choice — nothing is sent automatically.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Share new photo records automatically", style = MaterialTheme.typography.titleMedium)
+                        Text("Off unless you turn it on. Sensitive species always go with their location obscured.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                    }
+                    Switch(autoShare, onAutoShare, enabled = signedIn || token.isNotBlank())
+                }
+                Gap(6.dp)
+                Text("$unshared ${if (unshared == 1) "record is" else "records are"} not yet shared, $unsharedWithPhoto with a photo. Shared records are public under your iNaturalist account.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
                 Gap(4.dp)
-                Button(onClick = onShareAll, enabled = !sharing && token.isNotBlank() && unsharedWithPhoto > 0) { Text(if (sharing) "Sharing…" else "Share $unsharedWithPhoto photo records") }
+                Button(onClick = onShareAll, enabled = !sharing && (signedIn || token.isNotBlank()) && unsharedWithPhoto > 0) { Text(if (sharing) "Sharing…" else "Share $unsharedWithPhoto photo records now") }
                 Text("Records without a photo can be shared one at a time from a species page; iNaturalist keeps those as 'casual' and does not pass them to GBIF.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
                 Gap(8.dp)
                 Rule()

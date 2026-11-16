@@ -16,7 +16,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-enum class Source(val label: String) { INATURALIST("iNaturalist"), GBIF("GBIF") }
+enum class Source(val label: String) { INATURALIST("iNaturalist"), EBIRD("eBird · Merlin"), GBIF("GBIF") }
 
 /** A record made by someone else and published through an open biodiversity database. */
 data class CommunityRecord(
@@ -50,6 +50,41 @@ object Community {
     /** GBIF's copy of iNaturalist research-grade observations — skipped to avoid showing records twice. */
     const val GBIF_INAT_DATASET = "50c9509d-22c7-4a22-a47d-8c48425ef4a7"
 
+    /**
+     * The eBird Observation Dataset on GBIF. eBird is the database behind Merlin Bird ID; neither
+     * offers a key-free API of its own, but eBird publishes its records here, where anyone may read them.
+     * It is refreshed periodically rather than live, so the newest sightings lag.
+     */
+    const val GBIF_EBIRD_DATASET = "4fa7b334-ce0d-4e88-aaae-2e0c138d049e"
+    const val INAT_WEB = "https://www.inaturalist.org"
+    const val REDIRECT = "terra://inat-auth"
+
+    fun gbifEbirdUrl(lat: Double, lon: Double, radiusKm: Double) = gbifUrl(lat, lon, radiusKm, 300) + "&datasetKey=$GBIF_EBIRD_DATASET"
+
+    fun inatAuthorizeUrl(clientId: String, challenge: String) =
+        "$INAT_WEB/oauth/authorize?client_id=$clientId&redirect_uri=${java.net.URLEncoder.encode(REDIRECT, "UTF-8")}&response_type=code&code_challenge=$challenge&code_challenge_method=S256"
+
+    /** PKCE: the challenge is the URL-safe base64 of the SHA-256 of the verifier. */
+    fun pkceChallenge(verifier: String): String =
+        java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(java.security.MessageDigest.getInstance("SHA-256").digest(verifier.toByteArray(Charsets.US_ASCII)))
+
+    /** Collapses individual records into species with counts, most-recorded first. [names] supplies common names where known. */
+    fun speciesOf(records: List<CommunityRecord>, names: Map<String, String> = emptyMap()): List<NearbySpecies> =
+        records.groupBy { it.scientific }.map { (sci, list) ->
+            val first = list.first()
+            NearbySpecies(names[sci.lowercase()] ?: first.name, sci, first.group, list.size, 0)
+        }.sortedByDescending { it.count }
+
+    /**
+     * Merges what the three sources know about one habitat. A species keeps one row per source, so the
+     * habitat page can say who recorded it; eBird is trusted for birds only.
+     */
+    fun habitatRows(habitatId: Long, inat: List<NearbySpecies>, ebird: List<NearbySpecies>, gbif: List<NearbySpecies>, now: Long): List<org.terra.app.model.HabitatSpecies> {
+        fun rows(list: List<NearbySpecies>, source: Source) = list.filter { it.scientific.trim().contains(' ') }
+            .map { org.terra.app.model.HabitatSpecies(0, habitatId, it.scientific, it.name, it.group, it.count, source.name, now) }
+        return rows(inat, Source.INATURALIST) + rows(ebird.filter { it.group == LifeGroup.BIRD }, Source.EBIRD) + rows(gbif, Source.GBIF)
+    }
+
     private val json = Json { ignoreUnknownKeys = true }
     private fun f(d: Double) = String.format(Locale.US, "%.5f", d)
 
@@ -61,8 +96,8 @@ object Community {
 
     fun inatTaxonUrl(scientific: String) = "$INAT/taxa?q=${java.net.URLEncoder.encode(scientific, "UTF-8")}&per_page=1"
 
-    fun gbifUrl(lat: Double, lon: Double, radiusKm: Double) =
-        "$GBIF/occurrence/search?geoDistance=${f(lat)},${f(lon)},${radiusKm}km&hasCoordinate=true&occurrenceStatus=PRESENT&limit=100"
+    fun gbifUrl(lat: Double, lon: Double, radiusKm: Double, limit: Int = 100) =
+        "$GBIF/occurrence/search?geoDistance=${f(lat)},${f(lon)},${radiusKm}km&hasCoordinate=true&occurrenceStatus=PRESENT&limit=$limit"
 
     private fun JsonElement?.obj() = this as? JsonObject
     private fun JsonElement?.str(): String? = (this as? JsonPrimitive)?.takeIf { it !is JsonNull }?.content
@@ -136,9 +171,9 @@ object Community {
             val sci = o["species"].str() ?: o["scientificName"].str()
             if (lat == null || lon == null || key == null || sci == null) return@mapNotNull null
             CommunityRecord(
-                Source.GBIF, key, o["vernacularName"].str() ?: sci, sci, groupOfGbif(o), lat, lon,
+                if (o["datasetKey"].str() == GBIF_EBIRD_DATASET) Source.EBIRD else Source.GBIF, key, o["vernacularName"].str() ?: sci, sci, groupOfGbif(o), lat, lon,
                 o["eventDate"].str()?.take(10).orEmpty(), o["informationWithheld"].str() != null || o["dataGeneralizations"].str() != null,
-                listOfNotNull(o["datasetName"].str() ?: o["institutionCode"].str(), o["license"].str()?.substringAfter("licenses/")?.trim('/')?.let { "CC " + it.uppercase() }).joinToString(" · ").ifBlank { "via GBIF" },
+                listOfNotNull(if (o["datasetKey"].str() == GBIF_EBIRD_DATASET) "eBird, Cornell Lab of Ornithology" else o["datasetName"].str() ?: o["institutionCode"].str(), o["license"].str()?.substringAfter("licenses/")?.trim('/')?.let { "CC " + it.uppercase() }).joinToString(" · ").ifBlank { "via GBIF" },
                 "https://www.gbif.org/occurrence/$key"
             )
         }

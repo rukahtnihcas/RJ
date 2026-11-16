@@ -67,12 +67,12 @@ class ScreenshotTest {
     @Test fun species() = shot("species") { SpeciesDetailScreen(d, d.entry("monarch")!!, catalog, {}, {}, {}) }
     @Test fun speciesLocked() = shot("species_locked") { SpeciesDetailScreen(d, d.entry("red_tailed_hawk")!!, catalog, {}, {}, {}) }
     @Test fun habitats() = shot("habitats") { HabitatsScreen(d, fix, false, {}, {}) }
-    @Test fun habitat() = shot("habitat") { HabitatDetailScreen(d, Fixtures.wood, catalog, {}, {}, {}, {}) }
+    @Test fun habitat() = shot("habitat") { HabitatDetailScreen(d, Fixtures.wood, catalog, {}, {}, {}, {}, false, now - 2 * 86_400_000L) }
     @Test fun quests() = shot("quests") { QuestScreen(d) }
     @Test fun journal() = shot("journal") { JournalScreen(d, catalog, {}, {}, {}, {}, {}, {}, {}) }
     @Test fun landmark() = shot("landmark") { LandmarkDetailScreen(d, d.world.landmarks[0], {}, {}, { _, _, _ -> }) }
     @Test fun stillness() = shot("stillness") { StillnessScreen(StillnessStatus(true, 252, 600, 1, true), d, catalog, {}, {}, {}, {}) }
-    @Test fun data() = shot("data") { DataScreen(true, true, {}, {}, {}, {}, {}, {}, {}, "", 13, 0) }
+    @Test fun data() = shot("data") { DataScreen(true, true, {}, {}, {}, {}, {}, {}, {}, "", 13, 4, canSignIn = true, signedIn = true, autoShare = true) }
     @Test fun identify() = shot("identify") {
         val c = catalog.suggest(listOf("Bird" to 0.86f), Region.NA, d.season, null).take(4).map { Candidate(it.species, it.score, it.why) }
         IdentifyPanel(Draft(ObsMethod.PHOTO, null, c, "The camera sees: birds (86%)"), catalog, Region.NA, true) { _, _, _, _, _, _, _ -> }

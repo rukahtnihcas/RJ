@@ -178,7 +178,7 @@ class DomainTest {
         val now = at(2026, 10, 14)
         fun score(w: World, id: Long = 2) = HabitatEngine.health(habitats.first { it.id == id }, w.observations, w.actions, catalog, now)
         val empty = score(World())
-        assertEquals(15, empty.score)
+        assertEquals(10, empty.score)
         val one = score(World(listOf(Fixtures.obs("turkey_tail", now, habitat = 2))))
         assertTrue(one.score > empty.score)
         val three = score(World(listOf("turkey_tail", "white_oak", "black_capped_chickadee").map { Fixtures.obs(it, now, habitat = 2) }))
@@ -394,5 +394,48 @@ class DomainTest {
         assertEquals("ordinary species are identical in both", pub.first { it.contains("Trametes") }, res.first { it.contains("Trametes") })
         val quoted = org.terra.app.domain.Community.darwinCoreCsv(listOf(Fixtures.obs("turkey_tail", 0).copy(note = "on a log, \"big\" one")), catalog, false)
         assertTrue(quoted, quoted.contains("\"on a log, \"\"big\"\" one\""))
+    }
+
+    // ── habitats kept in step with the commons ──
+    @Test fun communityKnowledgeShapesHabitatHealth() {
+        val now = at(2026, 10, 14)
+        val w = Fixtures.world(now)
+        val bare = HabitatEngine.health(Fixtures.wood, w.observations, w.actions, catalog, now)
+        val synced = HabitatEngine.health(Fixtures.wood, w.observations, w.actions, catalog, now, w.habitatSpecies)
+        assertEquals(0, bare.communitySpecies)
+        assertEquals("one row per source still counts as one species", 7, synced.communitySpecies)
+        assertEquals("turkey tail is the only one the player has logged here", 1, synced.communityFound)
+        assertTrue(synced.breakdown.first { it.first.startsWith("Species known") }.second > 0)
+        assertEquals("community-reported ivy is a second invasive; one removal offsets only one", 2, synced.invasiveSpecies)
+        assertEquals(-6, synced.breakdown.first { it.first == "Invasive pressure" }.second)
+        assertEquals("other habitats are untouched", 0, HabitatEngine.health(Fixtures.meadow, w.observations, w.actions, catalog, now, w.habitatSpecies).communitySpecies)
+    }
+
+    @Test fun ebirdArrivesThroughGbifAndIsKeptToBirds() {
+        val c = org.terra.app.domain.Community
+        assertTrue(c.gbifEbirdUrl(43.65, -79.38, 0.3).contains("datasetKey=4fa7b334-ce0d-4e88-aaae-2e0c138d049e"))
+        assertTrue(c.gbifEbirdUrl(43.65, -79.38, 0.3).contains("limit=300"))
+        val json = """{"results":[
+          {"key":1,"datasetKey":"4fa7b334-ce0d-4e88-aaae-2e0c138d049e","species":"Cyanocitta cristata","class":"Aves","decimalLatitude":43.6,"decimalLongitude":-79.3},
+          {"key":2,"datasetKey":"4fa7b334-ce0d-4e88-aaae-2e0c138d049e","species":"Cyanocitta cristata","class":"Aves","decimalLatitude":43.6,"decimalLongitude":-79.3},
+          {"key":3,"datasetKey":"4fa7b334-ce0d-4e88-aaae-2e0c138d049e","species":"Poecile atricapillus","class":"Aves","decimalLatitude":43.6,"decimalLongitude":-79.3},
+          {"key":4,"datasetKey":"xyz","species":"Quercus alba","kingdom":"Plantae","decimalLatitude":43.6,"decimalLongitude":-79.3},
+          {"key":5,"datasetKey":"xyz","scientificName":"Aves","class":"Aves","decimalLatitude":43.6,"decimalLongitude":-79.3}]}"""
+        val all = c.parseGbif(json)
+        assertEquals(org.terra.app.domain.Source.EBIRD, all[0].source)
+        assertTrue(all[0].credit.startsWith("eBird"))
+        assertEquals(org.terra.app.domain.Source.GBIF, all[3].source)
+        val birds = c.speciesOf(all.filter { it.source == org.terra.app.domain.Source.EBIRD }, mapOf("cyanocitta cristata" to "blue jay"))
+        assertEquals(listOf("blue jay" to 2, "Poecile atricapillus" to 1), birds.map { it.name to it.count })
+        val rows = c.habitatRows(7, emptyList(), birds + c.speciesOf(all.filter { it.scientific == "Quercus alba" }), c.speciesOf(all.filter { it.source == org.terra.app.domain.Source.GBIF }), 99)
+        assertEquals("eBird contributes birds only; genus-or-higher names are dropped", listOf("EBIRD", "EBIRD", "GBIF"), rows.map { it.source })
+        assertTrue(rows.all { it.habitatId == 7L && it.fetchedAt == 99L })
+    }
+
+    @Test fun pkceChallengeMatchesTheStandard() {
+        // Test vector from RFC 7636, appendix B.
+        assertEquals("E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM", org.terra.app.domain.Community.pkceChallenge("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"))
+        val url = org.terra.app.domain.Community.inatAuthorizeUrl("abc", "xyz")
+        assertTrue(url, url.startsWith("https://www.inaturalist.org/oauth/authorize?client_id=abc&redirect_uri=terra%3A%2F%2Finat-auth&response_type=code&code_challenge=xyz"))
     }
 }

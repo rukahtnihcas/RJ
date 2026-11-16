@@ -225,3 +225,18 @@ data class Detection(
     /** 0 = awaiting the player's ear, 1 = confirmed, 2 = dismissed. */
     val resolved: Int = 0
 )
+
+/** A species an open database holds for a habitat: the community's knowledge of that ground, cached on the phone. */
+@Serializable
+@Entity(tableName = "habitat_species", indices = [Index("habitatId")])
+data class HabitatSpecies(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val habitatId: Long,
+    val scientific: String,
+    val name: String,
+    val group: LifeGroup,
+    val count: Int,
+    /** "INATURALIST", "EBIRD" or "GBIF". */
+    val source: String,
+    val fetchedAt: Long
+)

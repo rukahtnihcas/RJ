@@ -12,6 +12,7 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import org.terra.app.model.Detection
 import org.terra.app.model.Habitat
+import org.terra.app.model.HabitatSpecies
 import org.terra.app.model.Landmark
 import org.terra.app.model.LandmarkEntry
 import org.terra.app.model.Observation
@@ -27,6 +28,11 @@ interface TerraDao {
     @Query("SELECT * FROM landmark_entries ORDER BY timestamp DESC") fun entries(): Flow<List<LandmarkEntry>>
     @Query("SELECT * FROM stillness_sessions ORDER BY startedAt DESC") fun sessions(): Flow<List<StillnessSession>>
     @Query("SELECT * FROM detections ORDER BY timestamp DESC") fun detections(): Flow<List<Detection>>
+
+    @Query("SELECT * FROM habitat_species") fun habitatSpecies(): Flow<List<HabitatSpecies>>
+    @Query("DELETE FROM habitat_species WHERE habitatId = :habitatId") suspend fun clearHabitatSpecies(habitatId: Long)
+    @Insert suspend fun insertHabitatSpecies(x: List<HabitatSpecies>)
+    @androidx.room.Transaction suspend fun replaceHabitatSpecies(habitatId: Long, x: List<HabitatSpecies>) { clearHabitatSpecies(habitatId); insertHabitatSpecies(x) }
 
     @Query("SELECT * FROM habitats") suspend fun habitatsNow(): List<Habitat>
 
@@ -58,15 +64,22 @@ interface TerraDao {
 
 @Database(
     entities = [Observation::class, Habitat::class, StewardAction::class, Landmark::class,
-        LandmarkEntry::class, StillnessSession::class, Detection::class],
-    version = 2, exportSchema = true
+        LandmarkEntry::class, StillnessSession::class, Detection::class, HabitatSpecies::class],
+    version = 3, exportSchema = true
 )
 abstract class TerraDb : RoomDatabase() {
     abstract fun dao(): TerraDao
 
     companion object {
         fun open(context: Context): TerraDb =
-            Room.databaseBuilder(context, TerraDb::class.java, "terra.db").addMigrations(MIGRATION_1_2).build()
+            Room.databaseBuilder(context, TerraDb::class.java, "terra.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
+
+        val MIGRATION_2_3 = object : androidx.room.migration.Migration(2, 3) {
+            override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `habitat_species` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `habitatId` INTEGER NOT NULL, `scientific` TEXT NOT NULL, `name` TEXT NOT NULL, `group` TEXT NOT NULL, `count` INTEGER NOT NULL, `source` TEXT NOT NULL, `fetchedAt` INTEGER NOT NULL)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_habitat_species_habitatId` ON `habitat_species` (`habitatId`)")
+            }
+        }
 
         val MIGRATION_1_2 = object : androidx.room.migration.Migration(1, 2) {
             override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {

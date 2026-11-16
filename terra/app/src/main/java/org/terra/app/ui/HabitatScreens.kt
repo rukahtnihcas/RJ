@@ -70,7 +70,7 @@ fun HabitatsScreen(d: Derived, at: Fix, charting: Boolean, onOpen: (Long) -> Uni
                         GapW()
                         Column(Modifier.weight(1f)) {
                             Text(h.name, style = MaterialTheme.typography.titleMedium)
-                            Text("${h.type.label} · ${distanceLabel(dist)}" + if (h.firstVisitedAt == null) " · not yet visited" else "", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                            Text("${h.type.label} · ${distanceLabel(dist)}" + (if (h.firstVisitedAt == null) " · not yet visited" else "") + (health?.communitySpecies?.takeIf { it > 0 }?.let { " · ${health.communityFound}/$it community species" } ?: ""), style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
                             Gap(6.dp)
                             Meter((health?.score ?: 0) / 100f, color = healthColor(health?.score ?: 0))
                         }
@@ -91,7 +91,8 @@ fun HabitatsScreen(d: Derived, at: Fix, charting: Boolean, onOpen: (Long) -> Uni
 @Composable
 fun HabitatDetailScreen(
     d: Derived, h: Habitat, catalog: Catalog, onBack: () -> Unit, onSpecies: (String) -> Unit,
-    onNewAction: () -> Unit, onAfterPhoto: (StewardAction) -> Unit
+    onNewAction: () -> Unit, onAfterPhoto: (StewardAction) -> Unit,
+    syncing: Boolean = false, syncedAt: Long = 0, onSync: () -> Unit = {}
 ) {
     val health = d.health[h.id] ?: return
     val here = d.world.observations.filter { it.habitatId == h.id }
@@ -115,7 +116,7 @@ fun HabitatDetailScreen(
                     Text(if (pts > 0) "+$pts" else "$pts", style = MaterialTheme.typography.bodyMedium, color = if (pts < 0) pigments.rust else pigments.inkSoft)
                 }
                 Gap(6.dp)
-                Text("Based on your own records. Health rises as native life is logged and stewardship is verified; unaddressed invasives pull it down.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+                Text("Health rises as native life is logged — by you and by the wider community — and as stewardship is verified. Invasives, yours or reported, pull it down until a removal is verified.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
             }
 
             Eyebrow("What lives here · ${here.map { it.speciesId }.distinct().size} species")
@@ -129,11 +130,13 @@ fun HabitatDetailScreen(
                     }
                 }
             }
-            if (health.missing.isNotEmpty()) PaperCard(padding = PaddingValues(12.dp)) {
+            if (health.missing.isNotEmpty() && health.communitySpecies == 0) PaperCard(padding = PaddingValues(12.dp)) {
                 Eyebrow("What is missing")
                 Gap(4.dp)
                 Text("No ${health.missing.joinToString(", ") { it.label.lowercase() }} recorded here yet. Absent, or just unobserved?", style = MaterialTheme.typography.bodyMedium)
             }
+
+            CommunityCard(d, h, catalog, here.mapNotNull { catalog[it.speciesId]?.scientific?.lowercase() }.toSet(), syncing, syncedAt, onSync, onSpecies)
 
             Eyebrow("Stewardship · ${health.verifiedActions} verified" + if (health.isSteward) " · you are Steward" else "")
             if (!health.isSteward) Text("${HabitatEngine.STEWARD_ACTIONS} verified actions make you Steward of this habitat.", style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
@@ -190,6 +193,59 @@ fun NewActionScreen(h: Habitat, onBack: () -> Unit, onBefore: (ActionKind, Strin
                 Text("Only work where you have permission. Be sure of your identification before removing any plant, and never move invasive material off site unless the land manager asks you to.", style = MaterialTheme.typography.bodyMedium)
             }
             Button(onClick = { onBefore(kind ?: ActionKind.CLEANUP, note) }, modifier = Modifier.fillMaxWidth()) { Text("Take the before photo") }
+        }
+    }
+}
+
+/** What iNaturalist, eBird and GBIF hold for this habitat, and which of it the player has yet to find. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun CommunityCard(
+    d: Derived, h: Habitat, catalog: Catalog, mine: Set<String>, syncing: Boolean, syncedAt: Long,
+    onSync: () -> Unit, onSpecies: (String) -> Unit
+) {
+    val rows = d.world.habitatSpecies.filter { it.habitatId == h.id }
+    val guide = catalog.species.associateBy { it.scientific.lowercase() }
+    val species = rows.groupBy { it.scientific.lowercase() }
+    Eyebrow("Known to the community · ${species.size} species")
+    PaperCard {
+        if (rows.isEmpty()) {
+            Text(if (syncedAt == 0L) "Not yet checked against iNaturalist, eBird and GBIF." else "None of the open databases holds a record inside this habitat yet. Yours could be the first.", style = MaterialTheme.typography.bodyMedium)
+        } else {
+            val found = species.keys.count { it in mine }
+            Text("You have found $found of ${species.size}", style = MaterialTheme.typography.titleMedium)
+            Gap(4.dp)
+            Meter(found.toFloat() / species.size, color = pigments.water)
+            Gap(6.dp)
+            val bySource = rows.groupBy { it.source }
+            Text(listOf("INATURALIST" to "iNaturalist", "EBIRD" to "eBird (the birds behind Merlin)", "GBIF" to "other GBIF datasets")
+                .mapNotNull { (k, label) -> bySource[k]?.let { "${it.size} from $label" } }.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+            val missingGroups = species.values.map { it.first().group }.toSet() - d.world.observations.filter { it.habitatId == h.id }.map { it.group }.toSet()
+            if (missingGroups.isNotEmpty()) {
+                Gap(6.dp)
+                Text("Others have recorded ${missingGroups.joinToString(", ") { it.label.lowercase() }} here that you have not logged yet.", style = MaterialTheme.typography.bodyMedium)
+            }
+            val toFind = species.filterKeys { it !in mine }.values.sortedByDescending { list -> list.sumOf { it.count } }.take(12)
+            if (toFind.isNotEmpty()) {
+                Gap(8.dp)
+                Eyebrow("Most recorded here · not yet found by you")
+                Gap(6.dp)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    for (list in toFind) {
+                        val r = list.first()
+                        val known = guide[r.scientific.lowercase()]
+                        Column(Modifier.width(76.dp).clickable(enabled = known != null) { known?.let { onSpecies(it.id) } }, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Stamp(known?.glyph ?: r.group.glyph, 42.dp, ring = when { known?.isInvasiveIn(d.region) == true -> pigments.rust; list.any { it.source == "EBIRD" } -> pigments.water; else -> pigments.inkSoft })
+                            Text(r.name.replaceFirstChar { it.uppercase() }, style = MaterialTheme.typography.labelMedium, maxLines = 2, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                        }
+                    }
+                }
+            }
+        }
+        Gap(8.dp)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(if (syncedAt == 0L) "Never synced" else "Synced ${ago(syncedAt)} · refreshes weekly on its own", Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = pigments.inkSoft)
+            OutlinedButton(onClick = onSync, enabled = !syncing) { Text(if (syncing) "Syncing…" else "Sync now") }
         }
     }
 }

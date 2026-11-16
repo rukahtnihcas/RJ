@@ -22,6 +22,7 @@ class TerraApp : Application() {
     val repo by lazy { Repository(this, TerraDb.open(this).dao(), catalog, photos) }
     val location by lazy { LocationTracker(this) }
     val cues by lazy { Cues(this) }
+    val inat by lazy { org.terra.app.data.InatAccount(this) }
     val scope = MainScope()
     /** Short messages for whichever screen is showing. */
     val notices = MutableSharedFlow<String>(extraBufferCapacity = 4)

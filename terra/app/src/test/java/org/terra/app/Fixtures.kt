@@ -75,6 +75,17 @@ object Fixtures {
         )
         val sessions = listOf(StillnessSession(1, at(2026, 10, 10, 7), 600, LAT, LON, true, 0.9f))
         val detections = listOf(Detection(1, 1, at(2026, 10, 10, 7), "black_capped_chickadee", 0.71f))
-        return World(observations, listOf(meadow, wood, pond), actions, landmarks, entries, sessions, detections)
+        fun hs(h: Long, sci: String, name: String, g: org.terra.app.model.LifeGroup, n: Int, src: String) = org.terra.app.model.HabitatSpecies(0, h, sci, name, g, n, src, now)
+        val B = org.terra.app.model.LifeGroup.BIRD
+        val community = listOf(
+            hs(2, "Trametes versicolor", "turkey tail", org.terra.app.model.LifeGroup.FUNGUS, 14, "INATURALIST"),
+            hs(2, "Poecile atricapillus", "black-capped chickadee", B, 88, "EBIRD"),
+            hs(2, "Poecile atricapillus", "black-capped chickadee", B, 31, "INATURALIST"),
+            hs(2, "Cardinalis cardinalis", "northern cardinal", B, 64, "EBIRD"),
+            hs(2, "Cyanocitta cristata", "blue jay", B, 51, "EBIRD"),
+            hs(2, "Trillium grandiflorum", "white trillium", org.terra.app.model.LifeGroup.PLANT, 9, "INATURALIST"),
+            hs(2, "Hedera helix", "common ivy", org.terra.app.model.LifeGroup.PLANT, 6, "INATURALIST"),
+            hs(2, "Quercus alba", "white oak", org.terra.app.model.LifeGroup.TREE, 3, "GBIF"))
+        return World(observations, listOf(meadow, wood, pond), actions, landmarks, entries, sessions, detections, community)
     }
 }
