@@ -3,7 +3,14 @@ package com.rj.core
 /** Builds the system prompt (stable per drive, so it caches) and the per-turn cue messages. */
 object PromptBuilder {
 
-    fun system(persona: Persona, profile: UserProfile, memories: List<String>, catalog: List<SongPick> = emptyList()): String = buildString {
+    fun system(
+        persona: Persona,
+        profile: UserProfile,
+        memories: List<String>,
+        catalog: List<SongPick> = emptyList(),
+        /** e.g. "British English": the voice's accent, so wording matches it. */
+        dialect: String? = null,
+    ): String = buildString {
         val name = profile.name.ifBlank { "the driver" }
         appendLine(
             """
@@ -29,6 +36,24 @@ object PromptBuilder {
             - Safety first: $name is driving. Never ask them to look at a screen, read or type. Keep questions
               answerable in a few words. In bad traffic be a calming presence. Never encourage speeding.
             - Be warm and on ${name}'s side: cheer on the things they care about, remember what they tell you.
+            ${dialect?.let { "- Your voice has a $it accent: use $it wording, idiom and spelling (it's read aloud in that accent)." } ?: ""}
+
+            Songs: NEVER name the next song in "speech". Introduce it only in "intro_tag" (e.g. "Here's Coldplay
+            with Yellow"). The app plays the song first, checks what actually started, and then speaks your intro_tag
+            over the opening bars with the music faded down, exactly like real radio. If something else started, it
+            introduces that instead. You can still talk about the song that just finished in "speech".
+
+            Your wider senses (use them naturally, never as a list or a dashboard readout):
+            - Messages and emails: you see who wrote and, if allowed, a snippet. Summarise briefly in your own
+              words; never read out long messages unless asked; skip spammy or promotional ones. When a chat can be
+              answered by voice, offer to reply with a short suggested text ("offer"). Never send anything yourself:
+              the app always asks the driver to confirm.
+            - Wellbeing from their watch (sleep, steps, heart rate, workouts): use it with a light touch to choose
+              tone and music (short sleep: gentler, maybe a coffee nudge; workout done: celebrate; elevated heart
+              rate in traffic: calm them). Never diagnose, lecture or sound clinical.
+            - The car (fuel or charge, warnings, alerts from the car's app): mention only what matters, practically.
+            - Traffic and route: live ETA, delays and incidents. If they'll be late for something, say so kindly
+              and offer to send a running-late note to the organiser.
             """.trimIndent()
         )
         appendLine()
@@ -55,6 +80,8 @@ object PromptBuilder {
                       "accept": ["other spoken forms of the right answer"], "right": "reaction if they get it",
                       "wrong": "reaction if they miss, naming the right answer", "fact": "one-line follow-up fact",
                       "tune": {"artist": "...", "title": "..."} only for name-that-tune using a library song},
+             "offer": {"type": "reply", "to": "sender name", "text": "suggested short reply"} or
+                      {"type": "late_note", "minutes": 10} or null,
              "listen": true if you just asked $name something and want to hear the answer,
              "remember": ["new lasting facts about $name worth remembering for future drives"]}
             """.trimIndent()
@@ -111,6 +138,18 @@ object PromptBuilder {
         CueType.REPLY -> "Respond naturally to what they said, like a host chatting with a caller. If they asked for a " +
             "song, artist or mood, honour it. If they asked a question, answer it (search if needed). " +
             "Set listen=true only if you ask something back. Pick a song only if it fits the moment."
+        CueType.INBOX -> "Messages and emails came in (see the notes and the live context). Give a quick, friendly " +
+            "roundup in your own words: who, and the gist if you have it. If one can be answered by voice and a " +
+            "reply makes sense, add an \"offer\" of type reply with a short suggested text. Then a song."
+        CueType.RUNNING_LATE -> "Traffic says they'll be late for their next meeting (see notes). Break it gently, " +
+            "with the real numbers, keep them calm, and offer to send a running-late note (offer type late_note " +
+            "with the minutes). song=null."
+        CueType.VEHICLE_ALERT -> "Something about the car needs mentioning (see notes). Be clear and practical, " +
+            "not alarming: what it means and what to do (e.g. plan a fuel or charging stop). Then a song."
+        CueType.TAKE_A_BREAK -> "They've been driving a while (see notes). Warmly suggest a short break at the next " +
+            "safe place, maybe a stretch, water or coffee. Don't nag. Then an energising song."
+        CueType.WELLBEING -> "Their watch shows an elevated heart rate. Without mentioning numbers or sounding " +
+            "medical, bring the energy down: a calming word, maybe a slow breath together, then a soothing song."
         CueType.SIGN_OFF -> "The drive is ending. Sign off warmly and personally with a quick recap of the drive " +
             "(use the notes), referencing what's next for them. song=null."
     }

@@ -47,6 +47,36 @@ and you can talk back.
   score, or just chat.
 - **Sign-off** when you end the drive.
 
+## Senses: what makes it personal
+
+| Source | What the RJ does with it | Setup |
+|---|---|---|
+| Phone calendar (incl. Outlook app sync) | Agenda nudges, pep talks, birthdays | Calendar permission |
+| **Outlook / Microsoft 365** (Graph) | Meetings with organisers, important unread mail, *emails the organiser if you're running late* | Azure client ID + sign in (below) |
+| **WhatsApp, SMS, Telegram, Signal, Teams, Slack, Outlook & Gmail apps** | Roundups between songs, VIPs straight away, "read it", **reply by voice** (always confirmed) | Notification access |
+| **Samsung Health / Galaxy Watch** (Health Connect) | Gentler after a short night, cheers a workout, calms things down when your heart rate is up in traffic, break reminders on tired or late drives | Settings → Connect health |
+| **Car**: Tata iRA (or other connected-car app) alerts | Mentions door/tyre/charge/service alerts | Notification access |
+| **Car**: Bluetooth OBD-II (ELM327) adapter | Fuel or EV charge %, check-engine light, coolant, 12V battery | Pair adapter, pick it in Settings |
+| **Car Bluetooth** | "Connected to your car: tap to go on air" when you get in | Learned automatically on first drive |
+| **Traffic** (OpenStreetMap open data: Nominatim + OSRM) | ETA, delay vs an empty road, *"you'll be 8 min late for Standup"* | Destination field, or the next meeting's address |
+| Traffic, live (TomTom free tier, optional) | Live jams, road speed vs normal, accidents and closures ahead | TomTom key |
+| News: local, national, world + your interests | News breaks and podcast topics | None |
+| Weather here and at the destination | Weather moments, rain warnings | None |
+| Your trips | "This usually takes you 25 minutes" | Learned automatically |
+
+Message text is only shared with the AI if you switch that on; otherwise the AI sees who wrote and which
+app. Reading messages aloud happens on the phone. Nothing is ever sent without a spoken "yes".
+
+### Outlook (Microsoft 365) setup, about 2 minutes
+
+1. Go to <https://portal.azure.com> → **App registrations** → **New registration**. Name it "RJ", choose
+   *Accounts in any organizational directory and personal Microsoft accounts*, and register.
+2. **Authentication** → *Advanced settings* → **Allow public client flows: Yes** → Save.
+3. **API permissions** → Add → Microsoft Graph → *Delegated*: `Calendars.Read`, `Mail.Read`, `Mail.Send`,
+   `User.Read`, `offline_access`. Work accounts may need an admin to grant consent.
+4. Copy the **Application (client) ID** into RJ → Settings → Connections, tap **Sign in to Outlook**,
+   and enter the code shown at microsoft.com/devicelogin.
+
 ## Offline mode
 
 When there's no signal (or with **Brain → Always offline**), a built-in host takes over seamlessly. It
@@ -55,10 +85,20 @@ runs ~50 quiz questions, name-that-tune, place trivia for 30+ cities, facts, jok
 mini-podcasts with your co-host. Set **Music → Phone library** (or *Auto*) so songs play from files
 on your phone with the built-in player.
 
+## Sounds like radio
+
+- When the RJ talks, the music fades down underneath instead of stopping. The next song starts first,
+  then the host talks over its intro.
+- The RJ only names a song after the music app confirms what actually started. If the app picked a
+  different track, it introduces the real one. Spotify gets several precise search phrasings before
+  the app gives up.
+
 ## Voices
 
-- **ElevenLabs (natural)**: paste an ElevenLabs API key and two voice IDs (host and co-host) in
-  Settings → Voice. Lines are pre-rendered while the previous song plays, so they start instantly.
+- **ElevenLabs (natural)**: paste an ElevenLabs API key in Settings → Voice. Defaults are a deep British
+  broadcaster ("Daniel") hosting, with "Alice" (British) as co-host. Any voice IDs work. Lines are
+  pre-rendered while the previous song plays, so they start instantly.
+- **Accent** (default British) and **Deep voice** apply to both engines; the RJ's wording follows the accent.
 - **On-device**: the app prefers Google's TTS engine and picks its highest-quality voices, with a different
   voice for the co-host. Install "Speech Services by Google" and a high-quality voice pack for the best results.
 

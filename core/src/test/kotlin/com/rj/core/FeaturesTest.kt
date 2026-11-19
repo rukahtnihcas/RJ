@@ -91,7 +91,7 @@ class OfflineBrainTest {
         val b = brain()
         CueType.entries.forEach { t ->
             val seg = b.next(Cue(t, notes = listOf("question 1 of 3"), userSaid = "play some queen"), ctx("Kothrud, Pune"))
-            assertTrue(seg.speech.isNotBlank() || seg.quiz != null, "empty segment for $t")
+            assertTrue(seg.speech.isNotBlank() || seg.quiz != null || seg.introTag != null, "empty segment for $t")
         }
     }
 

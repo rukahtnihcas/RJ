@@ -119,6 +119,14 @@ fun HomeScreen(
             Text("Offline: quizzes, trivia, jokes and your phone's music keep the show going.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
         }
+        if (state.live && state.senses.isNotEmpty()) {
+            Text(
+                state.senses.joinToString("   "),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 2,
+            )
+        }
         state.quiz?.let {
             Text(it, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 20.sp)
         }

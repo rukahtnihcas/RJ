@@ -36,9 +36,26 @@ import kotlinx.coroutines.withContext
  * Empty notification listener. Being enabled in "Notification access" is what lets us read the
  * active media sessions of Spotify / YouTube Music etc. (now playing, position, play/pause, play-from-search).
  */
-class MediaWatcher : NotificationListenerService()
+class MediaWatcher : NotificationListenerService() {
+    override fun onNotificationPosted(sbn: android.service.notification.StatusBarNotification) {
+        // Messages, emails and car-app alerts feed the RJ's inbox.
+        runCatching { com.rj.app.connect.Inbox.onPosted(sbn, packageName) }
+    }
+}
 
 data class Progress(val positionMs: Long, val durationMs: Long, val playing: Boolean, val trackId: String?)
+
+/** Does the playing track match the one asked for? Ignores "(Remastered 2011)", "- Live" etc. */
+fun sameSong(want: SongPick, title: String?, artist: String?): Boolean {
+    fun clean(t: String) = QuizJudge.normalize(t.replace(Regex("\\(.*?\\)|\\[.*?]|\\s-\\s.*$"), ""))
+    val t = clean(title ?: return false)
+    val w = clean(want.title)
+    if (t.isEmpty() || w.isEmpty()) return false
+    val titleOk = t == w || t.startsWith(w) || w.startsWith(t)
+    val a = artist?.let { QuizJudge.normalize(it) }
+    val artistOk = a.isNullOrEmpty() || QuizJudge.normalize(want.artist).split(' ').any { it.length > 2 && a.contains(it) }
+    return titleOk && artistOk
+}
 
 /** One place the show engine talks to for music, whichever source is active. */
 class MusicHub(context: Context) {
@@ -95,7 +112,7 @@ class MusicHub(context: Context) {
     fun pause() = if (active == MusicSource.LIBRARY) library.pause() else streaming.pause()
     fun resume() = if (active == MusicSource.LIBRARY) library.resume() else streaming.resume()
     /** Our own player has to duck itself; streaming apps duck via audio focus. */
-    fun duck(on: Boolean) { if (active == MusicSource.LIBRARY) library.setVolume(if (on) 0.25f else 1f) }
+    fun duck(on: Boolean) { if (active == MusicSource.LIBRARY) library.setVolume(if (on) 0.18f else 1f) }
     fun stopAll() = library.stop()
 }
 
@@ -260,23 +277,27 @@ class StreamingApps(private val context: Context) {
     private fun isPlayingSong(song: SongPick): Boolean {
         val c = preferredController() ?: return false
         val playing = c.playbackState?.state == PlaybackState.STATE_PLAYING
-        val title = c.metadata?.getString(MediaMetadata.METADATA_KEY_TITLE)?.let(QuizJudge::normalize) ?: return false
-        val want = QuizJudge.normalize(song.title)
-        return playing && (title.contains(want) || want.contains(title))
+        val md = c.metadata ?: return false
+        return playing && sameSong(song, md.getString(MediaMetadata.METADATA_KEY_TITLE), md.getString(MediaMetadata.METADATA_KEY_ARTIST))
+    }
+
+    /** Search phrasings to try, most precise first. Spotify understands its own field syntax. */
+    private fun queries(song: SongPick): List<String> = buildList {
+        if (app == MusicApp.SPOTIFY) add("track:${song.title} artist:${song.artist}")
+        add("${song.title} ${song.artist}")
+        add("${song.title} by ${song.artist}")
     }
 
     /**
      * Start a song and make sure it actually plays. Many apps (Spotify especially) open their search
-     * results from the play-from-search intent without starting playback, so we follow up through the
-     * app's media session: play-from-search again now the app is awake, then press play.
+     * results from the play-from-search intent without starting playback, or pick a different version;
+     * so we go through the app's media session, try several phrasings until the requested track is the
+     * one playing, and as a last resort press play. Returns true if *something* is playing afterwards:
+     * the caller reads [nowPlaying] to announce what really started.
      */
     suspend fun play(song: SongPick): Boolean {
-        val q = song.query
         // 1. If the app's session is already alive, ask it directly (works from the background).
-        preferredController()?.let { c ->
-            c.transportControls.playFromSearch(q, extras(song))
-            if (waitFor(4_000) { isPlayingSong(song) }) return true
-        }
+        preferredController()?.let { c -> if (trySearches(c, song)) return true }
         // 2. Wake the app with the standard intent.
         launchSearchIntent(song)
         if (!hasSessionAccess()) {
@@ -287,12 +308,22 @@ class StreamingApps(private val context: Context) {
             return audio.isMusicActive
         }
         if (waitFor(4_000) { isPlayingSong(song) }) return true
-        // 3. App is awake now: search through its session, then nudge play.
+        // 3. App is awake now: search through its session with each phrasing.
         val c = waitForController(4_000) ?: return audio.isMusicActive
-        c.transportControls.playFromSearch(q, extras(song))
-        if (waitFor(4_000) { isPlayingSong(song) }) return true
-        c.transportControls.play()
-        if (waitFor(2_500) { c.playbackState?.state == PlaybackState.STATE_PLAYING }) return true
+        if (trySearches(c, song)) return true
+        // 4. Couldn't get that exact track: make sure at least the music is going.
+        if (c.playbackState?.state != PlaybackState.STATE_PLAYING) {
+            c.transportControls.play()
+            waitFor(2_500) { c.playbackState?.state == PlaybackState.STATE_PLAYING }
+        }
+        return c.playbackState?.state == PlaybackState.STATE_PLAYING
+    }
+
+    private suspend fun trySearches(c: MediaController, song: SongPick): Boolean {
+        for (q in queries(song)) {
+            c.transportControls.playFromSearch(q, extras(song))
+            if (waitFor(4_500) { isPlayingSong(song) }) return true
+        }
         return false
     }
 

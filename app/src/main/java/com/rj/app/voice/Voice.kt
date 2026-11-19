@@ -62,7 +62,30 @@ class VoiceDesk(context: Context) {
 
     private val useCloud get() = engine == VoiceEngine.ELEVENLABS && elevenLabsKey.isNotBlank() && isOnline()
 
-    suspend fun configure(locale: Locale, rate: Float, pitch: Float) = device.configure(locale, rate, pitch, isOnline())
+    /**
+     * @param localeTag accent for the phone voice, e.g. "en-GB" (blank = phone default)
+     * @param deep lower, richer male voice
+     */
+    suspend fun configure(localeTag: String, rate: Float, pitch: Float, deep: Boolean) {
+        val locale = localeTag.takeIf { it.isNotBlank() }?.let(Locale::forLanguageTag) ?: Locale.getDefault()
+        device.configure(
+            locale = locale,
+            rate = if (deep) rate * 0.95f else rate,
+            pitch = if (deep) pitch * 0.82f else pitch,
+            online = isOnline(),
+            preferredHosts = if (deep) MALE_VOICES[locale.country].orEmpty() else emptyList(),
+        )
+    }
+
+    private companion object {
+        /** Google TTS speaker codes of male voices per country, deepest-sounding first. */
+        val MALE_VOICES = mapOf(
+            "GB" to listOf("rjs", "gbd", "gbb"),
+            "US" to listOf("iom", "tpd", "iol"),
+            "IN" to listOf("end", "inb"),
+            "AU" to listOf("aud", "auy"),
+        )
+    }
 
     /** Render upcoming lines in the background so they play instantly when it's their turn. */
     suspend fun prefetch(parts: List<SpokenLine>) {
@@ -130,7 +153,7 @@ private class DeviceVoice(context: Context) {
         })
     }
 
-    suspend fun configure(locale: Locale, rate: Float, pitch: Float, online: Boolean) {
+    suspend fun configure(locale: Locale, rate: Float, pitch: Float, online: Boolean, preferredHosts: List<String>) {
         if (!ready.await()) return
         tts.language = locale
         tts.setSpeechRate(rate)
@@ -145,9 +168,10 @@ private class DeviceVoice(context: Context) {
                     .thenByDescending { it.isNetworkConnectionRequired } // network voices sound better
                     .thenBy { it.latency }
             )
-        hostVoice = candidates.firstOrNull()
         // A clearly different voice for the co-host: different speaker code (e.g. "-x-iom-" vs "-x-tpd-").
         fun speakerCode(v: TtsVoice) = Regex("-x-([a-z]+)").find(v.name)?.groupValues?.get(1) ?: v.name
+        hostVoice = preferredHosts.firstNotNullOfOrNull { code -> candidates.firstOrNull { speakerCode(it) == code && it.locale.country == locale.country } }
+            ?: candidates.firstOrNull()
         cohostVoice = candidates.firstOrNull { c -> hostVoice?.let { speakerCode(it) != speakerCode(c) } ?: false }
         hostVoice?.let { tts.voice = it }
     }
@@ -157,7 +181,12 @@ private class DeviceVoice(context: Context) {
         val v = if (speaker == Speaker.COHOST) cohostVoice ?: hostVoice else hostVoice
         v?.let { if (tts.voice != it) tts.voice = it }
         // If there's no second voice, shift the co-host's pitch a little so they're distinguishable.
-        tts.setPitch(if (speaker == Speaker.COHOST && cohostVoice == null) basePitch * 0.88f else basePitch)
+        // The deep-voice pitch shift is for the host only; a separate co-host voice keeps its natural pitch.
+        tts.setPitch(when {
+            speaker == Speaker.HOST -> basePitch
+            cohostVoice != null -> 1f
+            else -> basePitch * 1.15f
+        })
         val id = UUID.randomUUID().toString()
         val done = CompletableDeferred<Unit>()
         synchronized(pending) { pending[id] = done }

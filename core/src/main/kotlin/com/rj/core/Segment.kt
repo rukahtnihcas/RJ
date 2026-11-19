@@ -26,6 +26,15 @@ data class QuizQuestion(
     val tune: SongPick? = null,
 )
 
+/**
+ * Something the RJ offers to do for the driver, always confirmed by voice before it happens.
+ * REPLY: answer a chat message ([to] = sender, [text] = suggested reply).
+ * LATE_NOTE: tell the next meeting's organiser they're running late ([minutes]).
+ */
+data class Offer(val kind: Kind, val to: String? = null, val text: String? = null, val minutes: Int? = null) {
+    enum class Kind { REPLY, LATE_NOTE }
+}
+
 /** One "on-air" moment produced by the brain. */
 data class Segment(
     /** What the host says first. */
@@ -42,6 +51,8 @@ data class Segment(
     val lines: List<SpokenLine> = emptyList(),
     /** A quiz question to ask after [speech]. */
     val quiz: QuizQuestion? = null,
+    /** An action to offer (reply to a message, send a running-late note). */
+    val offer: Offer? = null,
 ) {
     /** Everything this segment will say, in order (used to pre-render voice audio). */
     fun spokenParts(): List<SpokenLine> = buildList {
@@ -102,6 +113,13 @@ data class Segment(
                     tune = song(q.path("tune")),
                 )
             }
+            val offer = n.path("offer").takeIf { it.isObject }?.let { o ->
+                when (o.str("type")?.lowercase()) {
+                    "reply" -> Offer(Offer.Kind.REPLY, to = o.str("to"), text = o.str("text"))
+                    "late_note" -> Offer(Offer.Kind.LATE_NOTE, minutes = o.path("minutes").takeIf { it.isNumber }?.asInt())
+                    else -> null
+                }
+            }
             val song = song(n.path("song"))
             if (speech.isEmpty() && song == null && lines.isEmpty() && quiz == null) return null
             return Segment(
@@ -112,6 +130,7 @@ data class Segment(
                 remember = n.strings("remember"),
                 lines = lines,
                 quiz = quiz,
+                offer = offer,
             )
         }
     }

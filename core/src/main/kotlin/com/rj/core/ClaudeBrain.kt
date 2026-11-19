@@ -24,6 +24,8 @@ class ClaudeBrain(
     private val model: String = DEFAULT_MODEL,
     private val effort: OutputConfig.Effort = OutputConfig.Effort.LOW,
     private val location: Location? = null,
+    /** e.g. "British English", matching the voice's accent. */
+    private val dialect: String? = null,
     private val client: AnthropicClient = AnthropicOkHttpClient.builder()
         .apiKey(apiKey)
         .timeout(Duration.ofSeconds(60))
@@ -37,7 +39,7 @@ class ClaudeBrain(
     private val messages = mutableListOf<MessageParam>()
 
     override fun startShow(persona: Persona, profile: UserProfile, memories: List<String>, catalog: List<SongPick>) {
-        system = PromptBuilder.system(persona, profile, memories, catalog)
+        system = PromptBuilder.system(persona, profile, memories, catalog, dialect)
         messages.clear()
     }
 

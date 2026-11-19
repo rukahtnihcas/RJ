@@ -22,6 +22,10 @@ data class CalendarEvent(
     val end: ZonedDateTime,
     val location: String? = null,
     val allDay: Boolean = false,
+    val organizer: String? = null,
+    val organizerEmail: String? = null,
+    /** "phone" (Android calendar) or "outlook" (Microsoft 365). */
+    val source: String = "phone",
 )
 
 data class WeatherSnapshot(
@@ -36,7 +40,9 @@ data class WeatherSnapshot(
     val sunset: String?,
 )
 
-data class NewsItem(val title: String, val source: String?, val topic: String? = null)
+enum class NewsScope(val label: String) { LOCAL("Local"), NATIONAL("National"), WORLD("World"), TOPIC("Your interests") }
+
+data class NewsItem(val title: String, val source: String?, val topic: String? = null, val scope: NewsScope = NewsScope.TOPIC)
 
 data class NowPlaying(val artist: String?, val title: String?, val app: String?)
 
@@ -69,6 +75,13 @@ data class ShowContext(
     val online: Boolean = true,
     /** Long-run history, e.g. "drive #14", "best quiz score 3/3". */
     val history: List<String> = emptyList(),
+    val inbox: List<InboxItem> = emptyList(),
+    val health: HealthSnapshot? = null,
+    val vehicle: VehicleStatus? = null,
+    val traffic: TrafficInfo? = null,
+    val destinationWeather: WeatherSnapshot? = null,
+    /** Usual duration of this trip, learned from past drives. */
+    val usualTripMinutes: Int? = null,
 ) {
     fun nextEvent(): CalendarEvent? =
         events.filter { !it.allDay && it.end.isAfter(now) }.minByOrNull { it.start }
@@ -97,6 +110,24 @@ data class ShowContext(
             appendLine()
         }
 
+        traffic?.let { t ->
+            val hm = DateTimeFormatter.ofPattern("HH:mm")
+            append("Route to ${t.destination}: ${"%.1f".format(t.remainingKm)} km left, arriving ~${t.arrival(now).format(hm)}")
+            if (t.delayMinutes >= 2) append(" (${t.delayMinutes} min slower than an empty road)") else append(" (traffic is light)")
+            usualTripMinutes?.let { append("; this trip usually takes $it min") }
+            t.flowNote?.let { append(". Road now: $it") }
+            if (t.incidents.isNotEmpty()) append(". Incidents nearby: ${t.incidents.take(3).joinToString("; ")}")
+            appendLine()
+            nextEvent()?.let { e ->
+                val late = Duration.between(e.start, t.arrival(now)).toMinutes()
+                if (late > 2 && e.start.isAfter(now)) appendLine("At this rate they'll be about $late min late for '${e.title}' (${e.start.format(hm)}).")
+            }
+        }
+        destinationWeather?.let { w ->
+            appendLine("Weather at destination: ${w.description}, ${w.temperatureC.toInt()}°C" +
+                (w.precipitationChanceNext3h?.let { ", $it% chance of rain" } ?: ""))
+        }
+
         if (events.isNotEmpty()) {
             appendLine("Calendar:")
             val hm = DateTimeFormatter.ofPattern("HH:mm")
@@ -111,16 +142,35 @@ data class ShowContext(
                     }
                     "${e.start.format(hm)}-${e.end.format(hm)}, $rel"
                 }
-                appendLine("- ${e.title} ($whenText)${e.location?.let { " @ $it" } ?: ""}")
+                appendLine("- ${e.title} ($whenText)${e.location?.let { " @ $it" } ?: ""}" +
+                    (e.organizer?.let { " [organiser: $it]" } ?: ""))
             }
         }
 
         if (headlines.isNotEmpty()) {
-            appendLine("Headlines right now:")
-            headlines.take(10).forEach { h ->
-                appendLine("- ${h.title}${h.source?.let { " [$it]" } ?: ""}${h.topic?.let { " (#$it)" } ?: ""}")
+            headlines.groupBy { it.scope }.toSortedMap().forEach { (scope, items) ->
+                appendLine("${scope.label} news:")
+                items.take(5).forEach { h ->
+                    appendLine("- ${h.title}${h.source?.let { " [$it]" } ?: ""}${h.topic?.let { " (#$it)" } ?: ""}")
+                }
             }
         }
+
+        if (inbox.isNotEmpty()) {
+            appendLine("New for the driver (not yet mentioned):")
+            inbox.sortedByDescending { it.at }.take(8).forEach { m ->
+                val mins = Duration.between(m.at, now).toMinutes()
+                append("- ${m.app} ${m.kind.name.lowercase()} from ${m.from}")
+                if (m.count > 1) append(" (${m.count})")
+                if (m.vip) append(" [VIP]")
+                append(", ${if (mins < 1) "just now" else "$mins min ago"}")
+                m.text?.let { append(": \"${it.take(160)}\"") }
+                if (m.canReply) append(" [can reply by voice]")
+                appendLine()
+            }
+        }
+        health?.render(now)?.let { appendLine("Wellbeing (Samsung Health / watch): $it") }
+        vehicle?.render()?.let { appendLine("Car status: $it") }
 
         nowPlaying?.let { np ->
             if (np.title != null) appendLine("Currently playing: ${np.title}${np.artist?.let { " by $it" } ?: ""}")

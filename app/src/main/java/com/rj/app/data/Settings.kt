@@ -27,6 +27,15 @@ enum class VoiceEngine(val label: String) {
     ELEVENLABS("ElevenLabs (natural)"),
 }
 
+/** Accent for both voice engines; also steers the RJ's wording. */
+enum class VoiceAccent(val label: String, val localeTag: String, val dialect: String) {
+    BRITISH("British", "en-GB", "British English"),
+    AMERICAN("American", "en-US", "American English"),
+    INDIAN("Indian", "en-IN", "Indian English"),
+    AUSTRALIAN("Australian", "en-AU", "Australian English"),
+    DEVICE("Phone default", "", ""),
+}
+
 enum class BrainMode(val label: String) {
     AUTO("Auto"),          // Claude when online, offline host when not
     OFFLINE("Always offline"),
@@ -46,11 +55,35 @@ data class AppSettings(
     val elevenLabsKey: String = "",
     val hostVoiceId: String = DEFAULT_HOST_VOICE,
     val cohostVoiceId: String = DEFAULT_COHOST_VOICE,
+    val accent: VoiceAccent = VoiceAccent.BRITISH,
+    /** Lower, richer on-device voice. */
+    val deepVoice: Boolean = true,
+
+    // --- Connections ---
+    /** Announce WhatsApp / SMS / email / car-app notifications during the show. */
+    val announceMessages: Boolean = true,
+    /** Send message snippets to the AI so it can summarise them (otherwise just who/which app). */
+    val shareMessageText: Boolean = false,
+    /** Comma-separated names whose messages are announced straight away. */
+    val vipNames: String = "",
+    val useHealth: Boolean = true,
+    val tomTomKey: String = "",
+    /** Azure app registration (public client) ID for Outlook calendar & mail. */
+    val msClientId: String = "",
+    /** Bluetooth MAC of an ELM327 OBD-II adapter. */
+    val obdAddress: String = "",
+    val obdName: String = "",
+    /** Name of the car's Bluetooth, learned automatically; used to offer "go on air" when you get in. */
+    val carBluetoothName: String = "",
 ) {
+    val vipList: List<String> get() = vipNames.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+
     companion object {
         // ElevenLabs premade voices; any voice ID from your ElevenLabs voice library works.
-        const val DEFAULT_HOST_VOICE = "EXAVITQu4vr4xnJjD0NA"
-        const val DEFAULT_COHOST_VOICE = "pNInz6obpgDQGcFmaJgB"
+        const val DEFAULT_HOST_VOICE = "onwK4e9ZLuTAKqWW03F9"   // "Daniel": deep, British, broadcaster
+        const val DEFAULT_COHOST_VOICE = "Xb7hH8MSUJpSbSDYk0k2" // "Alice": clear, British
+        /** Earlier defaults, migrated to the British ones above. */
+        val OLD_DEFAULTS = setOf("EXAVITQu4vr4xnJjD0NA", "pNInz6obpgDQGcFmaJgB")
     }
 }
 
@@ -86,8 +119,21 @@ class SettingsStore(context: Context) {
             linkEveryMinutes = getInt("linkEveryMinutes", d.linkEveryMinutes),
             voiceEngine = enumOf("voiceEngine", d.voiceEngine),
             elevenLabsKey = getString("elevenLabsKey", "")!!,
-            hostVoiceId = getString("hostVoiceId", d.hostVoiceId)!!.ifBlank { d.hostVoiceId },
-            cohostVoiceId = getString("cohostVoiceId", d.cohostVoiceId)!!.ifBlank { d.cohostVoiceId },
+            hostVoiceId = getString("hostVoiceId", d.hostVoiceId)!!.ifBlank { d.hostVoiceId }
+                .let { if (it in AppSettings.OLD_DEFAULTS) d.hostVoiceId else it },
+            cohostVoiceId = getString("cohostVoiceId", d.cohostVoiceId)!!.ifBlank { d.cohostVoiceId }
+                .let { if (it in AppSettings.OLD_DEFAULTS) d.cohostVoiceId else it },
+            accent = enumOf("accent", d.accent),
+            deepVoice = getBoolean("deepVoice", d.deepVoice),
+            announceMessages = getBoolean("announceMessages", d.announceMessages),
+            shareMessageText = getBoolean("shareMessageText", d.shareMessageText),
+            vipNames = getString("vipNames", "")!!,
+            useHealth = getBoolean("useHealth", d.useHealth),
+            tomTomKey = getString("tomTomKey", "")!!,
+            msClientId = getString("msClientId", "")!!,
+            obdAddress = getString("obdAddress", "")!!,
+            obdName = getString("obdName", "")!!,
+            carBluetoothName = getString("carBluetoothName", "")!!,
         )
     }
 
@@ -114,7 +160,40 @@ class SettingsStore(context: Context) {
             .putString("elevenLabsKey", s.elevenLabsKey.trim())
             .putString("hostVoiceId", s.hostVoiceId.trim())
             .putString("cohostVoiceId", s.cohostVoiceId.trim())
+            .putString("accent", s.accent.name)
+            .putBoolean("deepVoice", s.deepVoice)
+            .putBoolean("announceMessages", s.announceMessages)
+            .putBoolean("shareMessageText", s.shareMessageText)
+            .putString("vipNames", s.vipNames)
+            .putBoolean("useHealth", s.useHealth)
+            .putString("tomTomKey", s.tomTomKey.trim())
+            .putString("msClientId", s.msClientId.trim())
+            .putString("obdAddress", s.obdAddress)
+            .putString("obdName", s.obdName)
+            .putString("carBluetoothName", s.carBluetoothName)
             .apply()
+    }
+
+    /** Learned automatically; saved without touching anything else. */
+    fun saveCarBluetooth(name: String) = prefs.edit().putString("carBluetoothName", name).apply()
+
+    /** Microsoft 365 tokens (kept separate from the rest of the settings). */
+    fun msTokens(): com.rj.core.MsTokens? {
+        val at = prefs.getString("msAccess", null) ?: return null
+        val rt = prefs.getString("msRefresh", null) ?: return null
+        return com.rj.core.MsTokens(at, rt, java.time.Instant.ofEpochSecond(prefs.getLong("msExpires", 0)))
+    }
+
+    fun msAccount(): String? = prefs.getString("msAccount", null)
+
+    fun saveMsTokens(t: com.rj.core.MsTokens?, account: String? = msAccount()) {
+        prefs.edit().apply {
+            if (t == null) { remove("msAccess"); remove("msRefresh"); remove("msExpires"); remove("msAccount") }
+            else {
+                putString("msAccess", t.accessToken); putString("msRefresh", t.refreshToken)
+                putLong("msExpires", t.expiresAt.epochSecond); account?.let { putString("msAccount", it) }
+            }
+        }.apply()
     }
 }
 
@@ -166,6 +245,23 @@ class DriveStats(context: Context) {
             .apply { if (record) putInt("bestQuiz", correct) }
             .apply()
         return record
+    }
+
+    /** Learn how long trips to each destination usually take (simple running average). */
+    fun recordTrip(destination: String?, minutes: Long) {
+        val key = destination?.trim()?.lowercase()?.takeIf { it.isNotEmpty() && minutes >= 3 } ?: return
+        val trips = org.json.JSONObject(prefs.getString("trips", "{}")!!)
+        val t = trips.optJSONObject(key) ?: org.json.JSONObject().put("avg", minutes).put("n", 0)
+        val n = t.getInt("n")
+        t.put("avg", (t.getDouble("avg") * n + minutes) / (n + 1)).put("n", (n + 1).coerceAtMost(20))
+        trips.put(key, t)
+        prefs.edit().putString("trips", trips.toString()).apply()
+    }
+
+    fun usualTripMinutes(destination: String?): Int? {
+        val key = destination?.trim()?.lowercase() ?: return null
+        val t = org.json.JSONObject(prefs.getString("trips", "{}")!!).optJSONObject(key) ?: return null
+        return if (t.getInt("n") >= 2) t.getDouble("avg").toInt() else null
     }
 
     fun summary(): List<String> = buildList {

@@ -94,8 +94,34 @@ class OfflineBrain(
             "Traffic's crawling, $name, but we're in no rush in here. Deep breath. ",
             "Stuck in a jam? Perfect excuse for more music. ",
         ) + "Here's a fact to pass the time: ${fresh("fact", pack.facts)}")
+        CueType.INBOX -> withSong(ctx, inboxLine(cue, ctx))
+        CueType.RUNNING_LATE -> Segment(
+            speech = "Bit of news on the traffic, $name: ${cue.notes.firstOrNull() ?: "we might be a little late"}. " +
+                "No stress, we'll get there safely. Want me to let them know?",
+            offer = ctx.traffic?.let { t -> ctx.nextEvent()?.let { e ->
+                Offer(Offer.Kind.LATE_NOTE, minutes = Duration.between(e.start, t.arrival(ctx.now)).toMinutes().toInt().coerceAtLeast(5))
+            } },
+        )
+        CueType.VEHICLE_ALERT -> withSong(ctx, "Quick one from the car: ${cue.notes.joinToString(", ")}. " +
+            pick("Worth sorting at the next stop.", "Let's keep an eye on that.", "Nothing to panic about, just plan for it."))
+        CueType.TAKE_A_BREAK -> withSong(ctx, pick(
+            "We've been on the road a while, $name. Next safe spot, how about a quick stretch and some water?",
+            "You've earned a break, $name. Let's pull in somewhere safe soon and reset.",
+        ))
+        CueType.WELLBEING -> withSong(ctx, pick(
+            "Let's take it down a notch. Shoulders down, nice slow breath in... and out. We've got all the time we need.",
+            "Easy does it, $name. Slow breath with me. In... and out. Here's something calm.",
+        ))
         CueType.REPLY -> reply(cue, ctx)
         CueType.SIGN_OFF -> Segment(speech = signOff(cue, ctx))
+    }
+
+    private fun inboxLine(cue: Cue, ctx: ShowContext): String {
+        val items = ctx.inbox.ifEmpty { return "Your inbox can wait. ${cue.notes.joinToString(", ")}" }
+        val people = items.groupBy { it.from }.entries.take(3).joinToString(", ") { (from, ms) ->
+            "${ms.first().app} from $from${if (ms.sumOf { it.count } > 1) " (${ms.sumOf { it.count }})" else ""}"
+        }
+        return "Quick inbox check: $people. " + pick("Nothing that can't wait till we stop.", "Say read it if you want to hear them.")
     }
 
     private fun opener(ctx: ShowContext): Segment {
@@ -114,6 +140,10 @@ class OfflineBrain(
             parts += if (mins in 1..180) "You've got ${e.title} in about ${humanMinutes(mins)}." else "Later on: ${e.title}."
         }
         ctx.drive?.destination?.let { parts += "Destination: $it. Let's go." }
+        ctx.health?.let { h ->
+            if (h.shortSleep) parts += "Bit of a short night, I hear. I'll go easy on you."
+            else if ((h.stepsToday ?: 0) >= 8000) parts += "${h.stepsToday} steps already. Look at you."
+        }
         parts += "Coming up: a quiz, some trivia, and my co-host ${persona.cohostName} has opinions."
         return withSong(ctx, parts.joinToString(" "))
     }
@@ -132,8 +162,8 @@ class OfflineBrain(
 
     private fun withSong(ctx: ShowContext, speech: String): Segment {
         val song = nextSong(ctx)
-        val intro = song?.let { pick("Here's ${it.title} by ${it.artist}.", "Next up, ${it.artist}.", "This is ${it.title}.") }
-        return Segment(speech = listOfNotNull(speech.trim().ifEmpty { null }, intro).joinToString(" "), song = song)
+        val intro = song?.let { pick("Here's ${it.title} by ${it.artist}.", "Next up, ${it.artist} with ${it.title}.", "This is ${it.title}.") }
+        return Segment(speech = speech.trim(), song = song, introTag = intro)
     }
 
     private fun nextSong(ctx: ShowContext): SongPick? {
@@ -199,7 +229,8 @@ class OfflineBrain(
                 val hay = QuizJudge.normalize("${s.title} ${s.artist}")
                 words.count { hay.contains(it) }
             }?.takeIf { s -> words.any { QuizJudge.normalize("${s.title} ${s.artist}").contains(it) } }
-            if (match != null) return Segment(speech = pick("You got it.", "Coming right up.", "Great choice.") + " ${match.title}.", song = match)
+            if (match != null) return Segment(speech = pick("You got it.", "Coming right up.", "Great choice."), song = match,
+                introTag = "${match.title}, by ${match.artist}.")
             return withSong(ctx, "I couldn't find that one on your phone, so here's something else.")
         }
         val ack = pick("Ha, love that.", "Fair enough!", "I hear you.", "Noted.")

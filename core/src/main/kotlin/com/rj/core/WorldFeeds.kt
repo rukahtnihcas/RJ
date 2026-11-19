@@ -98,17 +98,28 @@ class WeatherClient(private val client: OkHttpClient = http) {
 
 /** Key-less headlines from Google News RSS: top stories for the locale plus one feed per interest. */
 class NewsClient(private val client: OkHttpClient = http) {
-    fun fetch(language: String, country: String, interests: List<String>, perTopic: Int = 3): List<NewsItem> {
+    /**
+     * Local (your city), national, world and interest-based headlines.
+     * @param city the town you're in (or home city) for the local section; null to skip it.
+     */
+    fun fetch(language: String, country: String, interests: List<String>, city: String? = null, perTopic: Int = 3): List<NewsItem> {
         val hl = "$language-$country"
         val ceid = "$country:$language"
+        fun url(path: String, q: String? = null) = "https://news.google.com/$path".toHttpUrl().newBuilder().apply {
+            q?.let { addQueryParameter("q", it) }
+            addQueryParameter("hl", hl); addQueryParameter("gl", country); addQueryParameter("ceid", ceid)
+        }.build().toString()
+
         val out = mutableListOf<NewsItem>()
-        get("https://news.google.com/rss?hl=$hl&gl=$country&ceid=$ceid")?.let { out += it.take(6) }
+        city?.takeIf { it.isNotBlank() }?.let { c ->
+            get(url("rss/headlines/section/geo/${c.replace(' ', '+')}"))?.let { items -> out += items.take(4).map { it.copy(scope = NewsScope.LOCAL) } }
+        }
+        get(url("rss/headlines/section/topic/NATION"))?.let { items -> out += items.take(4).map { it.copy(scope = NewsScope.NATIONAL) } }
+        get(url("rss/headlines/section/topic/WORLD"))?.let { items -> out += items.take(4).map { it.copy(scope = NewsScope.WORLD) } }
         interests.take(4).forEach { topic ->
-            val url = "https://news.google.com/rss/search".toHttpUrl().newBuilder()
-                .addQueryParameter("q", "$topic when:1d")
-                .addQueryParameter("hl", hl).addQueryParameter("gl", country).addQueryParameter("ceid", ceid)
-                .build().toString()
-            get(url)?.let { items -> out += items.take(perTopic).map { it.copy(topic = topic) } }
+            get(url("rss/search", "$topic when:1d"))?.let { items ->
+                out += items.take(perTopic).map { it.copy(topic = topic, scope = NewsScope.TOPIC) }
+            }
         }
         return out.distinctBy { it.title }
     }

@@ -101,3 +101,37 @@ object IntentRouter {
         }
     }
 }
+
+/** Spoken commands handled directly by the app (not the AI). */
+sealed interface Command {
+    data object ReadMessages : Command
+    data class ReplyTo(val name: String?) : Command
+    data object RunningLate : Command
+}
+
+object Commands {
+    fun parse(utterance: String): Command? {
+        val s = QuizJudge.normalize(utterance)
+        Regex("^(?:reply|respond|answer|text|message) (?:to )?(.+)$").find(s)?.let { m ->
+            val name = m.groupValues[1].removePrefix("back ").trim()
+            return Command.ReplyTo(name.takeUnless { it in setOf("it", "them", "her", "him", "back", "") })
+        }
+        if (Regex("^(reply|respond)( back)?$").matches(s)) return Command.ReplyTo(null)
+        if (Regex("\\bread (it|them|that|my|the|out|me)\\b").containsMatchIn(s) || s == "read") return Command.ReadMessages
+        if (Regex("\\b(running|be|i m|im) late\\b|tell them i m late").containsMatchIn(s)) return Command.RunningLate
+        return null
+    }
+
+    private val yes = setOf("yes", "yeah", "yep", "yup", "sure", "ok", "okay", "please", "send", "send it", "go ahead",
+        "do it", "absolutely", "of course", "correct", "yes please", "go for it", "haan", "ha")
+    private val no = setOf("no", "nope", "nah", "don t", "dont", "cancel", "stop", "never mind", "nevermind", "not now", "leave it", "nahi")
+
+    /** true = yes, false = no, null = unclear. */
+    fun confirm(utterance: String?): Boolean? {
+        val s = QuizJudge.normalize(utterance ?: return null)
+        if (s.isEmpty()) return null
+        if (no.any { s == it || s.startsWith("$it ") }) return false
+        if (yes.any { s == it || s.startsWith("$it ") || s.endsWith(" $it") }) return true
+        return null
+    }
+}
