@@ -6,14 +6,14 @@ plugins {
 
 android {
     namespace = "com.rj.app"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.rj.app"
-        minSdk = 26
+        minSdk = 31 // on-device AI (Gemini Nano / Gemma) needs Android 12+
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
     }
 
     buildTypes {
@@ -27,9 +27,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -51,6 +48,12 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
 dependencies {
     implementation(project(":core"))
 
@@ -67,4 +70,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
+
+    // On-device AI: Gemini Nano through Android AICore (ML Kit Prompt API), and Gemma 4 through LiteRT-LM.
+    implementation("com.google.mlkit:genai-prompt:1.0.0-beta5")
+    implementation("com.google.ai.edge.litertlm:litertlm-android:0.18.1")
 }

@@ -40,6 +40,7 @@ import com.rj.app.data.AppSettings
 import com.rj.app.data.BrainMode
 import com.rj.app.data.MusicApp
 import com.rj.app.data.MusicSource
+import com.rj.app.data.OnDeviceAi
 import com.rj.app.data.VoiceAccent
 import com.rj.app.data.VoiceEngine
 import androidx.compose.material3.Switch
@@ -206,8 +207,23 @@ fun SettingsScreen(
 
         Section("Brain")
         Chips(BrainMode.entries, settings.brainMode, { it.label }) { onChange(settings.copy(brainMode = it)) }
-        Hint(if (settings.brainMode == BrainMode.AUTO) "Claude writes the show when you're online; the offline host takes over automatically in dead zones."
-            else "Never uses the internet for the show: built-in quizzes, trivia, jokes, mini-podcasts and your phone's music.")
+        Hint(if (settings.brainMode == BrainMode.AUTO) "Claude writes the show when you're online; the on-device AI (or the scripted host) takes over in dead zones."
+            else "Never uses Claude: the on-device AI writes the show, with the scripted host as a safety net.")
+
+        Text("On-device AI (private, works without signal)", style = MaterialTheme.typography.bodyMedium)
+        Chips(OnDeviceAi.entries, settings.onDeviceAi, { it.label }) { onChange(settings.copy(onDeviceAi = it)) }
+        Hint("Gemini Nano: ${connections.nanoStatus ?: "checking…"}. Built into newer Galaxy and Pixel phones; Android only lets the on-screen app use it, so keep RJ open while driving.")
+        if (connections.nanoStatus?.startsWith("Supported") == true) {
+            OutlinedButton(onClick = connections.onDownloadNano) { Text("Get Gemini Nano") }
+        }
+        Hint("Gemma 4: ${connections.gemmaStatus}. Google's open model, runs on the phone's GPU, works in the background. One-time 2.6 GB download over Wi-Fi.")
+        if (connections.gemmaStatus.startsWith("Ready")) {
+            OutlinedButton(onClick = connections.onDeleteGemma) { Text("Delete Gemma 4 (free 2.6 GB)") }
+        } else if (connections.gemmaStatus == "Not downloaded") {
+            OutlinedButton(onClick = connections.onDownloadGemma) { Text("Download Gemma 4 (2.6 GB, Wi-Fi)") }
+        }
+        Toggle("Use on-device AI even when online", settings.preferOnDevice) { onChange(settings.copy(preferOnDevice = it)) }
+        Hint("Fully private shows. Claude is sharper and can search the web; the on-device AI talks about the news the app has already fetched.")
         Field("Claude API key", settings.apiKey, secret = true, hint = "sk-ant-…") { onChange(settings.copy(apiKey = it)) }
         Field("Model", settings.model) { onChange(settings.copy(model = it)) }
         Text(
@@ -245,6 +261,11 @@ data class ConnectionsUi(
     val onMsSignOut: () -> Unit,
     val obdAdapters: List<Pair<String, String>>,
     val onRequestBluetooth: () -> Unit,
+    val nanoStatus: String?,
+    val onDownloadNano: () -> Unit,
+    val gemmaStatus: String,
+    val onDownloadGemma: () -> Unit,
+    val onDeleteGemma: () -> Unit,
 )
 
 @Composable

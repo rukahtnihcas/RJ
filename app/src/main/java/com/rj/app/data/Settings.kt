@@ -36,6 +36,14 @@ enum class VoiceAccent(val label: String, val localeTag: String, val dialect: St
     DEVICE("Phone default", "", ""),
 }
 
+/** Which on-device model writes the show when Claude isn't used. */
+enum class OnDeviceAi(val label: String) {
+    AUTO("Auto"),               // Gemini Nano if the phone offers it, else Gemma 4 if downloaded
+    NANO("Gemini Nano"),
+    GEMMA("Gemma 4"),
+    OFF("Off (scripted)"),
+}
+
 enum class BrainMode(val label: String) {
     AUTO("Auto"),          // Claude when online, offline host when not
     OFFLINE("Always offline"),
@@ -75,6 +83,12 @@ data class AppSettings(
     val obdName: String = "",
     /** Name of the car's Bluetooth, learned automatically; used to offer "go on air" when you get in. */
     val carBluetoothName: String = "",
+
+    // --- On-device AI ---
+    val onDeviceAi: OnDeviceAi = OnDeviceAi.AUTO,
+    /** Also use the on-device model when online and a Claude key is set (fully private shows). */
+    val preferOnDevice: Boolean = false,
+    val gemmaModelUrl: String = DEFAULT_GEMMA_URL,
 ) {
     val vipList: List<String> get() = vipNames.split(',').map { it.trim() }.filter { it.isNotEmpty() }
 
@@ -84,6 +98,9 @@ data class AppSettings(
         const val DEFAULT_COHOST_VOICE = "Xb7hH8MSUJpSbSDYk0k2" // "Alice": clear, British
         /** Earlier defaults, migrated to the British ones above. */
         val OLD_DEFAULTS = setOf("EXAVITQu4vr4xnJjD0NA", "pNInz6obpgDQGcFmaJgB")
+        /** Gemma 4 E2B instruction-tuned, LiteRT-LM format (~2.6 GB, Apache 2.0). */
+        const val DEFAULT_GEMMA_URL =
+            "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm"
     }
 }
 
@@ -134,6 +151,9 @@ class SettingsStore(context: Context) {
             obdAddress = getString("obdAddress", "")!!,
             obdName = getString("obdName", "")!!,
             carBluetoothName = getString("carBluetoothName", "")!!,
+            onDeviceAi = enumOf("onDeviceAi", d.onDeviceAi),
+            preferOnDevice = getBoolean("preferOnDevice", d.preferOnDevice),
+            gemmaModelUrl = getString("gemmaModelUrl", d.gemmaModelUrl)!!.ifBlank { d.gemmaModelUrl },
         )
     }
 
@@ -171,6 +191,9 @@ class SettingsStore(context: Context) {
             .putString("obdAddress", s.obdAddress)
             .putString("obdName", s.obdName)
             .putString("carBluetoothName", s.carBluetoothName)
+            .putString("onDeviceAi", s.onDeviceAi.name)
+            .putBoolean("preferOnDevice", s.preferOnDevice)
+            .putString("gemmaModelUrl", s.gemmaModelUrl.trim())
             .apply()
     }
 

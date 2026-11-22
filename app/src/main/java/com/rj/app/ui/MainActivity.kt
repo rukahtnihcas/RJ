@@ -48,6 +48,8 @@ class MainActivity : ComponentActivity() {
                 var msCode by remember { mutableStateOf<String?>(null) }
                 var msStatus by remember { mutableStateOf<String?>(null) }
                 var msSignedIn by remember { mutableStateOf(engine.microsoft.signedIn) }
+                var nanoStatus by remember { mutableStateOf<String?>(null) }
+                var gemmaStatus by remember { mutableStateOf(engine.localAi.gemmaStatus()) }
 
                 val permissions = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                     // Start regardless: every context source degrades gracefully if its permission is denied.
@@ -58,7 +60,17 @@ class MainActivity : ComponentActivity() {
                 }
                 val bluetoothPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
-                LaunchedEffect(showSettings) { healthGranted = engine.health.granted().isNotEmpty() }
+                LaunchedEffect(showSettings) {
+                    healthGranted = engine.health.granted().isNotEmpty()
+                    if (showSettings) {
+                        nanoStatus = engine.localAi.nanoStatus()
+                        // Keep the Gemma download progress fresh while Settings is open.
+                        while (true) {
+                            gemmaStatus = engine.localAi.gemmaStatus()
+                            kotlinx.coroutines.delay(2_000)
+                        }
+                    }
+                }
                 LaunchedEffect(autostart) {
                     if (autostart && !state.live) {
                         autostart = false
@@ -99,6 +111,15 @@ class MainActivity : ComponentActivity() {
                             onRequestBluetooth = {
                                 if (Build.VERSION.SDK_INT >= 31) bluetoothPermission.launch(Manifest.permission.BLUETOOTH_CONNECT)
                             },
+                            nanoStatus = nanoStatus,
+                            onDownloadNano = { engine.localAi.downloadNano { msg -> nanoStatus = msg } },
+                            gemmaStatus = gemmaStatus,
+                            onDownloadGemma = {
+                                store.save(settings)
+                                engine.localAi.startGemmaDownload(settings.gemmaModelUrl)
+                                gemmaStatus = engine.localAi.gemmaStatus()
+                            },
+                            onDeleteGemma = { engine.localAi.deleteGemma(); gemmaStatus = engine.localAi.gemmaStatus() },
                         ),
                         onClearMemories = { MemoryStore(this).clear() },
                     )

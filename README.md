@@ -77,6 +77,23 @@ app. Reading messages aloud happens on the phone. Nothing is ever sent without a
 4. Copy the **Application (client) ID** into RJ → Settings → Connections, tap **Sign in to Outlook**,
    and enter the code shown at microsoft.com/devicelogin.
 
+## On-device AI (Gemini Nano / Gemma 4)
+
+The show's writer falls back through three tiers: **Claude** (online, web search, sharpest), then an
+**on-device model**, then the **scripted host**, which never fails. Turn on *Use on-device AI even
+when online* for fully private shows.
+
+- **Gemini Nano**, through Android AICore (ML Kit Prompt API). There's nothing to download where the phone
+  offers it to apps. Settings shows whether yours does. Android only lets the app on screen use it, so
+  keep RJ open while driving; if you switch to Maps, the show falls back to Gemma or the script.
+- **Gemma 4 E2B**, Google's open model, through LiteRT-LM on the phone's GPU (CPU fallback). It's a
+  one-time 2.6 GB download over Wi-Fi from Settings and works in the background.
+
+Small models get a compact prompt, use the headlines the app has already fetched (no web search), and
+have every reply checked. Songs must come from your library when that's the music source, quizzes
+must have a valid answer and debates need two voices; anything unusable falls through to the scripted
+host. Actions such as replying to messages stay with explicit voice commands.
+
 ## Offline mode
 
 When there's no signal (or with **Brain → Always offline**), a built-in host takes over seamlessly. It

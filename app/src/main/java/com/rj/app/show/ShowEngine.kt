@@ -10,6 +10,7 @@ import com.rj.app.RjApp
 import com.rj.app.connect.CarBluetooth
 import com.rj.app.connect.HealthReader
 import com.rj.app.connect.Inbox
+import com.rj.app.connect.LocalAi
 import com.rj.app.connect.MicrosoftAccount
 import com.rj.app.connect.ObdLink
 import com.rj.app.context.CalendarSource
@@ -40,6 +41,7 @@ import com.rj.core.NewsClient
 import com.rj.core.NewsItem
 import com.rj.core.Offer
 import com.rj.core.OfflineBrain
+import com.rj.core.OnDeviceBrain
 import com.rj.core.Persona
 import com.rj.core.QuizJudge
 import com.rj.core.RjBrain
@@ -120,6 +122,7 @@ class ShowEngine(private val app: Context) {
     val health = HealthReader(app)
     val obd = ObdLink(app)
     val microsoft = MicrosoftAccount(settingsStore)
+    val localAi = LocalAi(app)
     private val voices = VoiceDesk(app)
     private val ears = Ears(app)
     private val planner = ShowPlanner()
@@ -143,6 +146,9 @@ class ShowEngine(private val app: Context) {
 
     private var settings = AppSettings()
     private var cloud: RjBrain? = null
+    /** On-device model (Gemini Nano / Gemma 4), between Claude and the scripted host. */
+    private var local: RjBrain? = null
+    private var localLabel: String? = null
     private var persona = Persona()
     private var profile = UserProfile()
     private val recentSongs = mutableListOf<String>()
@@ -192,7 +198,7 @@ class ShowEngine(private val app: Context) {
             } finally {
                 sensorsJob?.cancel()
                 withContext(NonCancellable + Dispatchers.Main) { drive.stop() }
-                withContext(NonCancellable + Dispatchers.IO) { obd.close() }
+                withContext(NonCancellable + Dispatchers.IO) { obd.close(); localAi.release() }
                 if (!stopping) end()
             }
         }
@@ -290,10 +296,17 @@ class ShowEngine(private val app: Context) {
                 dialect = s.accent.dialect.ifBlank { null },
             )
         }
-        if (cloud == null && s.brainMode == BrainMode.AUTO) {
-            _state.update { it.copy(notice = "No Claude API key: running the offline show. Add a key in Settings for news, chat and fresh content.") }
+        // On-device AI: private, works without signal. Loading Gemma takes a few seconds.
+        _state.update { it.copy(notice = "Warming up the on-device AI…") }
+        val onDevice = localAi.prepare(s.onDeviceAi)
+        local = onDevice?.let { OnDeviceBrain(it.first) }
+        localLabel = onDevice?.second
+        _state.update { it.copy(notice = null) }
+        if (cloud == null && local == null && s.brainMode == BrainMode.AUTO) {
+            _state.update { it.copy(notice = "No Claude API key or on-device AI: running the scripted show. See Settings → Brain.") }
         }
         cloud?.startShow(s.persona, s.profile, memory.all(), catalog)
+        local?.startShow(s.persona, s.profile, memory.all(), catalog)
         offline.startShow(s.persona, s.profile, memory.all(), catalog)
         stats.startDrive()
 
@@ -377,6 +390,12 @@ class ShowEngine(private val app: Context) {
             val unread = Inbox.snapshot(showStart).size + outlookMail.size
             if (unread > 0) add("💬 $unread new")
             if (outlookEvents.isNotEmpty()) add("📅 Outlook")
+            val brain = when {
+                cloud != null && isOnline() && !(settings.preferOnDevice && local != null) -> "Claude"
+                local != null -> localLabel
+                else -> "scripted"
+            }
+            add("🧠 $brain")
         }
         _state.update { it.copy(senses = senses) }
     }
@@ -649,14 +668,25 @@ class ShowEngine(private val app: Context) {
         if (updateStatus) _state.update { it.copy(status = OnAir.THINKING) }
         return withContext(Dispatchers.IO) {
             val ctx = context()
-            val brain = cloud?.takeIf { ctx.online }
-            val result = if (brain == null) null else runCatching { withTimeoutOrNull(45_000) { brain.next(cue, ctx) } }
-            result?.exceptionOrNull()?.let { e ->
-                if (e is CancellationException) throw e
-                _state.update { it.copy(notice = describe(e)) }
+            fun usable(s: Segment?) = s?.takeIf { it.speech.isNotBlank() || it.song != null || it.quiz != null || it.lines.isNotEmpty() }
+            // 1. Claude, when online (unless the driver prefers fully on-device shows).
+            val claude = cloud?.takeIf { ctx.online && !(settings.preferOnDevice && local != null) }
+            if (claude != null) {
+                val r = runCatching { withTimeoutOrNull(45_000) { claude.next(cue, ctx) } }
+                r.exceptionOrNull()?.let { e ->
+                    if (e is CancellationException) throw e
+                    _state.update { it.copy(notice = describe(e)) }
+                }
+                usable(r.getOrNull())?.let { return@withContext it }
             }
-            result?.getOrNull()?.takeIf { it.speech.isNotBlank() || it.song != null || it.quiz != null || it.lines.isNotEmpty() }
-                ?: offline.next(cue, ctx)
+            // 2. The on-device model. Small models slip sometimes; unusable replies fall through.
+            local?.let { brain ->
+                val r = runCatching { brain.next(cue, ctx) }
+                r.exceptionOrNull()?.let { if (it is CancellationException) throw it }
+                usable(r.getOrNull())?.let { return@withContext it }
+            }
+            // 3. The scripted host never fails.
+            offline.next(cue, ctx)
         }
     }
 
